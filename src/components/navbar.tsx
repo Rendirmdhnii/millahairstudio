@@ -1,186 +1,66 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { 
-  Menu, X, Sparkles, User as UserIcon, LogOut, Shield, Scissors, 
-  ShoppingBag, Bell 
-} from 'lucide-react';
-import { useMillaStore } from '../store/useMillaStore';
-import { cn } from '../lib/utils';
+import { Menu, X, Scissors } from 'lucide-react';
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { currentUser, logout, notifications, markNotificationRead } = useMillaStore();
-
-  const unreadNotifs = notifications.filter(n => !n.isRead && (!currentUser || n.userId === currentUser.id));
-
   const navLinks = [
-    { name: 'Beranda', href: '/' },
-    { name: 'Layanan', href: '/services' },
-    { name: 'Stylist', href: '/stylists' },
-    { name: 'Membership', href: '/membership' },
-    { name: 'Produk', href: '/products' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Hubungi Kami', href: '/contact' },
+    { name: 'Beranda', href: '#' },
+    { name: 'Layanan', href: '#layanan' },
+    { name: 'Produk', href: '#produk' },
+    { name: 'Galeri', href: '#galeri' },
+    { name: 'Lokasi', href: '#lokasi' },
   ];
 
-  const getDashboardLink = (role: string) => {
-    switch (role) {
-      case 'owner': return '/dashboard/owner';
-      case 'admin': return '/dashboard/admin';
-      case 'cashier': return '/dashboard/cashier';
-      case 'stylist': return '/dashboard/stylist';
-      case 'manager': return '/dashboard/manager';
-      default: return '/dashboard/customer';
-    }
-  };
-
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-stone-200/55 transition-all duration-300">
+    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-zinc-200/50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2.5 group">
+            <a href="#" className="flex items-center gap-2.5 group">
               <span className="p-2 rounded-full bg-stone-100 text-primary transition-all duration-300 group-hover:bg-primary/10">
                 <Scissors className="h-6 w-6" />
               </span>
               <span className="text-xl font-bold tracking-tight text-zinc-900 transition-colors duration-300 group-hover:text-primary">
                 Milla Hair Studio
               </span>
-            </Link>
+            </a>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-x-8 lg:gap-x-10">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.name}
                 href={link.href}
-                className={cn(
-                  "text-sm font-medium tracking-wide transition-colors duration-200 pb-1 border-b-2",
-                  pathname === link.href
-                    ? "text-primary border-primary"
-                    : "text-zinc-600 border-transparent hover:text-primary hover:border-zinc-300"
-                )}
+                className="text-sm font-semibold tracking-wide text-zinc-700 hover:text-primary transition-colors duration-250"
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
           </nav>
 
-          {/* Right Buttons */}
-          <div className="hidden md:flex items-center gap-5">
-            {/* Cart */}
-            <Link 
-              href="/cart" 
-              className="p-2 text-zinc-600 hover:text-primary relative transition-colors"
-              title="Keranjang Belanja"
+          {/* Right Button (WhatsApp CTA) */}
+          <div className="hidden md:flex items-center">
+            <a
+              href="https://wa.me/6285645121008"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold text-xs px-6 py-3.5 rounded-full shadow transition-all duration-300 hover:scale-[1.02]"
             >
-              <ShoppingBag className="h-6 w-6" />
-            </Link>
-
-            {/* Notification Bell */}
-            {currentUser && (
-              <div className="relative group">
-                <button className="p-2 text-zinc-600 hover:text-primary transition-colors relative">
-                  <Bell className="h-6 w-6" />
-                  {unreadNotifs.length > 0 && (
-                    <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-                  )}
-                </button>
-                {/* Notifications Dropdown */}
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-zinc-200 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 text-xs">
-                  <h4 className="font-bold p-2 border-b border-zinc-100 text-primary flex justify-between items-center">
-                    <span>Notifikasi ({unreadNotifs.length})</span>
-                  </h4>
-                  <div className="max-h-60 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <p className="text-center py-4 text-zinc-400">Tidak ada notifikasi.</p>
-                    ) : (
-                      notifications.slice(0, 5).map(n => (
-                        <div 
-                          key={n.id} 
-                          onClick={() => markNotificationRead(n.id)}
-                          className={cn(
-                            "p-3 border-b border-zinc-50 hover:bg-zinc-50 cursor-pointer transition-colors",
-                            !n.isRead && "bg-zinc-50 font-medium"
-                          )}
-                        >
-                          <p className="text-zinc-800">{n.title}</p>
-                          <p className="text-zinc-500 mt-1">{n.message}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentUser ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  href={getDashboardLink(currentUser.role)}
-                  className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-700 bg-zinc-50 border border-zinc-200 px-3.5 py-2 rounded-full hover:bg-zinc-100 transition-all duration-300"
-                >
-                  <Shield className="h-3.5 w-3.5 text-primary" />
-                  {currentUser.role === 'customer' ? 'Dashboard' : `${currentUser.role}`}
-                </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    router.push('/');
-                  }}
-                  className="p-2 text-zinc-500 hover:text-red-500 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="text-sm font-semibold tracking-wide text-zinc-700 hover:text-primary transition-colors"
-              >
-                Login / Register
-              </Link>
-            )}
-
-            <Link
-              href="/booking"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold text-xs px-6 py-3 rounded-full shadow transition-all duration-300"
-            >
-              <Sparkles className="h-4 w-4" />
-              Booking Sekarang
-            </Link>
+              {/* WhatsApp Icon */}
+              <svg className="h-4 w-4 fill-current text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+              </svg>
+              Konsultasi WhatsApp
+            </a>
           </div>
 
-          {/* Mobile Navigation Controls (Logo + Cart + User Icon + Hamburger) */}
-          <div className="flex md:hidden items-center gap-2">
-            {/* Cart Icon */}
-            <Link 
-              href="/cart" 
-              className="p-2 text-zinc-600 hover:text-primary relative transition-colors"
-              title="Keranjang Belanja"
-            >
-              <ShoppingBag className="h-6 w-6" />
-            </Link>
-
-            {/* Login / Profile Icon */}
-            <Link 
-              href={currentUser ? getDashboardLink(currentUser.role) : "/login"} 
-              className="p-2 text-zinc-600 hover:text-primary transition-colors"
-              title={currentUser ? "Dashboard" : "Login / Register"}
-            >
-              <UserIcon className="h-6 w-6" />
-            </Link>
-
-            {/* Hamburger Button */}
+          {/* Mobile Hamburg Toggle */}
+          <div className="flex md:hidden items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-zinc-600 hover:text-primary focus:outline-none transition-colors"
@@ -197,59 +77,28 @@ export default function Navbar() {
         <div className="md:hidden bg-white/95 backdrop-blur-lg border-b border-zinc-200/80 shadow-lg animate-fade-in-up">
           <div className="px-4 pt-2 pb-6 space-y-1.5 sm:px-6">
             {navLinks.map((link) => (
-              <Link
+              <a
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={cn(
-                  "block px-3 py-3 rounded-xl text-base font-medium transition-colors",
-                  pathname === link.href
-                    ? "text-primary bg-primary-bg"
-                    : "text-zinc-700 hover:text-primary hover:bg-zinc-50"
-                )}
+                className="block px-3 py-3 rounded-xl text-base font-semibold text-zinc-700 hover:text-primary hover:bg-stone-50 transition-colors"
               >
                 {link.name}
-              </Link>
+              </a>
             ))}
 
-            <div className="border-t border-zinc-150/50 my-4 pt-4 flex flex-col gap-3">
-              {currentUser ? (
-                <>
-                  <Link
-                    href={getDashboardLink(currentUser.role)}
-                    onClick={() => setIsOpen(false)}
-                    className="w-full text-center bg-zinc-50 border border-zinc-200 text-zinc-800 py-3 rounded-full font-semibold transition-all hover:bg-zinc-100"
-                  >
-                    Dashboard ({currentUser.role === 'customer' ? 'Customer' : currentUser.role})
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setIsOpen(false);
-                      router.push('/');
-                    }}
-                    className="w-full text-center bg-red-50 text-red-600 py-3 rounded-full font-semibold transition-all hover:bg-red-100"
-                  >
-                    Log Out
-                  </button>
-                </>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full text-center bg-zinc-50 border border-zinc-200 text-zinc-800 py-3 rounded-full font-semibold transition-all hover:bg-zinc-100"
-                >
-                  Login / Register
-                </Link>
-              )}
-
-              <Link
-                href="/booking"
+            <div className="border-t border-zinc-150/50 my-4 pt-4">
+              <a
+                href="https://wa.me/6285645121008"
                 onClick={() => setIsOpen(false)}
-                className="w-full text-center bg-primary hover:bg-primary-hover text-white py-3.5 rounded-full font-bold shadow-md transition-all hover:shadow-lg"
+                className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white py-3.5 rounded-full font-bold shadow-md transition-all hover:shadow-lg"
               >
-                Booking Sekarang
-              </Link>
+                {/* WhatsApp Icon */}
+                <svg className="h-5 w-5 fill-current text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                </svg>
+                Konsultasi WhatsApp
+              </a>
             </div>
           </div>
         </div>
