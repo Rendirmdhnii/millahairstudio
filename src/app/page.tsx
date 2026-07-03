@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { 
-  Sparkles, Star, Scissors, MapPin, Clock, Check, ShieldCheck, Gem
+  Sparkles, Star, Scissors, MapPin, Clock, Check, ShieldCheck, Gem, ChevronDown, ChevronUp, Heart
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -9,41 +10,63 @@ export default function LandingPage() {
   // WhatsApp Link Helper
   const waLink = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20booking%20perawatan/tanya%20layanan.";
 
-  // Services Data
-  const services = [
+  // Comprehensive Price List Categories
+  const priceListCategories = [
     {
-      id: 1,
-      name: 'Premium Signature Haircut',
-      description: 'Potongan rambut modern yang disesuaikan dengan bentuk wajah dan karakter Anda oleh stylist berpengalaman. Termasuk cuci rambut & styling.',
-      price: 75000,
-      duration: '45-60',
-      image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=500'
+      id: 'hair-treatment-styling',
+      title: 'Hair Treatment & Styling',
+      icon: Scissors,
+      services: [
+        { name: 'Ladies Haircut (Owner)', price: '125k' },
+        { name: 'Ladies Haircut By Hairdresser', price: '100k' },
+        { name: 'Gent Haircut', price: '50k' },
+        { name: 'Hairspa / Hairmask (Keratin/Matrix/MK Texture)', price: '150k - 200k' },
+        { name: 'Scalp / Hairfall Treatment', price: '200k' },
+        { name: 'Wash & Dry / Flat Iron / Curly', price: '45k - 110k' },
+        { name: 'Hairdo / Halfdo', price: '130k - 150k' }
+      ]
     },
     {
-      id: 2,
-      name: 'Luxury Balayage & Coloring',
-      description: 'Pewarnaan rambut artistik dengan gradasi warna natural premium. Menggunakan bahan berkualitas tinggi yang melindungi kekuatan folikel rambut.',
-      price: 350000,
-      duration: '120-180',
-      image: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=500'
+      id: 'hair-color-smoothing-perm',
+      title: 'Hair Color, Smoothing & Perm',
+      icon: Sparkles,
+      services: [
+        { name: 'Basic Color Vegan (No Bleach)', price: '300k - 900k + UP' },
+        { name: 'Balyage / Highlight', price: '480k - 900k + UP' },
+        { name: 'Bleach + Fashion Color', price: '500k - 950k + UP' },
+        { name: 'Smoothing Collagen / Japan Nano Keratin', price: '400k - 980k + UP' },
+        { name: 'Keratin Filler', price: 'Start From 470k - 1000k + UP' },
+        { name: 'Down Perm Poni / Cold Perm', price: '250k - 600k + UP' }
+      ]
     },
     {
-      id: 3,
-      name: 'Silk Keratin & Smoothing',
-      description: 'Solusi meluruskan rambut kusut agar terlihat jatuh lembut berkilau alami. Mengembalikan protein keratin rambut yang rusak.',
-      price: 250000,
-      duration: '90-120',
-      image: 'https://images.unsplash.com/photo-1595853035070-59a39fe84de3?auto=format&fit=crop&q=80&w=500'
+      id: 'hair-extension-eyelash',
+      title: 'Hair Extension & Eyelash',
+      icon: Gem,
+      services: [
+        { name: 'Apply Extension Keratin/Ring/Braid', price: '5k - 8k / Helai' },
+        { name: 'Natural / Dramatic / Volume Eyelash', price: '180k - 250k' }
+      ]
     },
     {
-      id: 4,
-      name: 'Japanese Hair Spa & Therapy',
-      description: 'Relaksasi kulit kepala mendalam dengan pijatan khusus, masker nutrisi, dan serum untuk menenangkan stres rambut serta merangsang pertumbuhan.',
-      price: 120000,
-      duration: '60',
-      image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=500'
+      id: 'body-treatment-nails',
+      title: 'Body Treatment & Nails',
+      icon: Star,
+      services: [
+        { name: 'Manicure / Pedicure / Reflexi', price: '75k - 150k' },
+        { name: 'Bodyspa Scrub / V Ratus', price: '75k - 300k' },
+        { name: 'Facial (Basic/Detox)', price: '85k - 250k' },
+        { name: 'Nail Gel (Polos/Simple/Hard Design)', price: '180k - 230k' },
+        { name: 'Nail Gel Halal + Mani/Pedi', price: '165k - 175k' }
+      ]
     }
   ];
+
+  // Active Tab for Desktop View
+  const [activeTab, setActiveTab] = useState(priceListCategories[0].id);
+
+  // Active Accordion Item for Mobile View
+  const [activeAccordion, setActiveAccordion] = useState<string | null>(priceListCategories[0].id);
 
   // Products Data
   const products = [
@@ -166,64 +189,143 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. SERVICES & TREATMENTS SECTION */}
-      <section id="layanan" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-stone-100">
+      {/* 2. SERVICES & TREATMENTS SECTION (Layanan & Daftar Harga) */}
+      <section id="layanan" className="py-24 bg-soft-pink/40 px-4 sm:px-6 lg:px-8 border-b border-stone-100">
         <div className="max-w-7xl mx-auto">
+          
+          {/* Header Section */}
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <div className="inline-flex items-center gap-1 bg-stone-100 text-stone-600 rounded-full px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
-              Treatment Spesialis
+            <div className="inline-flex items-center gap-1.5 bg-white border border-gold-accent/20 text-gold-accent-hover rounded-full px-4.5 py-1.5 text-[10px] font-bold tracking-widest uppercase shadow-2xs">
+              Menu & Daftar Harga
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900">Layanan Salon Kami</h2>
-            <p className="text-zinc-500 font-normal leading-relaxed text-sm sm:text-base">
-              Setiap perawatan dikerjakan secara eksklusif oleh stylist berpengalaman menggunakan produk kecantikan berkualitas internasional.
+            <h2 className="text-3xl sm:text-4xl font-serif font-extrabold text-zinc-950 tracking-tight">
+              Layanan Salon Kami
+            </h2>
+            <div className="w-16 h-1 bg-gold-accent mx-auto rounded-full my-2" />
+            <p className="text-zinc-600 font-normal leading-relaxed text-sm sm:text-base">
+              Nikmati perawatan eksklusif yang dikerjakan oleh professional hair stylist Milla Hair Studio menggunakan produk bersertifikat internasional.
             </p>
           </div>
 
-          {/* Services Grid - Responsive (1 col mobile, 2 col tablet, 4 col desktop) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {services.map((service) => (
-              <div 
-                key={service.id} 
-                className="bg-white rounded-2xl overflow-hidden border border-stone-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group hover:border-primary/30"
-              >
-                <div className="relative h-56 w-full overflow-hidden bg-stone-100">
-                  <img 
-                    src={service.image} 
-                    alt={service.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103" 
-                  />
-                  <span className="absolute bottom-3 left-3 bg-white/95 text-stone-800 text-[10px] font-bold px-2.5 py-1.5 rounded-full shadow-xs">
-                    ⏱️ {service.duration} Menit
-                  </span>
-                </div>
-                
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <h3 className="text-base sm:text-lg font-bold text-zinc-900 group-hover:text-primary transition-colors">
-                      {service.name}
-                    </h3>
-                    <p className="text-xs text-zinc-500 font-normal leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
-                  
-                  <div className="mt-6 pt-5 border-t border-stone-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <span className="text-base font-extrabold text-zinc-950">
-                      {formatPrice(service.price)}
-                    </span>
-                    <a
-                      href={`https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20booking%20treatment%20${encodeURIComponent(service.name)}.`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4.5 py-2.5 rounded-full shadow-xs transition-colors"
-                    >
-                      Pesan via WA
-                    </a>
-                  </div>
-                </div>
+          {/* Desktop View: Tabs & Dotted Menu List */}
+          <div className="hidden md:block">
+            {/* Tabs List */}
+            <div className="flex flex-wrap justify-center gap-3 mb-12 bg-white/50 p-2.5 rounded-2xl border border-zinc-200/60 backdrop-blur-md max-w-4xl mx-auto">
+              {priceListCategories.map((category) => {
+                const IconComponent = category.icon;
+                const isActive = activeTab === category.id;
+                return (
+                  <button
+                    key={category.id}
+                    onClick={() => setActiveTab(category.id)}
+                    className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-300 ${
+                      isActive
+                        ? 'bg-gold-accent text-white shadow-md shadow-gold-accent/25 scale-[1.02]'
+                        : 'text-zinc-650 hover:text-gold-accent hover:bg-white'
+                    }`}
+                  >
+                    <IconComponent className={`h-4.5 w-4.5 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                    {category.title}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tab Panel Content */}
+            <div className="bg-white p-10 lg:p-12 rounded-3xl border border-zinc-200/65 shadow-sm max-w-5xl mx-auto animate-fade-in-up">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-14 gap-y-6">
+                {priceListCategories
+                  .find((c) => c.id === activeTab)
+                  ?.services.map((service, index) => (
+                    <div key={index} className="flex flex-col justify-center py-2.5 group">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="text-zinc-950 font-bold text-[15px] group-hover:text-gold-accent transition-colors duration-250 leading-tight">
+                          {service.name}
+                        </span>
+                        <div className="flex-1 border-b border-dashed border-zinc-300/80 min-w-[20px] mx-1 relative top-[-4px]" />
+                        <span className="text-gold-accent-hover font-extrabold text-[15px] whitespace-nowrap bg-soft-pink/50 px-3.5 py-1.5 rounded-lg border border-gold-accent/15">
+                          {service.price}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
               </div>
-            ))}
+            </div>
           </div>
+
+          {/* Mobile View: Accordion */}
+          <div className="md:hidden space-y-4 max-w-md mx-auto">
+            {priceListCategories.map((category) => {
+              const IconComponent = category.icon;
+              const isOpen = activeAccordion === category.id;
+              return (
+                <div 
+                  key={category.id} 
+                  className="bg-white rounded-2xl border border-zinc-200/85 shadow-sm overflow-hidden transition-all duration-300"
+                >
+                  <button
+                    onClick={() => setActiveAccordion(isOpen ? null : category.id)}
+                    className="w-full flex items-center justify-between p-5 text-left font-bold text-sm text-zinc-950 hover:bg-stone-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`p-2.5 rounded-xl transition-colors ${isOpen ? 'bg-gold-accent text-white' : 'bg-stone-100 text-zinc-500'}`}>
+                        <IconComponent className="h-4.5 w-4.5" />
+                      </span>
+                      <span className={`tracking-tight ${isOpen ? 'text-gold-accent-hover' : ''}`}>{category.title}</span>
+                    </div>
+                    {isOpen ? (
+                      <ChevronUp className="h-5 w-5 text-gold-accent" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-zinc-400" />
+                    )}
+                  </button>
+                  
+                  {isOpen && (
+                    <div className="border-t border-zinc-100 p-5 space-y-4 bg-stone-50/50 animate-fade-in-up">
+                      {category.services.map((service, index) => (
+                        <div key={index} className="flex justify-between items-center py-2 border-b border-zinc-150/40 last:border-b-0 last:pb-0">
+                          <span className="text-zinc-900 text-xs font-semibold pr-4 leading-snug">{service.name}</span>
+                          <span className="text-gold-accent-hover font-bold text-xs bg-white px-2.5 py-1 rounded-md border border-gold-accent/20 shadow-2xs whitespace-nowrap">
+                            {service.price}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* WhatsApp Call to Action Panel */}
+          <div className="mt-16 text-center max-w-4xl mx-auto p-8 sm:p-12 rounded-3xl bg-white border border-zinc-200/80 shadow-md relative overflow-hidden">
+            {/* Decorative Soft Shapes */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-soft-pink rounded-full opacity-60 blur-xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-gold-accent/10 rounded-full opacity-60 blur-xl pointer-events-none" />
+            
+            <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
+              <h3 className="text-xl sm:text-2xl font-bold text-zinc-950 font-serif">
+                Siap Tampil Memukau Bersama Kami?
+              </h3>
+              <p className="text-zinc-600 text-sm leading-relaxed">
+                Tekan tombol di bawah untuk langsung terhubung dengan admin WhatsApp kami. Konsultasikan model rambut idaman Anda dan reservasi jadwal kedatangan dengan mudah.
+              </p>
+              <div className="pt-2">
+                <a 
+                  href="https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20melakukan%20reservasi%20jadwal%20perawatan."
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 bg-gold-accent hover:bg-gold-accent-hover text-white font-bold text-base px-8 py-4.5 rounded-full shadow-lg shadow-gold-accent/25 hover:shadow-gold-accent/35 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto justify-center cursor-pointer"
+                >
+                  <svg className="h-5 w-5 fill-current text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                  </svg>
+                  Reservasi Jadwal via WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

@@ -13,6 +13,9 @@
   
   --secondary: #D9B48F;
   --gold: #C8A27A;
+  --gold-accent: #D4B26F;
+  --gold-accent-hover: #C59E5B;
+  --soft-pink: #FFF5F6;
   
   --dark: #2A2521;
   --gray-light: #F7F7F7; /* Abu Muda */
@@ -29,6 +32,9 @@
   --color-primary-bg: var(--primary-bg);
   --color-secondary: var(--secondary);
   --color-gold: var(--gold);
+  --color-gold-accent: var(--gold-accent);
+  --color-gold-accent-hover: var(--gold-accent-hover);
+  --color-soft-pink: var(--soft-pink);
   --color-dark: var(--dark);
   --color-gray-light: var(--gray-light);
   --color-gray-medium: var(--gray-medium);
