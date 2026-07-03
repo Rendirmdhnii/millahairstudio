@@ -31,38 +31,41 @@ export default function LandingPage() {
     <div className="w-full flex flex-col font-sans text-stone-800 bg-white">
       
       {/* 1. HERO BANNER */}
-      <section className="relative w-full min-h-[85vh] flex items-center bg-stone-100 overflow-hidden py-16 px-4 sm:px-6 lg:px-8">
+      <section className="relative w-full min-h-[90vh] flex items-center bg-stone-900 overflow-hidden py-24 px-4 sm:px-6 lg:px-8">
         {/* Background Image & Soft Filter Overlay */}
-        <div className="absolute inset-0 opacity-80">
+        <div className="absolute inset-0 opacity-90">
           <img 
             src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1600" 
             alt="Milla Hair Studio Salon Interior" 
             className="w-full h-full object-cover scale-100"
           />
         </div>
-        {/* Elegant Minimalist Solid-Beige Overlay */}
-        <div className="absolute inset-0 bg-stone-900/40" />
+        {/* Elegant Minimalist Dark Overlay for ultra text contrast */}
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
         
-        <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-8 space-y-6 text-left">
-            <div className="inline-flex items-center gap-1.5 bg-white/90 border border-stone-200 rounded-full px-4 py-1.5 shadow-sm">
+        <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-9 space-y-8 text-left">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4.5 py-2 shadow-sm">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-semibold tracking-wider text-stone-700 uppercase">Minimalist & Elegant Hair Studio</span>
+              <span className="text-[11px] font-bold tracking-wider text-stone-250 uppercase">Minimalist & Elegant Hair Studio</span>
             </div>
             
-            <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight">
+            <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
               Kecantikan Rambut Anda<br />
-              <span className="text-primary-light">Adalah Seni & Dedikasi.</span>
+              <span className="text-primary">Adalah Seni & Dedikasi.</span>
             </h1>
             
-            <p className="text-base sm:text-lg text-stone-100 font-normal leading-relaxed max-w-2xl bg-black/20 p-4 rounded-2xl backdrop-blur-xs">
-              Milla Hair Studio menghadirkan layanan penataan rambut premium yang minimalis, bersih, dan modern di Sidoarjo. Fokus kami adalah memberikan kemudahan booking janji temu serta pelayanan berkualitas tinggi yang nyaman untuk semua usia.
-            </p>
+            {/* Elegant glassmorphic description card for readability */}
+            <div className="max-w-2xl bg-white/5 backdrop-blur-md border border-white/15 p-6 sm:p-8 rounded-2xl shadow-xl">
+              <p className="text-base sm:text-lg text-white font-normal leading-relaxed">
+                Milla Hair Studio menghadirkan layanan penataan rambut premium yang minimalis, bersih, dan modern di Sidoarjo. Fokus kami adalah memberikan kemudahan booking janji temu serta pelayanan berkualitas tinggi yang nyaman untuk semua usia.
+              </p>
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link 
                 href="/booking" 
-                className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-bold text-base px-8 py-4 rounded-full shadow transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2.5 bg-primary hover:bg-primary-hover text-white font-bold text-base px-8 py-4 rounded-full shadow-lg hover:shadow-primary/20 hover:scale-[1.02] transition-all duration-300"
               >
                 <Calendar className="h-5 w-5" />
                 Booking Sekarang
@@ -72,26 +75,28 @@ export default function LandingPage() {
                 href="https://wa.me/6285645121008" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 font-bold text-base px-8 py-4 rounded-full shadow-sm transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 font-bold text-base px-8 py-4 rounded-full shadow-md hover:scale-[1.02] transition-all duration-300"
               >
-                <Phone className="h-5 w-5 text-emerald-600" />
+                <svg className="h-5 w-5 fill-current text-[#25D366]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                </svg>
                 WhatsApp Kami
               </a>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-4 max-w-lg">
-              <div className="bg-white/90 p-3 rounded-2xl border border-stone-150 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-zinc-900">4.9 ⭐</p>
-                <p className="text-[10px] text-zinc-500 font-semibold mt-0.5">Google Rating</p>
+            {/* Quick Stats - Translucent and premium */}
+            <div className="grid grid-cols-3 gap-6 pt-6 max-w-lg">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/15 text-center shadow-lg">
+                <p className="text-xl sm:text-2xl font-bold text-white">4.9 ⭐</p>
+                <p className="text-[10px] text-white/70 font-semibold mt-0.5 tracking-wider uppercase">Google Rating</p>
               </div>
-              <div className="bg-white/90 p-3 rounded-2xl border border-stone-150 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-zinc-900">100%</p>
-                <p className="text-[10px] text-zinc-500 font-semibold mt-0.5">Pelayanan Ramah</p>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/15 text-center shadow-lg">
+                <p className="text-xl sm:text-2xl font-bold text-white">100%</p>
+                <p className="text-[10px] text-white/70 font-semibold mt-0.5 tracking-wider uppercase">Pelayanan Ramah</p>
               </div>
-              <div className="bg-white/90 p-3 rounded-2xl border border-stone-150 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-zinc-900">Sidoarjo</p>
-                <p className="text-[10px] text-zinc-500 font-semibold mt-0.5">Lokasi Utama</p>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/15 text-center shadow-lg">
+                <p className="text-xl sm:text-2xl font-bold text-white">Sidoarjo</p>
+                <p className="text-[10px] text-white/70 font-semibold mt-0.5 tracking-wider uppercase">Lokasi Utama</p>
               </div>
             </div>
           </div>
