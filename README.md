@@ -1,70 +1,87 @@
-# Milla Hair Studio — Enterprise Digital Storefront
+# Milla Hair Studio — Full-Stack Enterprise Digital Storefront & Management System
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-12-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployment-black?style=for-the-badge&logo=vercel&logoColor=white)
 
-An ultra-premium, high-converting digital storefront engineered for **Milla Hair Studio** — a luxury hair salon and boutique studio based in Sidoarjo. Designed with startup-grade aesthetics, hardware-accelerated 60fps micro-animations, and zero-friction lead conversion workflows.
+An ultra-premium, full-stack digital storefront and salon management ecosystem engineered for **Milla Hair Studio** — an elite boutique hair salon based in Sidoarjo. Architected with modern full-stack software engineering paradigms, Supabase relational backend, hardware-accelerated 60fps micro-animations, and high-converting customer acquisition pipelines.
 
 ---
 
-## 🌟 Executive Summary
+## 🌟 Enterprise Overview
 
-**Milla Hair Studio** represents a modern paradigm shift in boutique luxury commerce. Built to bridge offline artistry with elite digital experiences, this platform combines high-performance server-side architecture with high-end editorial aesthetics.
+**Milla Hair Studio** is not merely a landing page — it is a **Full-Stack Premium Digital Storefront & Management Platform** engineered to bridge luxury offline salon operations with cutting-edge digital infrastructure.
 
-### Key Objectives
-* **Conversion Optimization**: High-intent WhatsApp API integration routing direct lead acquisition with zero friction.
-* **Core Web Vitals Excellence**: Engineered for sub-second initial load times, perfect Lighthouse accessibility ratings, and seamless responsiveness across mobile & desktop devices.
-* **Luxury UI/UX Aesthetics**: Crafted using glassmorphism, dynamic active scroll tracking, and cinematic Framer Motion orchestrations.
+Architected for extreme scalability, data integrity, and high-throughput performance, the system delivers sub-second page delivery, real-time data synchronization, and robust authorization models. It serves as the digital flagship for Milla Hair Studio, offering an omnichannel experience for service reservations, product cataloging, and client management.
+
+### Strategic Pillar Objectives
+* **Full-Stack Scalability**: Decoupled, API-first architecture powered by Next.js App Router and Supabase BaaS.
+* **Core Web Vitals & SEO Excellence**: Sub-second Initial Server Response (TTFB), optimized Largest Contentful Paint (LCP), and high search visibility.
+* **Enterprise Security & Data Protection**: Row Level Security (RLS) policies enforcing zero-trust data access on PostgreSQL tables.
+* **Luxury UI/UX Aesthetics**: Hardware-accelerated 60fps animations, glassmorphism UI tokens, and ergonomic responsive layouts.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 🏗️ System Architecture & Technology Stack
 
-The application is architected around modern web performance patterns and enterprise software engineering principles:
+The platform implements an end-to-end type-safe enterprise architecture:
 
-| Layer | Technology | Engineering Rationale |
+```
+[ Client Viewport ]  <--->  [ Next.js App Router (SSR/SSG) ]  <--->  [ Supabase BaaS ]
+ (Framer Motion UI)           (Server Actions & API Routes)          (PostgreSQL + RLS + Auth)
+```
+
+| Component / Layer | Technology | Professional Rationale |
 | :--- | :--- | :--- |
-| **Framework** | **Next.js (App Router)** | Leverages Server-Side Rendering (SSR) & Static Site Generation (SSG) to maximize SEO indexing and achieve optimal LCP/FID metrics. |
-| **Language** | **TypeScript** | Ensures strict end-to-end type safety, eliminating runtime errors and maintaining modular component scalability. |
-| **Styling** | **Tailwind CSS v4** | Delivers zero-runtime CSS overhead with utility-first responsive layout structures and custom design system variables. |
-| **Animations** | **Framer Motion** | Provides hardware-accelerated 60fps animations, staggered entrance sequences, and layout transition primitives via `AnimatePresence`. |
-| **Icons & Assets** | **Lucide React** | Lightweight, SVG-based icon system tailored for clean corporate presentation. |
+| **Frontend Framework** | **Next.js (App Router)** | Leverages Server-Side Rendering (SSR) & Static Site Generation (SSG) for lightning-fast TTFB, automated code-splitting, and peak SEO indexing. |
+| **Backend-as-a-Service** | **Supabase (PostgreSQL)** | Open-source BaaS delivering enterprise relational database management, Row Level Security (RLS) authorization, secure Auth, and real-time database subscriptions. |
+| **Language & Type System** | **TypeScript** | Enforces strict end-to-end type safety across database schemas, API payload models, and client React components. |
+| **Design System & Styling** | **Tailwind CSS v4** | Delivers zero-runtime CSS utility classes, custom luxury color tokens, and responsive layout structures without style clutter. |
+| **Motion & Interactivity** | **Framer Motion** | Powers hardware-accelerated 60fps micro-animations, staggered layout reveals, and dynamic state transitions via `AnimatePresence`. |
+| **Deployment Infrastructure** | **Vercel Platform** | Global Edge Network hosting with automated CI/CD deployment pipelines, instant CDN caching, and serverless runtime capabilities. |
 
 ---
 
 ## ✨ Key Technical Highlights
 
+### ⚡ Seamless Database & Backend Infrastructure
+* **PostgreSQL Relational Engine**: Normalized schema architecture managing treatments, pricing tiers, product catalogs, customer bookings, and membership tiers.
+* **Row Level Security (RLS)**: Fine-grained access control policies guaranteeing strict data isolation between public clients and administrative management views.
+* **End-to-End Type Safety**: Generated TypeScript definitions synchronized directly with Supabase database schemas.
+
 ### 💎 Glassmorphism & Active Scroll Navigation
-* **Sticky Glass Navbar**: Ultra-sleek `backdrop-blur-md` navigation header with adaptive border contrast on scroll.
-* **Dynamic Active State**: Real-time section scroll detection (`IntersectionObserver` API) paired with Framer Motion `layoutId` pill indicators.
-* **Thumb-Friendly Mobile Drawer**: Ergonomic mobile navigation drawer animated via `AnimatePresence` for fluid touch interactions.
+* **Sticky Glass Header**: Sleek `backdrop-blur-md` navigation bar with dynamic border contrast adaptation during scroll sequences.
+* **Scroll-Aware Active State**: Real-time section detection via `IntersectionObserver` paired with Framer Motion `layoutId` pill indicators.
+* **Thumb-Friendly Mobile Drawer**: Ergonomic mobile navigation panel featuring fluid `AnimatePresence` slide-in sequences and generous touch targets.
 
-### 🎭 Scroll-Driven Motion Engine
-* **Staggered Hero Entrance**: Micro-timed entrance sequences for branding badges, typography, CTA buttons, and social proof counters.
-* **Viewport Reveal**: Viewport-triggered scroll animations (`whileInView`) that gently reveal content blocks as users navigate down the page.
-* **Interactive Hover Dynamics**: Elevated card physics (`whileHover={{ y: -8 }}`), glowing button interactions, and scale-up dynamics.
+### 🎭 Hardware-Accelerated Motion Engine
+* **Staggered Hero Entrance**: Micro-timed entrance orchestrations for brand badges, typography, CTA buttons, and key performance counters.
+* **Scroll-Driven Viewport Reveals**: Viewport-triggered scroll animations (`whileInView`) delivering seamless content reveals.
+* **Elevated Card Physics**: Hardware-accelerated hover physics (`whileHover={{ y: -8 }}`), glowing button states, and scale transitions.
 
-### 📋 Dynamic Price List Engine
-* **Desktop Categorized Tabs**: Smooth layout transitions without content jump using Framer Motion tab layout coordination.
-* **Mobile Accordion System**: Fluid height-measured expand/collapse transitions using `AnimatePresence` for mobile viewport optimization.
+### 📋 Complex Dynamic Data Mapping
+* **Desktop Categorized Tabs**: Smooth layout transitions without layout shift using Framer Motion tab layout primitives.
+* **Mobile Accordion Engine**: Fluid height-measured expand/collapse transitions using `AnimatePresence` for mobile viewports.
 
-### ⚡ Zero-Friction Conversion Routing
-* Context-aware WhatsApp API deep links embedded across all services, price lists, and product catalog items for instant client booking.
+### 🎯 Zero-Friction Conversion & Reservation Pipeline
+* **High-Intent WhatsApp Routing**: Context-aware deep-linking API embedding service details, product SKUs, and booking intent.
+* **Extensible Self-Service Engine**: Pre-built API architecture ready for instant expansion into autonomous online booking and QRIS payment integration.
 
 ---
 
-## 🚀 Local Development Setup
+## 🚀 Local Development & Environment Setup
 
-Follow these steps to run the application locally on your machine:
+Follow this step-by-step guide to configure and run the project in your local development environment:
 
 ### Prerequisites
 * **Node.js**: `v18.x` or higher
 * **npm**: `v9.x` or higher (or `pnpm` / `yarn`)
+* **Supabase Account**: (Optional for local DB connection)
 
-### Installation & Execution
+### Step-by-Step Installation
 
 1. **Clone the repository**:
    ```bash
@@ -77,13 +94,21 @@ Follow these steps to run the application locally on your machine:
    npm install
    ```
 
-3. **Start the development server**:
+3. **Configure Environment Variables**:
+   Create a `.env.local` file in the root directory and add your Supabase project credentials:
+   ```env
+   # Supabase Configuration
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+   ```
+
+4. **Run the local development server**:
    ```bash
    npm run dev
    ```
-   Open `http://localhost:3000` in your browser to view the application.
+   Open `http://localhost:3000` in your web browser to explore the platform.
 
-4. **Build for production**:
+5. **Build and verify production bundle**:
    ```bash
    npm run build
    npm run start
@@ -95,18 +120,18 @@ Follow these steps to run the application locally on your machine:
 
 <table border="0">
   <tr>
-    <td width="100" align="center">
-      <img src="https://github.com/Rendirmdhnii.png" width="80" height="80" style="border-radius: 50%;" alt="Rendi"/>
+    <td width="110" align="center">
+      <img src="https://github.com/Rendirmdhnii.png" width="90" height="90" style="border-radius: 50%;" alt="Rendi"/>
     </td>
     <td>
-      <strong>Lead Software Engineer</strong><br/>
+      <strong>Lead Full-Stack Engineer</strong><br/>
       <h3>Rendi</h3>
-      <p><em>Full-Stack & Frontend Specialist</em></p>
-      <a href="https://github.com/Rendirmdhnii">GitHub Profile</a>
+      <p>GitHub: <a href="https://github.com/Rendirmdhnii">@Rendirmdhnii</a></p>
+      <p><strong>Expertise:</strong> Full-Stack Ecosystem (Next.js + Supabase), Cloud Architecture, & Premium UI/UX Engineering.</p>
     </td>
   </tr>
 </table>
 
 ---
 
-© 2026 Milla Hair Studio. All rights reserved. Engineered with precision.
+© 2026 Milla Hair Studio. All rights reserved. Architected & Engineered with Precision.
