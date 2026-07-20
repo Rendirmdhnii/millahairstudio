@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LocationSection from '../components/location-section';
 import { 
   Sparkles, Star, Scissors, MapPin, Clock, Gem, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, CheckCircle2, MessageCircle
 } from 'lucide-react';
@@ -587,92 +588,7 @@ export default function LandingPage() {
       </motion.section>
 
       {/* 5. LOCATION & INFO SECTION */}
-      <motion.section 
-        id="lokasi" 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-24 lg:py-28 bg-white px-4 sm:px-6 lg:px-8"
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Map Column */}
-            <motion.div 
-              whileHover={{ scale: 1.01 }}
-              className="lg:col-span-7 w-full h-[420px] rounded-3xl overflow-hidden border border-stone-200 bg-stone-100 shadow-md"
-            >
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4022830869766!2d112.7235084!3d-7.420658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e1329a43a0f7%3A0xe54d6824982f6e52!2sJank%20Jank%20Chicken%20Sidoarjo!5e0!3m2!1sid!2sid!4v1687500000000!5m2!1sid!2sid" 
-                className="w-full h-full border-none"
-                allowFullScreen={false} 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </motion.div>
-
-            {/* Info Column */}
-            <div className="lg:col-span-5 space-y-8 text-left">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 bg-stone-900 text-gold-accent px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase">
-                  <MapPin className="h-3.5 w-3.5" />
-                  <span>Lokasi Studio</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-serif font-extrabold text-stone-900">
-                  Milla Hair Studio Sidoarjo
-                </h2>
-                <div className="w-16 h-1 bg-gold-accent rounded-full" />
-              </div>
-              
-              <p className="text-base text-stone-600 leading-relaxed font-light">
-                Salon kami terletak di lokasi strategis pusat kota Sidoarjo. Ruangan steril, wangi, dan tenang dirancang khusus untuk kenyamanan maksimal Anda.
-              </p>
-
-              <div className="space-y-5">
-                <div className="flex items-start gap-4 p-4 rounded-2xl bg-stone-50 border border-stone-200/60">
-                  <div className="p-3 bg-stone-900 text-gold-accent rounded-xl">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-extrabold uppercase text-stone-400 tracking-wider">Alamat Lengkap</h4>
-                    <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-relaxed mt-1">
-                      Timur Jank Jank, Jl. Kav. DPR I No.26, Nggrekmas, Pagerwojo, Buduran, Sidoarjo 61219
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4 p-4 rounded-2xl bg-stone-50 border border-stone-200/60">
-                  <div className="p-3 bg-stone-900 text-gold-accent rounded-xl">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-extrabold uppercase text-stone-400 tracking-wider">Jam Operasional</h4>
-                    <p className="text-xs sm:text-sm font-bold text-stone-800 mt-1">
-                      Buka Setiap Hari: <span className="text-gold-accent-hover">09.30 - 20.00 WIB</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <motion.a 
-                  href={waLink} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full inline-flex items-center justify-center gap-3 bg-stone-900 hover:bg-stone-800 text-gold-accent font-bold text-sm px-8 py-4 rounded-2xl shadow-md border border-gold-accent/30"
-                >
-                  <MessageCircle className="h-4 w-4 text-gold-accent" />
-                  <span>Hubungi via WhatsApp</span>
-                </motion.a>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </motion.section>
+      <LocationSection />
 
     </div>
   );
