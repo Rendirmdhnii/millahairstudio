@@ -38,15 +38,15 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled 
-        ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg border-b border-zinc-800/80 py-2.5' 
-        : 'bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 py-3.5'
+        ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg border-b border-zinc-800/80 py-1.5 sm:py-2.5' 
+        : 'bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 py-2.5 sm:py-3.5'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 sm:h-24 items-center justify-between gap-4">
+        <div className="flex h-16 sm:h-20 md:h-24 items-center justify-between gap-4">
           
           {/* Brand Logo with Flexible Container & Drop Shadow over Dark Background */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="relative flex items-center h-16 sm:h-20 group">
+            <Link href="/" className="relative flex items-center h-12 sm:h-16 md:h-20 group">
               <Image 
                 src={LogoImage} 
                 alt="Milla Hair Studio" 
@@ -111,14 +111,26 @@ export default function Navbar() {
             </motion.a>
           </div>
 
-          {/* Mobile Hamburg Toggle */}
-          <div className="flex md:hidden items-center">
+          {/* Mobile Hamburg Toggle & Quick Action */}
+          <div className="flex md:hidden items-center gap-2">
+            <Link
+              href="/booking"
+              className={`inline-flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-wider px-3.5 py-2 rounded-xl transition-all shadow-xs border min-h-[40px] ${
+                isBookingActive
+                  ? 'bg-[#926C3A] text-white border-[#926C3A]'
+                  : 'border-[#926C3A]/30 bg-[#926C3A]/10 text-white'
+              }`}
+            >
+              <Calendar className="h-3.5 w-3.5 text-[#926C3A]" />
+              <span>Booking</span>
+            </Link>
+
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 rounded-xl bg-zinc-900 text-zinc-200 hover:bg-zinc-800 focus:outline-none transition-colors border border-zinc-800"
+              className="p-2.5 rounded-xl bg-zinc-900 text-zinc-200 hover:bg-zinc-800 focus:outline-none transition-colors border border-zinc-800 min-h-[40px] min-w-[40px] flex items-center justify-center"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
