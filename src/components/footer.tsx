@@ -86,6 +86,65 @@ export default function Footer() {
 
         </div>
 
+        {/* Social Media Links Section with Clean Custom SVGs */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-t border-zinc-800">
+          <span className="text-zinc-500 font-bold uppercase text-[10px] tracking-wider">
+            Ikuti Media Sosial Milla Hair Studio
+          </span>
+          <div className="flex items-center gap-6">
+            {/* Instagram */}
+            <a 
+              href="https://www.instagram.com/millahairstudio_sidoarjo?igsh=dHlpdnV3b2JxdDcz" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-zinc-400 hover:text-[#926C3A] transition-colors duration-300 min-h-[44px] flex items-center"
+              title="Instagram"
+            >
+              <svg className="h-5 w-5 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+            {/* Facebook */}
+            <a 
+              href="https://www.facebook.com/share/18xx3bfi4v/?mibextid=wwXIfr" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-zinc-400 hover:text-[#926C3A] transition-colors duration-300 min-h-[44px] flex items-center"
+              title="Facebook"
+            >
+              <svg className="h-5 w-5 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg>
+            </a>
+            {/* TikTok */}
+            <a 
+              href="https://www.tiktok.com/@millahairstudio_sidoarjo?_r=1&_t=ZS-98DxVGoFGSb" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-zinc-400 hover:text-[#926C3A] transition-colors duration-300 min-h-[44px] flex items-center"
+              title="TikTok"
+            >
+              <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.63 4.18 1.13 1.2 2.7 1.95 4.34 2.12v3.83c-1.42-.04-2.82-.44-4.03-1.2-.38-.24-.73-.52-1.05-.83v5.29c.07 1.9-.4 3.82-1.4 5.43-1.46 2.37-4.02 3.96-6.85 4.16-3.1.22-6.26-.88-8.22-3.32-2.17-2.72-2.52-6.68-.86-9.75 1.43-2.65 4.31-4.41 7.33-4.47.16 0 .32 0 .48.01v3.9c-.93.07-1.89.37-2.64.96-1.12.87-1.74 2.27-1.63 3.7.13 1.76 1.34 3.32 3.03 3.78 1.63.45 3.48-.15 4.45-1.54.54-.78.78-1.73.74-2.68V0h.06z" />
+              </svg>
+            </a>
+            {/* WhatsApp */}
+            <a 
+              href="https://wa.me/6285645121008" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-zinc-400 hover:text-[#926C3A] transition-colors duration-300 min-h-[44px] flex items-center"
+              title="WhatsApp"
+            >
+              <svg className="h-5 w-5 fill-none stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
         {/* Footer Bottom with Discreet Workspace Link */}
         <div className="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-zinc-500 gap-4">
           <p>© {new Date().getFullYear()} Milla Hair Studio Sidoarjo. Hak Cipta Dilindungi.</p>
