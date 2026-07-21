@@ -22,7 +22,7 @@ export default function Navbar() {
     { name: 'Lokasi Studio', href: '/#lokasi', id: 'lokasi' },
   ];
 
-  const waUrl = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20booking%20perawatan/tanya%20layanan.";
+  const waUrl = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20ingin%20bertanya%20seputar%20treatment";
 
   useEffect(() => {
     const handleScroll = () => {
