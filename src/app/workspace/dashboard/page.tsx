@@ -24,6 +24,33 @@ export default function WorkspaceDashboardPage() {
     addAuditLog
   } = useMillaStore();
 
+  // Helper local date string (YYYY-MM-DD)
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayStr = getLocalDateString();
+  const currentMonthStr = todayStr.substring(0, 7);
+
+  // Real-Time Live Timestamp State
+  const [lastUpdated, setLastUpdated] = useState<string>('');
+
+  const updateLiveTimestamp = () => {
+    const now = new Date();
+    const formatted = now.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) + ' WIB';
+    setLastUpdated(formatted);
+  };
+
   // 1. CEGAH LOGOUT OTOMATIS SAAT REFRESH (PERSISTENT SESSION)
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -36,21 +63,22 @@ export default function WorkspaceDashboardPage() {
     }
   }, [router, login]);
 
-  // Helper re-fetch Supabase query (select 20 data terbaru)
+  // Helper re-fetch Supabase query
   const reFetchBookings = async () => {
     try {
       const { data } = await supabase
         .from('bookings')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(30);
       if (data) useMillaStore.setState({ supabaseBookings: data });
+      updateLiveTimestamp();
     } catch (err) {
       console.warn('Supabase Re-fetch Notice:', err);
     }
   };
 
-  // 2. LIVE SYNC SUPABASE DATA (4-SECOND POLLING INTERVAL & LIMIT 20)
+  // 2. LIVE SYNC SUPABASE DATA (4-SECOND POLLING INTERVAL & TIMESTAMP UPDATE)
   useEffect(() => {
     async function fetchLiveBookingsFromSupabase() {
       try {
@@ -58,13 +86,14 @@ export default function WorkspaceDashboardPage() {
           .from('bookings')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(20);
+          .limit(30);
 
         if (error) {
           console.warn('Supabase Live Fetch Error:', error.message);
         } else if (data) {
           useMillaStore.setState({ supabaseBookings: data });
         }
+        updateLiveTimestamp();
       } catch (err) {
         console.error('Supabase Connection Error:', err);
       }
@@ -79,12 +108,15 @@ export default function WorkspaceDashboardPage() {
   // Active Navigation Tab State
   const [activeTab, setActiveTab] = useState<'reservations' | 'customers' | 'services' | 'settings'>('reservations');
 
-  // Booking table filter & search states
+  // Booking table filter & search states (Default Filter: Today's Date)
   const [showFilters, setShowFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | BookingStatus>('all');
-  const [filterDate, setFilterDate] = useState<string>('');
+  const [filterDate, setFilterDate] = useState<string>(todayStr);
   const [filterMonth, setFilterMonth] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Pagination State ("Muat Lebih Banyak" / Load More)
+  const [displayLimit, setDisplayLimit] = useState<number>(10);
 
   // Modal State: Complete Booking & Fill Total Payment
   const [selectedBookingForComplete, setSelectedBookingForComplete] = useState<Booking | null>(null);
@@ -95,7 +127,7 @@ export default function WorkspaceDashboardPage() {
   const [custName, setCustName] = useState('');
   const [custPhone, setCustPhone] = useState('');
   const [serviceName, setServiceName] = useState(services[0]?.name || 'Signature Milla Haircut & Blow');
-  const [bDate, setBDate] = useState(new Date().toISOString().split('T')[0]);
+  const [bDate, setBDate] = useState(todayStr);
   const [bTime, setBTime] = useState('14:00');
 
   const formatWhatsAppNumber = (phone: string) => {
@@ -109,17 +141,6 @@ export default function WorkspaceDashboardPage() {
   if (!currentUser) return null;
 
   // REVENUE & METRICS STATISTICAL CALCULATIONS
-  const getLocalDateString = () => {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  const todayStr = getLocalDateString();
-  const currentMonthStr = todayStr.substring(0, 7);
-
   // Card 1: Today's Revenue (Pendapatan Hari Ini)
   const todayRevenue = supabaseBookings
     .filter(b => b.status === 'completed' && (b.booking_date === todayStr || (b.created_at && b.created_at.startsWith(todayStr))))
@@ -136,7 +157,7 @@ export default function WorkspaceDashboardPage() {
   // Card 4: Total Completed Bookings (Reservasi Selesai)
   const completedBookingsCount = supabaseBookings.filter(b => b.status === 'completed').length;
 
-  // FILTERED BOOKINGS LIST
+  // FILTERED BOOKINGS LIST (Defaults to Today's Date unless cleared)
   const filteredBookings = supabaseBookings.filter(b => {
     const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
     const matchesDate = !filterDate || b.booking_date === filterDate;
@@ -149,6 +170,9 @@ export default function WorkspaceDashboardPage() {
 
     return matchesStatus && matchesDate && matchesMonth && matchesSearch;
   });
+
+  // Paginated visible items
+  const visibleBookings = filteredBookings.slice(0, displayLimit);
 
   // HANDLERS FOR STATUS UPDATES WITH SUPABASE
   const handleAcceptBooking = async (id: string) => {
@@ -300,9 +324,8 @@ export default function WorkspaceDashboardPage() {
             </div>
           </div>
 
-          {/* Navigation Menu Links (4 Pure Text Menus) */}
+          {/* Navigation Menu Links */}
           <nav className="p-4 space-y-1 text-xs font-semibold">
-            {/* 1. Daftar Reservasi */}
             <button
               onClick={() => setActiveTab('reservations')}
               className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
@@ -319,7 +342,6 @@ export default function WorkspaceDashboardPage() {
               )}
             </button>
 
-            {/* 2. Data Pelanggan */}
             <button
               onClick={() => setActiveTab('customers')}
               className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
@@ -331,7 +353,6 @@ export default function WorkspaceDashboardPage() {
               <span>Data Pelanggan</span>
             </button>
 
-            {/* 3. Kelola Layanan */}
             <button
               onClick={() => setActiveTab('services')}
               className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
@@ -343,7 +364,6 @@ export default function WorkspaceDashboardPage() {
               <span>Kelola Layanan</span>
             </button>
 
-            {/* 4. Pengaturan */}
             <button
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
@@ -374,15 +394,18 @@ export default function WorkspaceDashboardPage() {
         {/* TAB 1: DAFTAR RESERVASI */}
         {activeTab === 'reservations' && (
           <>
-            {/* Top Header Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
+            {/* Top Header Bar with Live Timestamp Indicator */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-xs">
               <div>
                 <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
                   Reservasi Masuk
                 </h1>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Panel pencatatan transaksi dan penjadwalan salon Milla Hair Studio Sidoarjo.
-                </p>
+                {/* 3. INDIKATOR WAKTU REAL-TIME */}
+                <div className="text-xs text-gray-500 font-medium flex items-center gap-1.5 mt-1">
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Data diperbarui:</span>
+                  <span className="font-bold text-gray-700">{lastUpdated || 'Baru saja'}</span>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
@@ -405,7 +428,7 @@ export default function WorkspaceDashboardPage() {
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
               
               {/* Card 1: Pendapatan Hari Ini */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
                   Pendapatan Hari Ini
                 </span>
@@ -418,7 +441,7 @@ export default function WorkspaceDashboardPage() {
               </div>
 
               {/* Card 2: Pendapatan Bulan Ini */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
                   Pendapatan Bulan Ini
                 </span>
@@ -431,7 +454,7 @@ export default function WorkspaceDashboardPage() {
               </div>
 
               {/* Card 3: Total Antrean Aktif */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
                   Total Antrean Aktif
                 </span>
@@ -444,7 +467,7 @@ export default function WorkspaceDashboardPage() {
               </div>
 
               {/* Card 4: Reservasi Selesai */}
-              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
                   Reservasi Selesai
                 </span>
@@ -459,21 +482,27 @@ export default function WorkspaceDashboardPage() {
             </div>
 
             {/* TABEL BOOKING MANAGEMENT CARD CONTAINER */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-xs p-4 sm:p-6 space-y-4">
               
               {/* Table Container Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-gray-100">
                 <div>
-                  <h2 className="text-base sm:text-lg font-serif font-bold text-gray-900">
-                    Daftar Reservasi Terbaru (20 Data Terakhir)
+                  {/* 2. UBAH LOGIKA DATA MENJADI "RESERVASI HARI INI" */}
+                  <h2 className="text-base sm:text-lg font-serif font-bold text-gray-900 flex items-center gap-2">
+                    <span>Reservasi Hari Ini</span>
+                    {filterDate === todayStr && (
+                      <span className="bg-amber-50 text-[#926C3A] border border-amber-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        Hari Ini
+                      </span>
+                    )}
                   </h2>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 mt-0.5">
                     Kelola status kedatangan dan pembayaran pelanggan salon secara real-time.
                   </p>
                 </div>
               </div>
 
-              {/* COLLAPSIBLE FILTER BUTTON & ACCORDION (NO ICONS) */}
+              {/* COLLAPSIBLE FILTER BUTTON & ACCORDION */}
               <div className="space-y-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
@@ -489,7 +518,7 @@ export default function WorkspaceDashboardPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs shadow-xs">
                     <div>
                       <label className="text-[10px] text-gray-500 uppercase font-bold tracking-wider block mb-1">
-                        Filter Tanggal (Hari)
+                        Filter Tanggal
                       </label>
                       <input
                         type="date"
@@ -565,15 +594,15 @@ export default function WorkspaceDashboardPage() {
                 )}
               </div>
 
-              {/* 3. MOBILE CARD LIST VIEW (SANGAT PENTING - LIGHT MODE, PURE TEXT BUTTONS, ZERO ICONS) */}
-              <div className="flex md:hidden flex-col gap-3.5">
-                {filteredBookings.length === 0 ? (
+              {/* 1. MOBILE CARD LIST VIEW FOR RESERVATIONS (ZERO HORIZONTAL SCROLL ON HP) */}
+              <div className="flex md:hidden flex-col gap-3.5 w-full overflow-hidden">
+                {visibleBookings.length === 0 ? (
                   <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-500 text-xs font-medium shadow-xs">
-                    Belum ada data reservasi saat ini.
+                    Belum ada data reservasi untuk kriteria ini.
                   </div>
                 ) : (
-                  filteredBookings.map((b) => (
-                    <div key={b.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-3">
+                  visibleBookings.map((b) => (
+                    <div key={b.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-3 w-full">
                       
                       {/* Card Header: Customer Name & Pure Text Badge */}
                       <div className="flex justify-between items-start gap-2 border-b border-gray-100 pb-2.5">
@@ -603,7 +632,7 @@ export default function WorkspaceDashboardPage() {
                         )}
                       </div>
 
-                      {/* Card Footer: Action Buttons (Full Width Pure Text, NO ICONS) */}
+                      {/* Card Footer: Action Buttons (Full Width Pure Text) */}
                       <div className="pt-2 space-y-2">
                         <a
                           href={`https://wa.me/${formatWhatsAppNumber(b.customer_phone)}?text=${encodeURIComponent(
@@ -671,14 +700,14 @@ export default function WorkspaceDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 text-gray-700">
-                    {filteredBookings.length === 0 ? (
+                    {visibleBookings.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="p-12 text-center text-gray-400 font-medium">
                           Belum ada data reservasi saat ini.
                         </td>
                       </tr>
                     ) : (
-                      filteredBookings.map((b) => (
+                      visibleBookings.map((b) => (
                         <tr key={b.id} className="hover:bg-gray-50 transition-colors">
                           <td className="p-3.5 font-bold text-gray-900">
                             {b.customer_name}
@@ -782,6 +811,18 @@ export default function WorkspaceDashboardPage() {
                 </table>
               </div>
 
+              {/* 2. TOMBOL MUAT LEBIH BANYAK (LOAD MORE PAGINATION) */}
+              {filteredBookings.length > displayLimit && (
+                <div className="pt-2 text-center">
+                  <button
+                    onClick={() => setDisplayLimit(prev => prev + 10)}
+                    className="w-full sm:w-auto bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-3 px-6 rounded-xl text-xs transition-all shadow-xs"
+                  >
+                    Muat Lebih Banyak ({filteredBookings.length - displayLimit} Data Tersisa)
+                  </button>
+                </div>
+              )}
+
             </div>
           </>
         )}
@@ -789,7 +830,7 @@ export default function WorkspaceDashboardPage() {
         {/* TAB 2: DATA PELANGGAN */}
         {activeTab === 'customers' && (
           <div className="space-y-5">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
               <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
                 Data Pelanggan Salon (CRM)
               </h1>
@@ -798,8 +839,43 @@ export default function WorkspaceDashboardPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-xs p-4 sm:p-6">
+              
+              {/* 1. MOBILE CARD LIST UNTUK TAB PELANGGAN (NO HORIZONTAL SCROLL ON HP) */}
+              <div className="flex md:hidden flex-col gap-3 w-full">
+                {supabaseBookings.length === 0 ? (
+                  <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-400 text-xs font-medium shadow-xs">
+                    Belum ada data pelanggan tercatat.
+                  </div>
+                ) : (
+                  Array.from(new Set(supabaseBookings.map(b => b.customer_phone))).map((phone) => {
+                    const customerBookings = supabaseBookings.filter(b => b.customer_phone === phone);
+                    const lastBooking = customerBookings[0];
+                    return (
+                      <div key={phone} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-2 w-full">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-gray-900 text-sm">{lastBooking.customer_name}</h3>
+                            <p className="text-xs text-gray-500 font-mono mt-0.5">{phone}</p>
+                          </div>
+                          <span className="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            VIP Member
+                          </span>
+                        </div>
+                        <div className="pt-2 flex items-center justify-between text-xs border-t border-gray-100">
+                          <span className="text-gray-500">Histori Kedatangan:</span>
+                          <span className="bg-gray-100 text-gray-800 border border-gray-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full font-mono">
+                            {customerBookings.length} Kali
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* DESKTOP TABLE FOR CUSTOMERS (HIDDEN ON MOBILE SCREEN) */}
+              <div className="hidden md:block w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
                 <table className="w-full min-w-[650px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
@@ -841,6 +917,7 @@ export default function WorkspaceDashboardPage() {
                   </tbody>
                 </table>
               </div>
+
             </div>
           </div>
         )}
@@ -848,7 +925,7 @@ export default function WorkspaceDashboardPage() {
         {/* TAB 3: KELOLA LAYANAN */}
         {activeTab === 'services' && (
           <div className="space-y-5">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
               <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
                 Katalog Menu Layanan & Tarif
               </h1>
@@ -857,8 +934,29 @@ export default function WorkspaceDashboardPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
-              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-xs p-4 sm:p-6">
+              
+              {/* 1. MOBILE CARD LIST UNTUK TAB LAYANAN (NO HORIZONTAL SCROLL ON HP) */}
+              <div className="flex md:hidden flex-col gap-3 w-full">
+                {services.map((s) => (
+                  <div key={s.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs flex items-center justify-between gap-3 w-full">
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-sm">{s.name}</h3>
+                      <p className="text-xs text-gray-500 mt-0.5 capitalize">
+                        {s.category || 'Hair Treatment'} • {s.durationMins || 60} Menit
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-emerald-700 font-mono text-sm block">
+                        {formatPrice(s.price)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* DESKTOP TABLE FOR SERVICES (HIDDEN ON MOBILE SCREEN) */}
+              <div className="hidden md:block w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
                 <table className="w-full min-w-[650px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
@@ -884,6 +982,7 @@ export default function WorkspaceDashboardPage() {
                   </tbody>
                 </table>
               </div>
+
             </div>
           </div>
         )}
@@ -891,7 +990,7 @@ export default function WorkspaceDashboardPage() {
         {/* TAB 4: PENGATURAN */}
         {activeTab === 'settings' && (
           <div className="space-y-5">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-xs">
               <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
                 Pengaturan Studio & Sesi Admin
               </h1>
@@ -902,7 +1001,7 @@ export default function WorkspaceDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Profil Studio Card */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-xs">
                 <h3 className="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">
                   Profil Milla Hair Studio
                 </h3>
@@ -927,7 +1026,7 @@ export default function WorkspaceDashboardPage() {
               </div>
 
               {/* Sesi Kredensial Admin Card */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-sm">
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-xs">
                 <h3 className="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">
                   Status Kredensial Admin
                 </h3>
