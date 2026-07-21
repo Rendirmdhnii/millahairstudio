@@ -1,20 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Scissors, ArrowUpRight, Calendar, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('beranda');
   const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
-    { name: 'Beranda', href: '#', id: 'beranda' },
-    { name: 'Tentang Kami', href: '#tentang', id: 'tentang' },
-    { name: 'Layanan & Harga', href: '#layanan', id: 'layanan' },
-    { name: 'Galeri Treatment', href: '#galeri', id: 'galeri' },
-    { name: 'Lokasi Studio', href: '#lokasi', id: 'lokasi' },
+    { name: 'Beranda', href: '/', id: 'beranda' },
+    { name: 'Tentang Kami', href: '/#tentang', id: 'tentang' },
+    { name: 'Layanan & Harga', href: '/#layanan', id: 'layanan' },
+    { name: 'Galeri Treatment', href: '/#galeri', id: 'galeri' },
+    { name: 'Lokasi Studio', href: '/#lokasi', id: 'lokasi' },
   ];
 
   const waUrl = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20booking%20perawatan/tanya%20layanan.";
@@ -23,27 +26,31 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      const sections = navLinks.map(link => link.id).filter(id => id !== 'beranda');
-      const scrollPosition = window.scrollY + 120;
+      if (pathname === '/') {
+        const sections = navLinks.map(link => link.id).filter(id => id !== 'beranda');
+        const scrollPosition = window.scrollY + 120;
 
-      let current = 'beranda';
-      for (const sectionId of sections) {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          const top = element.offsetTop;
-          const height = element.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            current = sectionId;
-            break;
+        let current = 'beranda';
+        for (const sectionId of sections) {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            const top = element.offsetTop;
+            const height = element.offsetHeight;
+            if (scrollPosition >= top && scrollPosition < top + height) {
+              current = sectionId;
+              break;
+            }
           }
         }
+        setActiveSection(current);
       }
-      setActiveSection(current);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
+
+  const isBookingActive = pathname === '/booking';
 
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -56,7 +63,7 @@ export default function Navbar() {
           
           {/* Brand Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <a href="#" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-3 group">
               <span className="p-2.5 rounded-xl bg-zinc-900 text-[#C5A880] shadow-xs">
                 <Scissors className="h-5 w-5" />
               </span>
@@ -68,18 +75,20 @@ export default function Navbar() {
                   Luxury Salon & Spa
                 </span>
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-x-1 bg-zinc-100/80 p-1.5 rounded-full border border-zinc-200">
             {navLinks.map((link) => {
-              const isActive = activeSection === link.id;
+              const isActive = pathname === '/' && activeSection === link.id;
               return (
-                <a
+                <Link
                   key={link.name}
                   href={link.href}
-                  onClick={() => setActiveSection(link.id)}
+                  onClick={() => {
+                    if (pathname === '/') setActiveSection(link.id);
+                  }}
                   className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-colors duration-200 ${
                     isActive ? 'text-white' : 'text-zinc-600 hover:text-zinc-900'
                   }`}
@@ -92,20 +101,24 @@ export default function Navbar() {
                     />
                   )}
                   <span className="relative z-10">{link.name}</span>
-                </a>
+                </Link>
               );
             })}
           </nav>
 
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center gap-2.5">
-            <a
+            <Link
               href="/booking"
-              className="inline-flex items-center gap-2 bg-white hover:bg-zinc-100 text-zinc-800 font-bold text-xs px-4 py-2.5 rounded-xl border border-zinc-200 transition-all shadow-xs"
+              className={`inline-flex items-center gap-2 font-bold text-xs px-4.5 py-2.5 rounded-xl transition-all shadow-xs ${
+                isBookingActive
+                  ? 'bg-[#C5A880] text-white shadow-xs'
+                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200'
+              }`}
             >
-              <Calendar className="h-4 w-4 text-[#C5A880]" />
+              <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#C5A880]'}`} />
               <span>Form Booking</span>
-            </a>
+            </Link>
 
             <motion.a
               href={waUrl}
@@ -145,13 +158,13 @@ export default function Navbar() {
             <div className="px-5 pt-3 pb-8 space-y-3 max-w-md mx-auto">
               <div className="space-y-1">
                 {navLinks.map((link) => {
-                  const isActive = activeSection === link.id;
+                  const isActive = pathname === '/' && activeSection === link.id;
                   return (
-                    <a
+                    <Link
                       key={link.name}
                       href={link.href}
                       onClick={() => {
-                        setActiveSection(link.id);
+                        if (pathname === '/') setActiveSection(link.id);
                         setIsOpen(false);
                       }}
                       className={`flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
@@ -162,20 +175,24 @@ export default function Navbar() {
                     >
                       <span>{link.name}</span>
                       <ArrowUpRight className={`h-4 w-4 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
 
               <div className="pt-3 border-t border-zinc-200 space-y-2">
-                <a
+                <Link
                   href="/booking"
                   onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 bg-zinc-100 text-zinc-800 border border-zinc-200 py-3 rounded-xl font-bold text-sm"
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm border ${
+                    isBookingActive
+                      ? 'bg-[#C5A880] text-white border-[#C5A880]'
+                      : 'bg-zinc-100 text-zinc-800 border-zinc-200'
+                  }`}
                 >
-                  <Calendar className="h-4 w-4 text-[#C5A880]" />
+                  <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#C5A880]'}`} />
                   <span>Form Booking Online</span>
-                </a>
+                </Link>
                 <a
                   href={waUrl}
                   target="_blank"
