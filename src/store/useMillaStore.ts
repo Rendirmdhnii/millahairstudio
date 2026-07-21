@@ -20,6 +20,7 @@ import {
   Blog,
   Supplier
 } from '../lib/mockData';
+import { Booking, BookingStatus } from '../lib/supabase';
 
 // Extended Interfaces for Database Models
 export interface User {
@@ -206,6 +207,9 @@ interface MillaState {
   auditLogs: AuditLog[];
   loyaltyPoints: LoyaltyPointsLog[];
   
+  // Supabase Bookings Data Model
+  supabaseBookings: Booking[];
+  
   // Shopping Cart & POS Temporary State
   cart: CartItem[];
   
@@ -214,7 +218,12 @@ interface MillaState {
   logout: () => void;
   registerCustomer: (name: string, email: string, phone: string, birthDate: string) => { success: boolean; user?: User };
   
-  // Bookings CRUD
+  // Bookings CRUD (Supabase Table Schema)
+  addSupabaseBooking: (data: Omit<Booking, 'id' | 'created_at' | 'total_payment' | 'status'> & { status?: BookingStatus; total_payment?: number }) => Booking;
+  updateSupabaseBookingStatus: (id: string, status: BookingStatus, total_payment?: number) => void;
+  deleteSupabaseBooking: (id: string) => void;
+  
+  // Bookings CRUD (App state)
   addAppointment: (appointment: Omit<Appointment, 'id' | 'createdAt' | 'status' | 'paymentStatus'>) => Appointment;
   updateAppointmentStatus: (id: string, status: Appointment['status'], paymentStatus?: Appointment['paymentStatus']) => void;
   rescheduleAppointment: (id: string, newDate: string, newTime: string) => void;
@@ -394,7 +403,112 @@ export const useMillaStore = create<MillaState>()(
       auditLogs: [
         { id: 'al-1', userId: 'usr-2', userName: 'Admin Rina', action: 'Update Stock', details: 'Menyesuaikan manual stok Milla Signature Caviar Elixir Shampoo di Cabang Senopati (+5 botol)', createdAt: new Date(Date.now() - 3600000).toISOString() }
       ],
+      supabaseBookings: [
+        {
+          id: 'bk-101',
+          customer_name: 'Aurelia Cantika',
+          customer_phone: '08123456789',
+          service_name: 'Signature Milla Haircut & Blow',
+          booking_date: new Date().toISOString().split('T')[0],
+          booking_time: '14:00',
+          status: 'completed',
+          total_payment: 350000,
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+          id: 'bk-102',
+          customer_name: 'Dian Sastrowardoyo',
+          customer_phone: '081122334455',
+          service_name: 'Premium Keratin Blowout Smooth',
+          booking_date: new Date().toISOString().split('T')[0],
+          booking_time: '10:00',
+          status: 'completed',
+          total_payment: 1200000,
+          created_at: new Date(Date.now() - 172800000).toISOString()
+        },
+        {
+          id: 'bk-103',
+          customer_name: 'Budi Santoso',
+          customer_phone: '081987654321',
+          service_name: 'Detoxifying Clay Scalp Ritual',
+          booking_date: new Date().toISOString().split('T')[0],
+          booking_time: '11:00',
+          status: 'accepted',
+          total_payment: 0,
+          created_at: new Date(Date.now() - 43200000).toISOString()
+        },
+        {
+          id: 'bk-104',
+          customer_name: 'Siti Nurhaliza',
+          customer_phone: '081345678901',
+          service_name: 'Balayage Korean Color & Gloss',
+          booking_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          booking_time: '13:00',
+          status: 'pending',
+          total_payment: 0,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'bk-105',
+          customer_name: 'Raisa Andriana',
+          customer_phone: '081299887766',
+          service_name: 'Luxe Restructuring Hair Spa',
+          booking_date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+          booking_time: '15:00',
+          status: 'completed',
+          total_payment: 450000,
+          created_at: new Date(Date.now() - 259200000).toISOString()
+        }
+      ],
       cart: [],
+
+      // Supabase Bookings Actions
+      addSupabaseBooking: (data) => {
+        const newId = 'bk-' + Date.now();
+        const newBooking: Booking = {
+          id: newId,
+          customer_name: data.customer_name,
+          customer_phone: data.customer_phone,
+          service_name: data.service_name,
+          booking_date: data.booking_date,
+          booking_time: data.booking_time,
+          status: data.status || 'pending',
+          total_payment: data.total_payment || 0,
+          created_at: new Date().toISOString()
+        };
+
+        set(state => ({
+          supabaseBookings: [newBooking, ...state.supabaseBookings]
+        }));
+
+        get().addAuditLog(get().currentUser?.id || 'system', 'Tambah Booking Supabase', `Menambahkan booking baru untuk ${data.customer_name}`);
+        return newBooking;
+      },
+
+      updateSupabaseBookingStatus: (id, status, total_payment) => {
+        set(state => ({
+          supabaseBookings: state.supabaseBookings.map(b => {
+            if (b.id === id) {
+              return {
+                ...b,
+                status,
+                total_payment: status === 'completed' && total_payment !== undefined ? total_payment : b.total_payment
+              };
+            }
+            return b;
+          })
+        }));
+
+        const detailMsg = status === 'completed' ? `Status booking ${id} diubah ke Completed dengan pembayaran Rp ${total_payment?.toLocaleString('id-ID')}` : `Status booking ${id} diubah ke ${status}`;
+        get().addAuditLog(get().currentUser?.id || 'system', 'Update Status Booking Supabase', detailMsg);
+      },
+
+      deleteSupabaseBooking: (id) => {
+        set(state => ({
+          supabaseBookings: state.supabaseBookings.filter(b => b.id !== id)
+        }));
+        get().addAuditLog(get().currentUser?.id || 'system', 'Hapus Booking Supabase', `Menghapus booking ${id}`);
+      },
 
       // Authentication Actions
       login: (email, role) => {
@@ -1209,7 +1323,8 @@ export const useMillaStore = create<MillaState>()(
         notifications: state.notifications,
         marketingCampaigns: state.marketingCampaigns,
         auditLogs: state.auditLogs,
-        loyaltyPoints: state.loyaltyPoints
+        loyaltyPoints: state.loyaltyPoints,
+        supabaseBookings: state.supabaseBookings
       })
     }
   )
