@@ -171,7 +171,7 @@ export default function OwnerDashboard() {
                 <div>
                   <span className="text-[10px] text-zinc-400 uppercase tracking-wider block font-bold">Total Pendapatan Bersih</span>
                   <h4 className="text-2xl font-serif font-bold text-zinc-950 mt-1">{formatPrice(totalRevenue + 424000000)}</h4>
-                  <p className="text-[10px] text-emerald-600 font-bold mt-1">✓ Lunas terverifikasi</p>
+                  <p className="text-[10px] text-emerald-600 font-bold mt-1">Lunas terverifikasi</p>
                 </div>
               </div>
 
@@ -364,7 +364,7 @@ export default function OwnerDashboard() {
 
             {settingsSuccess && (
               <div className="p-3.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-2xl text-xs text-center font-medium animate-pulse">
-                ✓ Pengaturan API gateway dan SMTP mailer berhasil diperbarui!
+                Pengaturan API gateway dan SMTP mailer berhasil diperbarui!
               </div>
             )}
 

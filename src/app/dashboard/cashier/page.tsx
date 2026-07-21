@@ -222,7 +222,7 @@ export default function CashierDashboard() {
                       <span className="text-primary uppercase">{customerInfo.membershipTier} Member</span>
                     </p>
                     <p className="text-[10px] text-zinc-500">Loyalty Points: {customerInfo.loyaltyPoints} Poin</p>
-                    <p className="text-[10px] text-emerald-600 font-bold">✓ Diskon Member VIP {Math.round(customerInfo.discountRate * 100)}% Terpasang</p>
+                    <p className="text-[10px] text-emerald-600 font-bold">Diskon Member VIP {Math.round(customerInfo.discountRate * 100)}% Terpasang</p>
                   </div>
                 ) : (
                   <p className="text-zinc-400 font-light italic">

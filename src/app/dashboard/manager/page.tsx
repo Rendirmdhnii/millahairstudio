@@ -76,7 +76,7 @@ export default function ManagerDashboard() {
 
               {success && (
                 <div className="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-2xl text-xs text-center font-medium animate-pulse">
-                  ✓ Jadwal jam kerja stylist berhasil diperbarui! Sinkronisasi otomatis ke kalender booking online customer.
+                  Jadwal jam kerja stylist berhasil diperbarui! Sinkronisasi otomatis ke kalender booking online customer.
                 </div>
               )}
 
@@ -167,7 +167,7 @@ export default function ManagerDashboard() {
                 )}
                 
                 <div className="pt-4 border-t border-pink-50 text-[10px] text-zinc-400 leading-relaxed">
-                  💡 Ajukan permohonan transfer stok di **Admin Console Panel** untuk mengirimkan sediaan barang dari Cabang Surabaya ke Cabang Senopati.
+                  Ajukan permohonan transfer stok di **Admin Console Panel** untuk mengirimkan sediaan barang dari Cabang Surabaya ke Cabang Senopati.
                 </div>
               </div>
             </div>

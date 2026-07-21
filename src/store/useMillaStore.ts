@@ -673,7 +673,7 @@ export const useMillaStore = create<MillaState>()(
                     if (user) {
                       get().addNotification(
                         user.id,
-                        'Treatment Selesai! 🎉',
+                        'Treatment Selesai!',
                         `Terima kasih telah berkunjung. Anda mendapatkan ${pointsGained} Loyalty Points dari kunjungan ini.`,
                         'appointment'
                       );
@@ -820,7 +820,7 @@ export const useMillaStore = create<MillaState>()(
 
         get().addNotification(
           current?.id || '',
-          'Pesanan Berhasil dibuat 🛍️',
+          'Pesanan Berhasil dibuat',
           `Pesanan produk Anda senilai Rp ${total.toLocaleString()} sedang diproses.`,
           'order'
         );
@@ -1059,7 +1059,7 @@ export const useMillaStore = create<MillaState>()(
                 setTimeout(() => {
                   get().addNotification(
                     'usr-1', // Notify Owner
-                    'Stok Menipis! ⚠️',
+                    'Stok Menipis!',
                     `Stok produk "${p.name}" tersisa ${currentStock} botol. Segera restock!`,
                     'info'
                   );

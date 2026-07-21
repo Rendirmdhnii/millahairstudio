@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import LocationSection from '../components/location-section';
 import { 
-  Sparkles, Star, Scissors, MapPin, Clock, Gem, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, CheckCircle2, MessageCircle
+  Sparkles, Scissors, Clock, Gem, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, CheckCircle2, Calendar, Award, Users, Camera
 } from 'lucide-react';
 
 export default function LandingPage() {
   
-  // WhatsApp Link Helper
   const waLink = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20untuk%20booking%20perawatan/tanya%20layanan.";
 
-  // Comprehensive Price List Categories
+  // Price List Categories
   const priceListCategories = [
     {
       id: 'hair-treatment-styling',
@@ -53,7 +52,7 @@ export default function LandingPage() {
     {
       id: 'body-treatment-nails',
       title: 'Body Treatment & Nails',
-      icon: Star,
+      icon: Award,
       services: [
         { name: 'Manicure / Pedicure / Reflexi', price: '75k - 150k' },
         { name: 'Bodyspa Scrub / V Ratus', price: '75k - 300k' },
@@ -64,305 +63,285 @@ export default function LandingPage() {
     }
   ];
 
-  // Active Tab for Desktop View
+  // Active Tab & Accordion
   const [activeTab, setActiveTab] = useState(priceListCategories[0].id);
-
-  // Active Accordion Item for Mobile View
   const [activeAccordion, setActiveAccordion] = useState<string | null>(priceListCategories[0].id);
 
-  // Products Data
-  const products = [
+  // Gallery Showcase Data
+  const galleryItems = [
     {
       id: 1,
-      name: 'Milla Daily Silk Keratin Shampoo',
-      description: 'Sampo harian premium dengan konsentrasi keratin tinggi untuk menjaga kehalusan rambut berwarna atau bekas smoothing.',
-      price: 145000,
-      volume: '250ml',
-      image: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2a?auto=format&fit=crop&q=80&w=400'
+      title: 'Korean Balayage & Silk Gloss',
+      category: 'Coloring',
+      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600'
     },
     {
       id: 2,
-      name: 'Pure Argan Glow Hair Serum',
-      description: 'Serum konsentrat minyak argan organik untuk melindungi rambut dari panas hair dryer sekaligus memberikan efek kilau berkilau sepanjang hari.',
-      price: 180000,
-      volume: '50ml',
-      image: 'https://images.unsplash.com/photo-1608248597481-496100c80836?auto=format&fit=crop&q=80&w=400'
+      title: 'Keratin Filler Smoothing',
+      category: 'Smoothing',
+      image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600'
     },
     {
       id: 3,
-      name: 'Deep Repair Nourishing Hair Mask',
-      description: 'Perawatan mingguan intensif untuk mengembalikan kelembapan rambut kering, bercabang, dan rusak akibat bahan kimia.',
-      price: 125000,
-      volume: '200ml',
-      image: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=400'
+      title: 'Signature Ladies Layer Cut',
+      category: 'Haircut',
+      image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=80&w=600'
     },
     {
       id: 4,
-      name: 'Organic Scalp Care Tonic Essence',
-      description: 'Tonik herbal berformula ringan untuk memperkuat akar rambut, mengurangi kerontokan, dan menjaga kesegaran kulit kepala.',
-      price: 160000,
-      volume: '100ml',
-      image: 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&q=80&w=400'
+      title: 'Organic Scalp Detox Ritual',
+      category: 'Scalp Care',
+      image: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=600'
     }
   ];
 
-  // Format IDR Helper
-  const formatPrice = (value: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(value);
-  };
-
-  // Animation Variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 35 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }
-    }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1
-      }
-    }
-  };
-
   return (
-    <div className="w-full flex flex-col font-sans text-stone-800 bg-white overflow-x-hidden">
+    <div className="w-full flex flex-col font-sans text-zinc-900 bg-zinc-50 overflow-x-hidden">
       
-      {/* 1. HERO SECTION (Staggered Load Animation) */}
-      <section className="relative w-full min-h-[92vh] flex items-center bg-stone-900 text-white overflow-hidden py-24 px-4 sm:px-6 lg:px-8">
-        
-        {/* Background Luxury Image with Zoom & Dark Gradient */}
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION */}
+      {/* ========================================================================= */}
+      <section className="relative w-full min-h-[88vh] flex items-center bg-zinc-900 text-white overflow-hidden py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1600" 
-            alt="Milla Hair Studio Luxury Salon Interior" 
-            className="w-full h-full object-cover opacity-25 scale-105"
+            alt="Milla Hair Studio Salon Interior" 
+            className="w-full h-full object-cover opacity-20 scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-stone-950 via-stone-900/95 to-stone-900/80" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(200,162,122,0.15),transparent_50%)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900/95 to-zinc-900/80" />
         </div>
         
         <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Hero Text Block */}
           <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="lg:col-span-8 space-y-8 text-left"
           >
             {/* Badge */}
-            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 bg-stone-800/80 border border-gold-accent/40 backdrop-blur-md rounded-full px-5 py-2 shadow-sm">
-              <Sparkles className="h-4 w-4 text-gold-accent animate-pulse" />
-              <span className="text-[11px] font-bold tracking-widest text-gold-accent uppercase">
-                Premium & Professional Hair Studio • Sidoarjo
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-5 py-2">
+              <Sparkles className="h-4 w-4 text-[#C5A880]" />
+              <span className="text-[11px] font-bold tracking-widest text-[#C5A880] uppercase">
+                Premium & Professional Salon • Sidoarjo
               </span>
-            </motion.div>
+            </div>
             
             {/* Heading */}
-            <motion.h1 variants={fadeInUp} className="text-4xl sm:text-6xl lg:text-7xl font-serif font-extrabold text-white leading-[1.15] tracking-tight">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-white leading-[1.15] tracking-tight">
               Kecantikan Rambut Anda<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-accent via-amber-200 to-gold-accent">
+              <span className="text-[#C5A880]">
                 Adalah Seni & Dedikasi.
               </span>
-            </motion.h1>
+            </h1>
             
             {/* Description */}
-            <motion.p variants={fadeInUp} className="text-stone-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl font-light">
+            <p className="text-zinc-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl font-light">
               Milla Hair Studio menghadirkan perawatan dan penataan rambut kelas dunia yang profesional, steril, dan penuh estetika modern di Sidoarjo. Pancarkan rasa percaya diri mahkota indah Anda bersama kami.
-            </motion.p>
+            </p>
             
             {/* Buttons */}
-            <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <motion.a 
-                href={waLink}
-                target="_blank" 
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.04, boxShadow: "0 12px 30px -5px rgba(200, 162, 122, 0.4)" }}
+                href="/booking"
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-3 bg-gold-accent hover:bg-gold-accent-hover text-stone-950 font-extrabold text-base px-9 py-4.5 rounded-full shadow-lg transition-all duration-200 border border-gold-accent"
+                className="inline-flex items-center justify-center gap-3 bg-[#C5A880] hover:bg-[#b59870] text-white font-bold text-base px-8 py-4 rounded-xl shadow-sm transition-all"
               >
-                {/* WhatsApp Icon */}
-                <svg className="h-5 w-5 fill-current text-stone-950" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
-                </svg>
-                <span>Booking via WhatsApp</span>
+                <Calendar className="h-5 w-5" />
+                <span>Form Booking Online</span>
               </motion.a>
               
               <motion.a 
                 href="#layanan"
-                whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-2.5 bg-stone-800/90 hover:bg-stone-800 text-white font-bold text-base px-8 py-4.5 rounded-full border border-stone-700 shadow-sm transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-base px-8 py-4 rounded-xl border border-white/20 backdrop-blur-md transition-all"
               >
                 <span>Lihat Layanan & Harga</span>
-                <ArrowRight className="h-4 w-4 text-gold-accent" />
+                <ArrowRight className="h-4 w-4 text-[#C5A880]" />
               </motion.a>
-            </motion.div>
+            </div>
 
             {/* Quick Stats Grid */}
-            <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-4 pt-8 max-w-lg">
-              <motion.div whileHover={{ y: -4 }} className="bg-stone-800/60 backdrop-blur-md p-4.5 rounded-2xl border border-stone-700/60 text-center shadow-xs">
-                <p className="text-xl sm:text-2xl font-extrabold text-gold-accent">4.9 ⭐</p>
-                <p className="text-[10px] text-stone-400 font-bold mt-1 tracking-wider uppercase">Google Rating</p>
-              </motion.div>
-              <motion.div whileHover={{ y: -4 }} className="bg-stone-800/60 backdrop-blur-md p-4.5 rounded-2xl border border-stone-700/60 text-center shadow-xs">
-                <p className="text-xl sm:text-2xl font-extrabold text-gold-accent">100%</p>
-                <p className="text-[10px] text-stone-400 font-bold mt-1 tracking-wider uppercase">Steril & Nyaman</p>
-              </motion.div>
-              <motion.div whileHover={{ y: -4 }} className="bg-stone-800/60 backdrop-blur-md p-4.5 rounded-2xl border border-stone-700/60 text-center shadow-xs">
-                <p className="text-xl sm:text-2xl font-extrabold text-gold-accent">Sidoarjo</p>
-                <p className="text-[10px] text-stone-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
-              </motion.div>
-            </motion.div>
+            <div className="grid grid-cols-3 gap-4 pt-8 max-w-lg">
+              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
+                <p className="text-xl sm:text-2xl font-bold text-[#C5A880]">4.9 / 5.0</p>
+                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating Pelanggan</p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
+                <p className="text-xl sm:text-2xl font-bold text-[#C5A880]">100%</p>
+                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril & Higienis</p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
+                <p className="text-xl sm:text-2xl font-bold text-[#C5A880]">Sidoarjo</p>
+                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
+              </div>
+            </div>
 
           </motion.div>
         </div>
       </section>
 
-      {/* 2. SERVICES & PRICE LIST SECTION (Scroll Reveal & AnimatePresence Tabs/Accordion) */}
-      <motion.section 
-        id="layanan" 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-24 lg:py-28 bg-stone-50 px-4 sm:px-6 lg:px-8 border-b border-stone-200/60"
-      >
+      {/* ========================================================================= */}
+      {/* 2. ABOUT SECTION */}
+      {/* ========================================================================= */}
+      <section id="tentang" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+          >
+            <div className="lg:col-span-6 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#C5A880] border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
+                <Scissors className="h-3.5 w-3.5" />
+                <span>Tentang Milla Hair Studio</span>
+              </div>
+              
+              <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight leading-tight">
+                Pengalaman Perawatan Rambut Berkelas Dunia
+              </h2>
+
+              <p className="text-zinc-500 text-base sm:text-lg leading-relaxed font-normal">
+                Milla Hair Studio didirikan untuk menghadirkan tempat relaksasi dan perawatan rambut berstandar internasional bagi wanita modern Sidoarjo. Kami menggabungkan teknik penataan terkini dengan produk perawatan rambut alami pilihan.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
+                  <ShieldCheck className="h-6 w-6 text-[#C5A880] mb-2" />
+                  <h4 className="font-bold text-sm text-zinc-900">Produk Bersertifikat</h4>
+                  <p className="text-xs text-zinc-500 mt-1">Menggunakan formula ramah kulit kepala tanpa zat kimia berbahaya.</p>
+                </div>
+                <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
+                  <Users className="h-6 w-6 text-[#C5A880] mb-2" />
+                  <h4 className="font-bold text-sm text-zinc-900">Stylist Berpengalaman</h4>
+                  <p className="text-xs text-zinc-500 mt-1">Tim profesional yang tersertifikasi dalam teknik tren internasional.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+              <img 
+                src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600" 
+                alt="Hair Treatment Studio"
+                className="w-full h-72 object-cover rounded-2xl shadow-sm border border-zinc-200"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600" 
+                alt="Styling Hair Studio"
+                className="w-full h-72 object-cover rounded-2xl shadow-sm border border-zinc-200 mt-8"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 3. SERVICES & PRICELIST (TABS) SECTION */}
+      {/* ========================================================================= */}
+      <section id="layanan" className="py-24 bg-zinc-50 px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
         <div className="max-w-7xl mx-auto">
           
-          {/* Header Section */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 bg-stone-900 text-gold-accent rounded-full px-5 py-1.5 text-[11px] font-bold tracking-widest uppercase shadow-xs">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          >
+            <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#C5A880] shadow-xs">
               <Scissors className="h-3.5 w-3.5" />
               <span>Menu & Daftar Harga</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-stone-900 tracking-tight">
-              Layanan Salon Perawatan & Styling
+            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
+              Pilihan Perawatan Berkelas
             </h2>
-            <div className="w-20 h-1 bg-gold-accent mx-auto rounded-full my-3" />
-            <p className="text-stone-600 font-normal leading-relaxed text-base sm:text-lg max-w-2xl mx-auto">
-              Nikmati perawatan eksklusif yang dikerjakan oleh professional hair stylist Milla Hair Studio menggunakan produk bersertifikat internasional.
+            <div className="w-16 h-1 bg-[#C5A880] rounded-full mx-auto" />
+            <p className="text-zinc-500 text-base sm:text-lg font-normal leading-relaxed">
+              Seluruh harga transparan dengan pengerjaan oleh stylist berpengalaman menggunakan produk internasional.
             </p>
-          </div>
+          </motion.div>
 
-          {/* Desktop View: Interactive Animated Tabs */}
-          <div className="hidden md:block">
-            {/* Tabs Bar */}
-            <div className="flex flex-wrap justify-center gap-3 mb-12 bg-white p-2 rounded-2xl border border-stone-200 shadow-sm max-w-4xl mx-auto">
+          {/* DESKTOP TABS */}
+          <div className="hidden md:block space-y-8">
+            <div className="flex justify-center gap-2 bg-white p-2 rounded-full border border-zinc-200 shadow-xs max-w-4xl mx-auto">
               {priceListCategories.map((category) => {
-                const IconComponent = category.icon;
+                const CategoryIcon = category.icon;
                 const isActive = activeTab === category.id;
                 return (
                   <button
                     key={category.id}
                     onClick={() => setActiveTab(category.id)}
-                    className={`relative flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-colors duration-200 ${
-                      isActive ? 'text-stone-950' : 'text-stone-600 hover:text-stone-900'
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-full text-xs font-bold transition-all ${
+                      isActive 
+                        ? 'bg-[#C5A880] text-white shadow-xs' 
+                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
                     }`}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeCategoryBg"
-                        className="absolute inset-0 bg-gold-accent rounded-xl shadow-md"
-                        transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
-                      />
-                    )}
-                    <IconComponent className={`relative z-10 h-4.5 w-4.5 ${isActive ? 'text-stone-950' : 'text-stone-400'}`} />
-                    <span className="relative z-10">{category.title}</span>
+                    <CategoryIcon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#C5A880]'}`} />
+                    <span>{category.title}</span>
                   </button>
                 );
               })}
             </div>
 
-            {/* Tab Panel Content with AnimatePresence */}
-            <div className="bg-white p-10 lg:p-14 rounded-3xl border border-stone-200/80 shadow-md max-w-5xl mx-auto">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-7"
-                >
-                  {priceListCategories
-                    .find((c) => c.id === activeTab)
-                    ?.services.map((service, index) => (
-                      <motion.div 
-                        key={index} 
-                        whileHover={{ x: 4 }}
-                        className="flex flex-col justify-center py-2.5 group"
-                      >
-                        <div className="flex items-baseline justify-between gap-3">
-                          <span className="text-stone-900 font-bold text-[15px] group-hover:text-gold-accent-hover transition-colors leading-tight">
-                            {service.name}
-                          </span>
-                          <div className="flex-1 border-b border-dashed border-stone-300 min-w-[20px] mx-1 relative top-[-4px]" />
-                          <span className="text-stone-950 font-extrabold text-[15px] whitespace-nowrap bg-stone-100 px-3.5 py-1.5 rounded-lg border border-stone-200">
-                            {service.price}
-                          </span>
+            <div className="max-w-4xl mx-auto">
+              {priceListCategories.map((category) => {
+                if (category.id !== activeTab) return null;
+                return (
+                  <motion.div
+                    key={category.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white rounded-2xl p-8 border border-zinc-200 shadow-sm"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 divide-y md:divide-y-0 divide-zinc-100">
+                      {category.services.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-center py-3 border-b border-zinc-100 last:border-0">
+                          <span className="font-semibold text-zinc-800 text-sm">{item.name}</span>
+                          <span className="font-bold text-[#C5A880] text-sm font-mono">{item.price}</span>
                         </div>
-                      </motion.div>
-                    ))}
-                </motion.div>
-              </AnimatePresence>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Mobile View: AnimatePresence Accordion */}
-          <div className="md:hidden space-y-4 max-w-md mx-auto">
+          {/* MOBILE ACCORDION */}
+          <div className="md:hidden space-y-4">
             {priceListCategories.map((category) => {
-              const IconComponent = category.icon;
+              const CategoryIcon = category.icon;
               const isOpen = activeAccordion === category.id;
               return (
-                <div 
-                  key={category.id} 
-                  className="bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden"
-                >
+                <div key={category.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-xs">
                   <button
                     onClick={() => setActiveAccordion(isOpen ? null : category.id)}
-                    className="w-full flex items-center justify-between p-5 text-left font-bold text-sm text-stone-900 hover:bg-stone-50 transition-colors"
+                    className="w-full flex items-center justify-between p-5 text-left font-bold text-zinc-900 text-sm"
                   >
                     <div className="flex items-center gap-3">
-                      <span className={`p-2.5 rounded-xl transition-colors ${isOpen ? 'bg-gold-accent text-stone-950' : 'bg-stone-100 text-stone-500'}`}>
-                        <IconComponent className="h-4.5 w-4.5" />
-                      </span>
-                      <span className={`tracking-tight ${isOpen ? 'text-stone-950 font-bold' : ''}`}>{category.title}</span>
+                      <CategoryIcon className="h-5 w-5 text-[#C5A880]" />
+                      <span>{category.title}</span>
                     </div>
-                    {isOpen ? (
-                      <ChevronUp className="h-5 w-5 text-gold-accent" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-stone-400" />
-                    )}
+                    {isOpen ? <ChevronUp className="h-5 w-5 text-[#C5A880]" /> : <ChevronDown className="h-5 w-5 text-zinc-400" />}
                   </button>
-                  
-                  <AnimatePresence initial={false}>
+
+                  <AnimatePresence>
                     {isOpen && (
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}
-                        className="overflow-hidden border-t border-stone-100 bg-stone-50/70 p-5 space-y-3.5"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="px-5 pb-5 pt-1 border-t border-zinc-100 space-y-3"
                       >
-                        {category.services.map((service, index) => (
-                          <div key={index} className="flex justify-between items-center py-2 border-b border-stone-200/50 last:border-b-0 last:pb-0">
-                            <span className="text-stone-900 text-xs font-semibold pr-4 leading-snug">{service.name}</span>
-                            <span className="text-stone-950 font-bold text-xs bg-white px-3 py-1.5 rounded-md border border-stone-200 whitespace-nowrap shadow-xs">
-                              {service.price}
-                            </span>
+                        {category.services.map((item, idx) => (
+                          <div key={idx} className="flex justify-between items-center text-xs py-2 border-b border-zinc-50 last:border-0">
+                            <span className="font-medium text-zinc-700">{item.name}</span>
+                            <span className="font-bold text-[#C5A880] font-mono">{item.price}</span>
                           </div>
                         ))}
                       </motion.div>
@@ -373,221 +352,80 @@ export default function LandingPage() {
             })}
           </div>
 
-          {/* WhatsApp Call to Action Panel */}
-          <motion.div 
-            whileHover={{ y: -4 }}
-            className="mt-16 text-center max-w-4xl mx-auto p-8 sm:p-14 rounded-3xl bg-stone-900 text-white border border-gold-accent/30 shadow-xl relative overflow-hidden"
-          >
-            {/* Soft Metallic Glowing Accents */}
-            <div className="absolute -top-16 -right-16 w-44 h-44 bg-gold-accent/20 rounded-full blur-2xl pointer-events-none" />
-            <div className="absolute -bottom-16 -left-16 w-44 h-44 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-            
-            <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
-              <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white">
-                Ingin Rambut Sehat & Memukau?
-              </h3>
-              <p className="text-stone-300 text-sm sm:text-base leading-relaxed font-light">
-                Konsultasikan keinginan Anda langsung dengan admin WhatsApp kami. Reservasi jadwal kedatangan dengan fleksibel dan dapatkan pelayanan terbaik.
-              </p>
-              <div className="pt-3">
-                <motion.a 
-                  href={waLink}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, boxShadow: "0 12px 30px -5px rgba(200, 162, 122, 0.5)" }}
-                  whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-3 bg-gold-accent hover:bg-gold-accent-hover text-stone-950 font-extrabold text-base px-9 py-4.5 rounded-full shadow-lg transition-all duration-200 border border-gold-accent w-full sm:w-auto justify-center"
-                >
-                  <svg className="h-5 w-5 fill-current text-stone-950" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.498 1.45 5.411 1.451 5.48.002 9.938-4.452 9.941-9.934.002-2.656-1.03-5.153-2.903-7.028-1.874-1.875-4.37-2.904-7.027-2.905-5.483 0-9.94 4.453-9.943 9.934-.001 1.914.5 3.791 1.453 5.4l-.994 3.633 3.717-.975zm12.39-6.07c-.3-.15-1.776-.875-2.05-.975-.276-.1-.476-.15-.676.15-.2.3-.775.975-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.795-1.49-1.777-1.665-2.076-.175-.3-.02-.46.13-.61.135-.13.3-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.676-1.63-.926-2.235-.244-.589-.492-.51-.676-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.27.495 1.7.63.717.227 1.37.195 1.885.118.574-.085 1.776-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
-                  </svg>
-                  <span>Reservasi Jadwal via WhatsApp</span>
-                </motion.a>
-              </div>
-            </div>
-          </motion.div>
-
-        </div>
-      </motion.section>
-
-      {/* 3. PRODUCTS CATALOG SECTION (Staggered Cards & Hover Elevate) */}
-      <motion.section 
-        id="produk" 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-24 lg:py-28 bg-white px-4 sm:px-6 lg:px-8 border-b border-stone-200/60"
-      >
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-700 border border-stone-200 rounded-full px-5 py-1.5 text-[11px] font-bold tracking-widest uppercase">
-              <Gem className="h-3.5 w-3.5 text-gold-accent" />
-              <span>Katalog Produk Hair Care</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-stone-900 tracking-tight">
-              Produk Perawatan Rambut Premium
-            </h2>
-            <div className="w-20 h-1 bg-gold-accent mx-auto rounded-full my-3" />
-            <p className="text-stone-600 font-normal leading-relaxed text-base sm:text-lg max-w-2xl mx-auto">
-              Bawa pulang formula rambut sehat bercahaya. Kami menyediakan produk orisinil khusus untuk menjaga kilau dan kelembutan pasca treatment.
-            </p>
+          <div className="mt-12 text-center">
+            <motion.a
+              href="/booking"
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 bg-[#C5A880] hover:bg-[#b59870] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-xs transition-all"
+            >
+              <Calendar className="h-4 w-4" />
+              <span>Reservasi Jadwal Sekarang</span>
+            </motion.a>
           </div>
 
-          {/* Products Grid */}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 4. GALLERY SECTION */}
+      {/* ========================================================================= */}
+      <section id="galeri" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+        <div className="max-w-7xl mx-auto">
+          
           <motion.div 
-            variants={staggerContainer}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="text-center max-w-3xl mx-auto mb-16 space-y-4"
           >
-            {products.map((product) => (
-              <motion.div 
-                key={product.id} 
-                variants={fadeInUp}
-                whileHover={{ y: -8, boxShadow: "0 20px 30px -10px rgba(0, 0, 0, 0.08)" }}
-                transition={{ duration: 0.3 }}
-                className="bg-stone-50 rounded-3xl overflow-hidden border border-stone-200/80 shadow-xs flex flex-col justify-between group"
+            <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#C5A880] border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
+              <Camera className="h-3.5 w-3.5" />
+              <span>Galeri Portofolio Treatment</span>
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
+              Hasil Karya Hair Stylist Kami
+            </h2>
+            <div className="w-16 h-1 bg-[#C5A880] rounded-full mx-auto" />
+            <p className="text-zinc-500 text-base sm:text-lg font-normal leading-relaxed">
+              Koleksi dokumentasi nyata penataan dan perawatan rambut pelanggan setia Milla Hair Studio.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {galleryItems.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.4 }}
+                className="bg-zinc-50 rounded-2xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
               >
-                <div className="relative h-64 w-full overflow-hidden bg-stone-200">
+                <div className="h-64 w-full overflow-hidden bg-zinc-200 relative">
                   <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    src={item.image} 
+                    alt={item.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-4 right-4 bg-stone-900 text-gold-accent text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-md border border-gold-accent/30">
-                    {product.volume}
-                  </span>
-                </div>
-                
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-6">
-                  <div className="space-y-2">
-                    <h3 className="text-base font-bold text-stone-900 group-hover:text-gold-accent-hover transition-colors font-serif">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-stone-600 font-normal leading-relaxed">
-                      {product.description}
-                    </p>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-stone-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <span className="text-lg font-extrabold text-stone-950 font-serif">
-                      {formatPrice(product.price)}
-                    </span>
-                    <motion.a
-                      href={`https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20tertarik%20membeli%20produk%20${encodeURIComponent(product.name)}.`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="inline-flex items-center gap-1.5 bg-stone-900 text-gold-accent text-xs font-bold px-4.5 py-2.5 rounded-full border border-gold-accent/30 shadow-xs transition-colors"
-                    >
-                      <span>Beli WA</span>
-                    </motion.a>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-        </div>
-      </motion.section>
-
-      {/* 4. GALLERY & PORTFOLIO SECTION */}
-      <motion.section 
-        id="galeri" 
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        variants={fadeInUp}
-        className="py-24 lg:py-28 bg-stone-50 px-4 sm:px-6 lg:px-8 border-b border-stone-200/60"
-      >
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-            <div className="inline-flex items-center gap-2 bg-stone-900 text-gold-accent rounded-full px-5 py-1.5 text-[11px] font-bold tracking-widest uppercase shadow-xs">
-              <Star className="h-3.5 w-3.5" />
-              <span>Portofolio Karya & Studio</span>
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-stone-900 tracking-tight">
-              Galeri Hasil Treatment
-            </h2>
-            <div className="w-20 h-1 bg-gold-accent mx-auto rounded-full my-3" />
-            <p className="text-stone-600 font-normal leading-relaxed text-base sm:text-lg max-w-2xl mx-auto">
-              Bukti komitmen seni, kepresisian potongan, kelembutan smoothing, dan kemewahan warna rambut pelanggan kami.
-            </p>
-          </div>
-
-          {/* Gallery Grid */}
-          <motion.div 
-            variants={staggerContainer}
-            className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8"
-          >
-            {[
-              {
-                title: 'Silk Smoothing Treatment',
-                category: 'Smoothing',
-                image: 'https://images.unsplash.com/photo-1595853035070-59a39fe84de3?auto=format&fit=crop&q=80&w=600'
-              },
-              {
-                title: 'Luxury Balayage Blonde',
-                category: 'Coloring',
-                image: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=600'
-              },
-              {
-                title: 'Signature Pixie Haircut',
-                category: 'Haircut',
-                image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600'
-              },
-              {
-                title: 'Premium Creambath Ritual',
-                category: 'Spa & Treatment',
-                image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=600'
-              },
-              {
-                title: 'Clean Styling Area',
-                category: 'Studio Atmosphere',
-                image: 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=80&w=600'
-              },
-              {
-                title: 'Salon Front Desk',
-                category: 'Luxury Lounge',
-                image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600'
-              }
-            ].map((item, index) => (
-              <motion.div 
-                key={index} 
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className="group relative aspect-square rounded-3xl overflow-hidden border border-stone-200 bg-stone-900 shadow-sm"
-              >
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90" 
-                />
-                
-                {/* Subtle Permanent Bottom Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent" />
-                
-                {/* Content Overlay */}
-                <div className="absolute inset-0 p-6 flex flex-col justify-end transition-opacity duration-300">
-                  <span className="text-[10px] uppercase tracking-widest font-extrabold text-gold-accent">
+                  <span className="absolute top-3 left-3 bg-zinc-900/80 backdrop-blur-md text-white font-bold text-[10px] uppercase px-3 py-1 rounded-full">
                     {item.category}
                   </span>
-                  <h4 className="text-white text-sm sm:text-base font-bold font-serif mt-1">
-                    {item.title}
-                  </h4>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-bold text-sm text-zinc-900">{item.title}</h3>
                 </div>
               </motion.div>
             ))}
-          </motion.div>
-        </div>
-      </motion.section>
+          </div>
 
-      {/* 5. LOCATION & INFO SECTION */}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. LOCATION INTEGRATION SECTION */}
+      {/* ========================================================================= */}
       <LocationSection />
 
     </div>

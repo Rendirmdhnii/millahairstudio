@@ -188,7 +188,7 @@ export default function LoginPage() {
                 </button>
               </p>
               <p className="text-[10px] text-zinc-400">
-                💡 Demo quick login: Anda bisa login dengan email apa saja, atau gunakan panel melayang **Dev Panel Switcher** di kanan bawah untuk berganti-ganti dashboard role dengan sekali klik!
+                Demo quick login: Anda bisa login dengan email apa saja, atau gunakan panel melayang **Dev Panel Switcher** di kanan bawah untuk berganti-ganti dashboard role dengan sekali klik!
               </p>
             </div>
           </div>

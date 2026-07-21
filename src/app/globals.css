@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFFFFF;
-  --foreground: #2D2D29;
+  --background: #FAFAFA; /* bg-zinc-50 */
+  --foreground: #18181B; /* text-zinc-900 */
   --card: #FFFFFF;
-  --card-foreground: #2D2D29;
+  --card-foreground: #18181B;
   
-  --primary: #C8A27A; /* Coklat Muda */
-  --primary-hover: #B68F68;
-  --primary-light: #F5F1EA; /* Soft Beige */
-  --primary-bg: #FAF8F5;
+  --primary: #C5A880; /* Champagne Gold */
+  --primary-hover: #B59870;
+  --primary-light: #FBF8F3;
+  --primary-bg: #FAFAFA;
   
-  --secondary: #D9B48F;
-  --gold: #C8A27A;
-  --gold-accent: #D4B26F;
-  --gold-accent-hover: #C59E5B;
-  --soft-pink: #FFF5F6;
+  --secondary: #D4BD9B;
+  --gold: #C5A880;
+  --gold-accent: #C5A880;
+  --gold-accent-hover: #B59870;
+  --soft-rose: #FAF5F0;
   
-  --dark: #2A2521;
-  --gray-light: #F7F7F7; /* Abu Muda */
-  --gray-medium: #EFEFEF;
-  --gray-dark: #7C7C80;
+  --dark: #09090B; /* Zinc 950 */
+  --gray-light: #FAFAFA; /* Zinc 50 */
+  --gray-medium: #E4E4E7; /* Zinc 200 */
+  --gray-dark: #71717A; /* Zinc 500 */
   
-  --radius: 0.75rem;
+  --radius: 1rem; /* rounded-2xl */
 }
 
 @theme {
@@ -34,21 +34,15 @@
   --color-gold: var(--gold);
   --color-gold-accent: var(--gold-accent);
   --color-gold-accent-hover: var(--gold-accent-hover);
-  --color-soft-pink: var(--soft-pink);
+  --color-soft-pink: var(--soft-rose);
   --color-dark: var(--dark);
   --color-gray-light: var(--gray-light);
   --color-gray-medium: var(--gray-medium);
   --color-gray-dark: var(--gray-dark);
-  
-  /* Auto-theming legacy pink classes to minimalist beige/brown */
-  --color-pink-50: #FAF8F5;
-  --color-pink-100: #F5F1EA;
-  --color-pink-200: #EADFC9;
-  --color-pink-300: #D9B48F;
-  --color-pink-400: #C8A27A;
-  --color-pink-500: #C8A27A;
-  --color-pink-600: #B68F68;
-  --color-pink-700: #9E7955;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -58,20 +52,19 @@ body {
   overflow-x: hidden;
 }
 
-/* Minimalist Card Styles */
+/* Glassmorphism Navbar */
 .glass {
-  background: #FFFFFF;
-  border: 1px solid #EFEFEF;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid #E4E4E7;
 }
 
 .glass-dark {
-  background: #2A2521;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.glass-rose {
-  background: #FAF8F5;
-  border: 1px solid rgba(200, 162, 122, 0.15);
+  background: rgba(9, 9, 11, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Custom Scrollbar */
@@ -79,21 +72,21 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: #FAFAFA;
 }
 ::-webkit-scrollbar-thumb {
-  background: #C8A27A;
-  border-radius: 3px;
+  background: #D4D4D8;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B68F68;
+  background: #A1A1AA;
 }
 
-/* Custom Animations */
+/* Smooth Fade-in animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -102,23 +95,5 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-.gold-text-gradient {
-  color: var(--primary);
-}
-
-.rose-text-gradient {
-  color: var(--primary);
-}
-
-.gold-border-gradient {
-  border-color: var(--primary);
-}
-
-/* Mobile device wrapper container */
-.phone-shadow {
-  box-shadow: 0 10px 30px -10px rgba(200, 162, 122, 0.15);
-}
-

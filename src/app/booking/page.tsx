@@ -28,10 +28,10 @@ export default function PublicBookingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Admin WhatsApp Phone Number for Redirection
-  const ADMIN_WA_NUMBER = '628119999222'; // Official Admin Milla Studio WhatsApp
+  // Admin WhatsApp Phone Number
+  const ADMIN_WA_NUMBER = '628119999222';
 
-  // Time Slot Options
+  // Time Slots
   const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
   const handleSubmitBooking = async (e: React.FormEvent) => {
@@ -45,7 +45,7 @@ export default function PublicBookingPage() {
 
     try {
       // 1. Insert into Supabase table `bookings` with status 'pending'
-      const { data, error } = await supabase.from('bookings').insert([
+      const { error } = await supabase.from('bookings').insert([
         {
           customer_name: fullName,
           customer_phone: whatsappPhone,
@@ -58,10 +58,10 @@ export default function PublicBookingPage() {
       ]);
 
       if (error) {
-        console.warn('Supabase Insert Notice (Fallback to Local Store):', error.message);
+        console.warn('Supabase Insert Notice:', error.message);
       }
 
-      // 2. Also save to Zustand persistent store for instant synchronization
+      // 2. Sync with Zustand store
       addSupabaseBooking({
         customer_name: fullName,
         customer_phone: whatsappPhone,
@@ -92,51 +92,47 @@ export default function PublicBookingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-900 via-zinc-900 to-stone-950 text-white font-sans flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
+    <div className="min-h-[85vh] bg-zinc-50 text-zinc-900 font-sans flex items-center justify-center p-4 sm:p-8 py-16 sm:py-24 relative">
       
-      {/* Background Decorative Ambient Glows */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main Glassmorphism Container with Framer Motion Fade-Up Animation */}
+      {/* Single-Column Centered Card Container */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="w-full max-w-2xl bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-6 sm:p-10 relative z-10"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-xl bg-white border border-zinc-200 shadow-sm rounded-2xl p-6 sm:p-10 relative z-10"
       >
         {/* Header Branding */}
         <div className="text-center space-y-2 mb-8">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider text-pink-200">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+          <div className="inline-flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#C5A880]">
+            <Sparkles className="h-3.5 w-3.5 text-[#C5A880]" />
             <span>Milla Hair Studio - Online Booking</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-serif font-bold text-white tracking-wide">
-            Reservasi Hair Treatment
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-zinc-900 tracking-tight">
+            Formulir Reservasi Treatment
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-300 max-w-md mx-auto">
-            Isi formulir di bawah untuk mencatat jadwal kunjungan Anda. Pembayaran dilakukan di kasir salon saat treatment.
+          <p className="text-xs sm:text-sm text-zinc-500 max-w-md mx-auto leading-relaxed">
+            Isi formulir reservasi di bawah. Pembayaran dilakukan secara langsung di kasir salon saat kedatangan.
           </p>
         </div>
 
         {/* SUCCESS STATE NOTICE */}
         {isSuccess ? (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-emerald-500/20 border border-emerald-400/40 p-6 rounded-2xl text-center space-y-3"
+            className="bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center space-y-4"
           >
-            <CheckCircle2 className="h-12 w-12 text-emerald-400 mx-auto animate-bounce" />
-            <h3 className="text-lg font-serif font-bold text-white">Reservasi Berhasil Dicatat!</h3>
-            <p className="text-xs text-zinc-200">
-              Data booking Anda telah tersimpan dengan status <span className="font-bold text-amber-300">Pending</span>. Anda sedang dialihkan ke WhatsApp Admin untuk mengonfirmasi jadwal.
+            <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
+            <h3 className="text-xl font-serif font-bold text-zinc-900">Reservasi Berhasil Dicatat</h3>
+            <p className="text-xs text-zinc-600 leading-relaxed max-w-md mx-auto">
+              Data reservasi Anda telah tersimpan dengan status <span className="font-bold text-[#C5A880]">Pending</span>. Anda sedang dialihkan ke WhatsApp Admin untuk konfirmasi jadwal.
             </p>
             <div className="pt-2">
               <a
                 href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(`Halo Admin Milla Hair Studio, saya baru saja melakukan reservasi melalui website. Berikut detailnya:\n\nNama: ${fullName}\nLayanan: ${selectedService}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\n\nMohon konfirmasinya.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-full text-xs transition-all shadow-lg"
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all shadow-xs"
               >
                 <MessageSquare className="h-4 w-4" />
                 Buka WhatsApp Admin Sekarang
@@ -144,13 +140,13 @@ export default function PublicBookingPage() {
             </div>
           </motion.div>
         ) : (
-          /* BOOKING FORM */
+          /* SINGLE COLUMN CLEAN BOOKING FORM */
           <form onSubmit={handleSubmitBooking} className="space-y-5 text-left">
             
             {/* 1. NAMA LENGKAP */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-200 flex items-center gap-1.5 uppercase tracking-wider">
-                <User className="h-3.5 w-3.5 text-primary" />
+              <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
+                <User className="h-3.5 w-3.5 text-[#C5A880]" />
                 Nama Lengkap
               </label>
               <input
@@ -158,15 +154,15 @@ export default function PublicBookingPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Masukkan nama lengkap Anda..."
-                className="w-full text-xs p-3.5 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-zinc-400 focus:outline-none focus:border-primary focus:bg-white/15 transition-all"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
                 required
               />
             </div>
 
             {/* 2. NOMOR WHATSAPP */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-200 flex items-center gap-1.5 uppercase tracking-wider">
-                <Phone className="h-3.5 w-3.5 text-emerald-400" />
+              <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
+                <Phone className="h-3.5 w-3.5 text-emerald-600" />
                 Nomor WhatsApp
               </label>
               <input
@@ -174,21 +170,21 @@ export default function PublicBookingPage() {
                 value={whatsappPhone}
                 onChange={(e) => setWhatsappPhone(e.target.value)}
                 placeholder="Contoh: 08123456789..."
-                className="w-full text-xs p-3.5 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-zinc-400 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all font-mono"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-mono"
                 required
               />
             </div>
 
             {/* 3. PILIHAN LAYANAN (DROPDOWN) */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-zinc-200 flex items-center gap-1.5 uppercase tracking-wider">
-                <Scissors className="h-3.5 w-3.5 text-primary" />
+              <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
+                <Scissors className="h-3.5 w-3.5 text-[#C5A880]" />
                 Pilihan Layanan Treatment
               </label>
               <select
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full text-xs p-3.5 bg-zinc-900 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-primary transition-all"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
                 required
               >
                 {services.map(s => (
@@ -202,13 +198,13 @@ export default function PublicBookingPage() {
               </select>
             </div>
 
-            {/* 4. TANGGAL & JAM (2 COLUMNS) */}
+            {/* 4. TANGGAL & JAM */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
               {/* Tanggal */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-200 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
+                  <Calendar className="h-3.5 w-3.5 text-[#C5A880]" />
                   Tanggal Kunjungan
                 </label>
                 <input
@@ -216,21 +212,21 @@ export default function PublicBookingPage() {
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full text-xs p-3.5 bg-zinc-900 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-primary transition-all"
+                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
                   required
                 />
               </div>
 
               {/* Jam */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-zinc-200 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Clock className="h-3.5 w-3.5 text-primary" />
+                <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
+                  <Clock className="h-3.5 w-3.5 text-[#C5A880]" />
                   Jam Kedatangan
                 </label>
                 <select
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full text-xs p-3.5 bg-zinc-900 border border-white/20 rounded-2xl text-white focus:outline-none focus:border-primary transition-all"
+                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
                   required
                 >
                   {timeSlots.map(t => (
@@ -242,18 +238,19 @@ export default function PublicBookingPage() {
             </div>
 
             {/* INFORMASI PEMBAYARAN KASIR */}
-            <div className="p-3.5 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-2.5 text-[11px] text-zinc-300">
-              <ShieldCheck className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+            <div className="p-3.5 bg-zinc-100/80 border border-zinc-200 rounded-xl flex items-center gap-3 text-xs text-zinc-600">
+              <ShieldCheck className="h-5 w-5 text-[#C5A880] flex-shrink-0" />
               <span>
-                Pembayaran dilakukan secara langsung di <strong className="text-white">Kasir Salon (Fisik)</strong> saat treatment selesai.
+                Pembayaran dilakukan secara langsung di <strong className="text-zinc-900">Kasir Salon (Fisik)</strong> saat treatment selesai.
               </span>
             </div>
 
             {/* SUBMIT BUTTON WITH LOADING SPINNER */}
-            <button
+            <motion.button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-primary via-pink-500 to-primary hover:opacity-95 text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-[#C5A880] hover:bg-[#b59870] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
@@ -266,7 +263,7 @@ export default function PublicBookingPage() {
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
-            </button>
+            </motion.button>
 
           </form>
         )}

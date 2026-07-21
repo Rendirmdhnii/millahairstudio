@@ -110,7 +110,7 @@ export default function StylistDashboard() {
             <span className="text-[10px] text-zinc-400 uppercase tracking-widest block font-bold">Absensi Hari Ini</span>
             {isCheckedIn ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-emerald-400 font-bold">✓ Terabsen ({checkInTime})</span>
+                <span className="text-xs text-emerald-400 font-bold">Terabsen ({checkInTime})</span>
                 <button
                   onClick={handleCheckOut}
                   className="bg-red-500/20 text-red-400 hover:bg-red-500/30 text-[10px] font-bold px-3 py-1 rounded-lg border border-red-500/30 transition-colors"
@@ -160,7 +160,7 @@ export default function StylistDashboard() {
               />
             </div>
             <p className="text-[10px] text-zinc-400">
-              💡 Capai target penjualan Rp 15jt untuk mendapatkan bonus ekstra komisi +5% dari manajer cabang.
+              Capai target penjualan Rp 15jt untuk mendapatkan bonus ekstra komisi +5% dari manajer cabang.
             </p>
           </div>
 
@@ -171,7 +171,7 @@ export default function StylistDashboard() {
           <div className="lg:col-span-2 space-y-6">
             {noteSuccess && (
               <div className="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-2xl text-xs text-center font-medium animate-pulse">
-                ✓ Catatan treatment dan formula kimia berhasil disimpan ke riwayat medis customer!
+                Catatan treatment dan formula kimia berhasil disimpan ke riwayat medis customer!
               </div>
             )}
 

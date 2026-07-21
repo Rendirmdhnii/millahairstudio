@@ -219,7 +219,7 @@ function CustomerDashboardContent() {
                         )}
                         {apt.status === 'completed' && reviews.some(r => r.appointmentId === apt.id) && (
                           <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-xl">
-                            ✓ Diulas
+                            Diulas
                           </span>
                         )}
                       </div>
@@ -309,7 +309,7 @@ function CustomerDashboardContent() {
                 </div>
 
                 <div className="p-3 bg-stone-50 rounded-2xl border border-zinc-150 text-[10px] text-zinc-500 leading-relaxed">
-                  💡 Catatan alergi dan preferensi di atas dibaca secara realtime oleh stylist saat memproses pengerjaan rambut Anda di salon demi keamanan maksimal.
+                  Catatan alergi dan preferensi di atas dibaca secara realtime oleh stylist saat memproses pengerjaan rambut Anda di salon demi keamanan maksimal.
                 </div>
               </div>
             </div>

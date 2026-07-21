@@ -213,7 +213,7 @@ export default function CartPage() {
                 {voucherError && <p className="text-[10px] text-red-500 mt-1">{voucherError}</p>}
                 {appliedVoucher && (
                   <p className="text-[10px] text-emerald-600 mt-1 font-bold">
-                    ✓ Voucher {appliedVoucher.code} Aktif (-{appliedVoucher.isPercentage ? `${appliedVoucher.discountAmount}%` : formatPrice(appliedVoucher.discountAmount)})
+                    Voucher {appliedVoucher.code} Aktif (-{appliedVoucher.isPercentage ? `${appliedVoucher.discountAmount}%` : formatPrice(appliedVoucher.discountAmount)})
                   </p>
                 )}
               </div>
