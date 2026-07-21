@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Scissors, ArrowUpRight, Calendar, MessageSquare } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Calendar, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LogoImage from '@/logosalon.png';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -55,26 +57,23 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled 
-        ? 'bg-white/85 backdrop-blur-md shadow-xs border-b border-zinc-200 py-1' 
-        : 'bg-white/70 backdrop-blur-md border-b border-zinc-200/60 py-2'
+        ? 'bg-white/90 backdrop-blur-md shadow-xs border-b border-zinc-200 py-1' 
+        : 'bg-white/80 backdrop-blur-md border-b border-zinc-200/60 py-2'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           
-          {/* Brand Logo */}
+          {/* Brand Logo with Real Image src/logosalon.png */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-3 group">
-              <span className="p-2.5 rounded-xl bg-zinc-900 text-[#C5A880] shadow-xs">
-                <Scissors className="h-5 w-5" />
-              </span>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-zinc-900 font-serif group-hover:text-[#C5A880] transition-colors">
-                  Milla Hair Studio
-                </span>
-                <span className="text-[10px] tracking-widest uppercase font-semibold text-zinc-400 -mt-0.5">
-                  Luxury Salon & Spa
-                </span>
-              </div>
+            <Link href="/" className="flex items-center group">
+              <Image 
+                src={LogoImage} 
+                alt="Milla Hair Studio" 
+                width={160} 
+                height={45} 
+                className="h-11 w-auto object-contain transition-transform group-hover:scale-105"
+                priority
+              />
             </Link>
           </div>
 
@@ -96,7 +95,7 @@ export default function Navbar() {
                   {isActive && (
                     <motion.span
                       layoutId="activeTabIndicator"
-                      className="absolute inset-0 bg-[#C5A880] rounded-full shadow-xs"
+                      className="absolute inset-0 bg-[#926C3A] rounded-full shadow-xs"
                       transition={{ type: 'spring', duration: 0.5, bounce: 0.15 }}
                     />
                   )}
@@ -112,11 +111,11 @@ export default function Navbar() {
               href="/booking"
               className={`inline-flex items-center gap-2 font-bold text-xs px-4.5 py-2.5 rounded-xl transition-all shadow-xs ${
                 isBookingActive
-                  ? 'bg-[#C5A880] text-white shadow-xs'
+                  ? 'bg-[#926C3A] text-white shadow-xs'
                   : 'bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200'
               }`}
             >
-              <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#C5A880]'}`} />
+              <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#926C3A]'}`} />
               <span>Form Booking</span>
             </Link>
 
@@ -125,7 +124,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 bg-[#C5A880] hover:bg-[#b59870] text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-all duration-200"
+              className="inline-flex items-center gap-2 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs transition-all duration-200"
             >
               <MessageSquare className="h-4 w-4 text-white" />
               <span>Konsultasi WA</span>
@@ -169,7 +168,7 @@ export default function Navbar() {
                       }}
                       className={`flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
                         isActive
-                          ? 'bg-[#C5A880] text-white shadow-xs'
+                          ? 'bg-[#926C3A] text-white shadow-xs'
                           : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900'
                       }`}
                     >
@@ -186,11 +185,11 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm border ${
                     isBookingActive
-                      ? 'bg-[#C5A880] text-white border-[#C5A880]'
+                      ? 'bg-[#926C3A] text-white border-[#926C3A]'
                       : 'bg-zinc-100 text-zinc-800 border-zinc-200'
                   }`}
                 >
-                  <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#C5A880]'}`} />
+                  <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#926C3A]'}`} />
                   <span>Form Booking Online</span>
                 </Link>
                 <a
@@ -198,7 +197,7 @@ export default function Navbar() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#C5A880] text-white py-3 rounded-xl font-bold text-sm shadow-xs"
+                  className="w-full flex items-center justify-center gap-2 bg-[#926C3A] text-white py-3 rounded-xl font-bold text-sm shadow-xs"
                 >
                   <MessageSquare className="h-4 w-4 text-white" />
                   <span>Konsultasi WhatsApp</span>

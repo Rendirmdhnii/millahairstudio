@@ -103,8 +103,8 @@ export default function PublicBookingPage() {
       >
         {/* Header Branding */}
         <div className="text-center space-y-2 mb-8">
-          <div className="inline-flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#C5A880]">
-            <Sparkles className="h-3.5 w-3.5 text-[#C5A880]" />
+          <div className="inline-flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#926C3A]">
+            <Sparkles className="h-3.5 w-3.5 text-[#926C3A]" />
             <span>Milla Hair Studio - Online Booking</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-zinc-900 tracking-tight">
@@ -125,7 +125,7 @@ export default function PublicBookingPage() {
             <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
             <h3 className="text-xl font-serif font-bold text-zinc-900">Reservasi Berhasil Dicatat</h3>
             <p className="text-xs text-zinc-600 leading-relaxed max-w-md mx-auto">
-              Data reservasi Anda telah tersimpan dengan status <span className="font-bold text-[#C5A880]">Pending</span>. Anda sedang dialihkan ke WhatsApp Admin untuk konfirmasi jadwal.
+              Data reservasi Anda telah tersimpan dengan status <span className="font-bold text-[#926C3A]">Pending</span>. Anda sedang dialihkan ke WhatsApp Admin untuk konfirmasi jadwal.
             </p>
             <div className="pt-2">
               <a
@@ -146,7 +146,7 @@ export default function PublicBookingPage() {
             {/* 1. NAMA LENGKAP */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
-                <User className="h-3.5 w-3.5 text-[#C5A880]" />
+                <User className="h-3.5 w-3.5 text-[#926C3A]" />
                 Nama Lengkap
               </label>
               <input
@@ -154,7 +154,7 @@ export default function PublicBookingPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Masukkan nama lengkap Anda..."
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                 required
               />
             </div>
@@ -170,7 +170,7 @@ export default function PublicBookingPage() {
                 value={whatsappPhone}
                 onChange={(e) => setWhatsappPhone(e.target.value)}
                 placeholder="Contoh: 08123456789..."
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-mono"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-mono"
                 required
               />
             </div>
@@ -178,13 +178,13 @@ export default function PublicBookingPage() {
             {/* 3. PILIHAN LAYANAN (DROPDOWN) */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
-                <Scissors className="h-3.5 w-3.5 text-[#C5A880]" />
+                <Scissors className="h-3.5 w-3.5 text-[#926C3A]" />
                 Pilihan Layanan Treatment
               </label>
               <select
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
+                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                 required
               >
                 {services.map(s => (
@@ -204,7 +204,7 @@ export default function PublicBookingPage() {
               {/* Tanggal */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Calendar className="h-3.5 w-3.5 text-[#C5A880]" />
+                  <Calendar className="h-3.5 w-3.5 text-[#926C3A]" />
                   Tanggal Kunjungan
                 </label>
                 <input
@@ -212,7 +212,7 @@ export default function PublicBookingPage() {
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
+                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                   required
                 />
               </div>
@@ -220,13 +220,13 @@ export default function PublicBookingPage() {
               {/* Jam */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
-                  <Clock className="h-3.5 w-3.5 text-[#C5A880]" />
+                  <Clock className="h-3.5 w-3.5 text-[#926C3A]" />
                   Jam Kedatangan
                 </label>
                 <select
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/30 transition-all font-medium"
+                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                   required
                 >
                   {timeSlots.map(t => (
@@ -239,7 +239,7 @@ export default function PublicBookingPage() {
 
             {/* INFORMASI PEMBAYARAN KASIR */}
             <div className="p-3.5 bg-zinc-100/80 border border-zinc-200 rounded-xl flex items-center gap-3 text-xs text-zinc-600">
-              <ShieldCheck className="h-5 w-5 text-[#C5A880] flex-shrink-0" />
+              <ShieldCheck className="h-5 w-5 text-[#926C3A] flex-shrink-0" />
               <span>
                 Pembayaran dilakukan secara langsung di <strong className="text-zinc-900">Kasir Salon (Fisik)</strong> saat treatment selesai.
               </span>
@@ -250,7 +250,7 @@ export default function PublicBookingPage() {
               type="submit"
               disabled={isSubmitting}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-[#C5A880] hover:bg-[#b59870] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+              className="w-full bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

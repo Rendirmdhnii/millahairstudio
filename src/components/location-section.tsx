@@ -19,8 +19,8 @@ export default function LocationSection() {
           {/* Left Column: Text & Operational Info */}
           <div className="lg:col-span-6 space-y-8 text-left">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#C5A880] shadow-xs">
-                <MapPin className="h-3.5 w-3.5 text-[#C5A880]" />
+              <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#926C3A] shadow-xs">
+                <MapPin className="h-3.5 w-3.5 text-[#926C3A]" />
                 <span>Lokasi Studio Kami</span>
               </div>
               
@@ -28,7 +28,7 @@ export default function LocationSection() {
                 Kunjungi Studio Kami
               </h2>
               
-              <div className="w-16 h-1 bg-[#C5A880] rounded-full my-3" />
+              <div className="w-16 h-1 bg-[#926C3A] rounded-full my-3" />
               
               <p className="text-zinc-500 font-normal leading-relaxed text-base sm:text-lg max-w-xl">
                 Nikmati suasana salon yang tenang, steril, dan bernuansa kemewahan modern di pusat kota Sidoarjo. Kami siap menyambut kehadiran Anda.
@@ -41,7 +41,7 @@ export default function LocationSection() {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-start gap-4 p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs"
               >
-                <div className="p-3 bg-zinc-50 text-[#C5A880] rounded-xl flex-shrink-0 mt-0.5 border border-zinc-200">
+                <div className="p-3 bg-zinc-50 text-[#926C3A] rounded-xl flex-shrink-0 mt-0.5 border border-zinc-200">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
@@ -56,13 +56,13 @@ export default function LocationSection() {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-start gap-4 p-6 rounded-2xl bg-white border border-zinc-200 shadow-xs"
               >
-                <div className="p-3 bg-zinc-50 text-[#C5A880] rounded-xl flex-shrink-0 mt-0.5 border border-zinc-200">
+                <div className="p-3 bg-zinc-50 text-[#926C3A] rounded-xl flex-shrink-0 mt-0.5 border border-zinc-200">
                   <Clock className="h-5 w-5" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Jam Operasional</h4>
                   <p className="text-sm font-bold text-zinc-800 mt-1">
-                    Buka Setiap Hari: <span className="text-[#C5A880] font-extrabold">09.30 - 20.00 WIB</span>
+                    Buka Setiap Hari: <span className="text-[#926C3A] font-extrabold">09.30 - 19.00 WIB</span>
                   </p>
                 </div>
               </motion.div>
@@ -75,7 +75,7 @@ export default function LocationSection() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-3 bg-[#C5A880] hover:bg-[#b59870] text-white font-bold text-base px-8 py-4 rounded-xl shadow-xs transition-all"
+                className="inline-flex items-center justify-center gap-3 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-base px-8 py-4 rounded-xl shadow-xs transition-all"
               >
                 <Navigation className="h-5 w-5" />
                 <span>Petunjuk Arah Google Maps</span>
