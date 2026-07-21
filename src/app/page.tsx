@@ -81,21 +81,23 @@ export default function LandingPage() {
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-8 max-w-lg">
-              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
-                <div className="flex items-center justify-center gap-1 text-[#926C3A] font-bold text-lg sm:text-2xl">
-                  <Star className="h-4 w-4 sm:h-5 sm:w-5 fill-[#926C3A]" />
+            <div className="grid grid-cols-3 gap-2 md:gap-4 mt-8 mb-6 max-w-lg">
+              <div className="bg-white/5 backdrop-blur-md p-2.5 sm:p-4 rounded-xl border border-white/10 text-center flex flex-col justify-center min-h-[72px] sm:min-h-[96px]">
+                <div className="flex items-center justify-center gap-1 text-[#926C3A] font-bold text-xs sm:text-base md:text-lg">
+                  <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-[#926C3A]" />
                   <span>4.9 / 5.0</span>
                 </div>
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating Pelanggan</p>
+                <p className="text-[8px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating</p>
               </div>
-              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">100%</p>
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril & Higienis</p>
+              
+              <div className="bg-white/5 backdrop-blur-md p-2.5 sm:p-4 rounded-xl border border-white/10 text-center flex flex-col justify-center min-h-[72px] sm:min-h-[96px]">
+                <p className="text-xs sm:text-base md:text-lg font-bold text-[#926C3A]">100%</p>
+                <p className="text-[8px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril</p>
               </div>
-              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">Sidoarjo</p>
-                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
+              
+              <div className="bg-white/5 backdrop-blur-md p-2.5 sm:p-4 rounded-xl border border-white/10 text-center flex flex-col justify-center min-h-[72px] sm:min-h-[96px]">
+                <p className="text-xs sm:text-base md:text-lg font-bold text-[#926C3A]">Sidoarjo</p>
+                <p className="text-[8px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
               </div>
             </div>
 
