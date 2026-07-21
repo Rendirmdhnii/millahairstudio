@@ -100,9 +100,9 @@ export default function LandingPage() {
     <div className="w-full flex flex-col font-sans text-zinc-900 bg-zinc-50 overflow-x-hidden">
       
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION WITH ELEGANT 4.9/5.0 RATING BADGE */}
+      {/* 1. HERO SECTION WITH MOBILE-OPTIMIZED SPACING & 4.9 RATING BADGE */}
       {/* ========================================================================= */}
-      <section className="relative w-full min-h-[88vh] flex items-center bg-zinc-900 text-white overflow-hidden py-24 px-4 sm:px-6 lg:px-8">
+      <section className="relative w-full min-h-[85vh] flex items-center bg-zinc-900 text-white overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1600" 
@@ -112,34 +112,34 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900/95 to-zinc-900/80" />
         </div>
         
-        <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
           
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="lg:col-span-8 space-y-8 text-left"
+            className="lg:col-span-8 space-y-6 sm:space-y-8 text-left"
           >
             {/* Header Badges Grid (Location & 4.9 Rating) */}
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-5 py-2">
-                <Sparkles className="h-4 w-4 text-[#926C3A]" />
-                <span className="text-[11px] font-bold tracking-widest text-[#926C3A] uppercase">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-4 sm:px-5 py-1.5 sm:py-2">
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#926C3A]" />
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-widest text-[#926C3A] uppercase">
                   Premium Salon • Sidoarjo
                 </span>
               </div>
 
               {/* 4.9/5.0 Rating Element (Solid Star SVG + Text) */}
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-4 py-2">
-                <Star className="h-4 w-4 text-[#926C3A] fill-[#926C3A]" />
-                <span className="text-[11px] font-bold text-zinc-200 tracking-wide">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2">
+                <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#926C3A] fill-[#926C3A]" />
+                <span className="text-[10px] sm:text-[11px] font-bold text-zinc-200 tracking-wide">
                   4.9 / 5.0 Rating
                 </span>
               </div>
             </div>
             
-            {/* Heading */}
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif font-bold text-white leading-[1.15] tracking-tight">
+            {/* Heading - Responsive Font Size */}
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-serif font-bold text-white leading-[1.18] sm:leading-[1.15] tracking-tight">
               Kecantikan Rambut Anda<br />
               <span className="text-[#926C3A]">
                 Adalah Seni & Dedikasi.
@@ -147,16 +147,16 @@ export default function LandingPage() {
             </h1>
             
             {/* Description */}
-            <p className="text-zinc-300 text-base sm:text-lg lg:text-xl leading-relaxed max-w-2xl font-light">
+            <p className="text-zinc-300 text-sm sm:text-lg lg:text-xl leading-relaxed max-w-2xl font-light">
               Milla Hair Studio menghadirkan perawatan dan penataan rambut kelas dunia yang profesional, steril, dan penuh estetika modern di Sidoarjo. Pancarkan rasa percaya diri mahkota indah Anda bersama kami.
             </p>
             
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            {/* Action Buttons with min-h-[44px] touch targets */}
+            <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 pt-2 sm:pt-4">
               <motion.a 
                 href="/booking"
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-3 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-base px-8 py-4 rounded-xl shadow-xs transition-all"
+                className="inline-flex items-center justify-center gap-3 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-xs transition-all"
               >
                 <Calendar className="h-5 w-5" />
                 <span>Form Booking Online</span>
@@ -165,7 +165,7 @@ export default function LandingPage() {
               <motion.a 
                 href="#layanan"
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-base px-8 py-4 rounded-xl border border-white/20 backdrop-blur-md transition-all"
+                className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl border border-white/20 backdrop-blur-md transition-all"
               >
                 <span>Lihat Layanan & Harga</span>
                 <ArrowRight className="h-4 w-4 text-[#926C3A]" />
@@ -173,21 +173,21 @@ export default function LandingPage() {
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-3 gap-4 pt-8 max-w-lg">
-              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
-                <div className="flex items-center justify-center gap-1.5 text-[#926C3A] font-bold text-xl sm:text-2xl">
-                  <Star className="h-5 w-5 fill-[#926C3A]" />
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-4 sm:pt-8 max-w-lg">
+              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
+                <div className="flex items-center justify-center gap-1 text-[#926C3A] font-bold text-lg sm:text-2xl">
+                  <Star className="h-4 w-4 sm:h-5 sm:w-5 fill-[#926C3A]" />
                   <span>4.9 / 5.0</span>
                 </div>
-                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating Pelanggan</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating Pelanggan</p>
               </div>
-              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">100%</p>
-                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril & Higienis</p>
+              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
+                <p className="text-lg sm:text-2xl font-bold text-[#926C3A]">100%</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril & Higienis</p>
               </div>
-              <div className="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">Sidoarjo</p>
-                <p className="text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
+              <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
+                <p className="text-lg sm:text-2xl font-bold text-[#926C3A]">Sidoarjo</p>
+                <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
               </div>
             </div>
 
@@ -198,36 +198,36 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* 2. ABOUT SECTION */}
       {/* ========================================================================= */}
-      <section id="tentang" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+      <section id="tentang" className="py-16 sm:py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center"
           >
-            <div className="lg:col-span-6 space-y-6 text-left">
+            <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
               <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#926C3A] border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
                 <Scissors className="h-3.5 w-3.5" />
                 <span>Tentang Milla Hair Studio</span>
               </div>
               
-              <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight leading-tight">
                 Pengalaman Perawatan Rambut Berkelas Dunia
               </h2>
 
-              <p className="text-zinc-500 text-base sm:text-lg leading-relaxed font-normal">
+              <p className="text-zinc-500 text-sm sm:text-lg leading-relaxed font-normal">
                 Milla Hair Studio didirikan untuk menghadirkan tempat relaksasi dan perawatan rambut berstandar internasional bagi wanita modern Sidoarjo. Kami menggabungkan teknik penataan terkini dengan produk perawatan rambut alami pilihan.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
+                <div className="p-4 sm:p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
                   <ShieldCheck className="h-6 w-6 text-[#926C3A] mb-2" />
                   <h4 className="font-bold text-sm text-zinc-900">Produk Bersertifikat</h4>
                   <p className="text-xs text-zinc-500 mt-1">Menggunakan formula ramah kulit kepala tanpa zat kimia berbahaya.</p>
                 </div>
-                <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
+                <div className="p-4 sm:p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
                   <Users className="h-6 w-6 text-[#926C3A] mb-2" />
                   <h4 className="font-bold text-sm text-zinc-900">Stylist Berpengalaman</h4>
                   <p className="text-xs text-zinc-500 mt-1">Tim profesional yang tersertifikasi dalam teknik tren internasional.</p>
@@ -235,16 +235,16 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 grid grid-cols-2 gap-4">
+            <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
               <img 
                 src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600" 
                 alt="Hair Treatment Studio"
-                className="w-full h-72 object-cover rounded-2xl shadow-sm border border-zinc-200"
+                className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200"
               />
               <img 
                 src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600" 
                 alt="Styling Hair Studio"
-                className="w-full h-72 object-cover rounded-2xl shadow-sm border border-zinc-200 mt-8"
+                className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200 mt-4 sm:mt-8"
               />
             </div>
           </motion.div>
@@ -252,9 +252,9 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. SERVICES & PRICELIST SECTION (CLEAN PURE TEXT TABS - NO ICONS) */}
+      {/* 3. SERVICES & PRICELIST SECTION (MOBILE HORIZONTAL SCROLLABLE TABS) */}
       {/* ========================================================================= */}
-      <section id="layanan" className="py-24 bg-zinc-50 px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+      <section id="layanan" className="py-16 sm:py-24 bg-zinc-50 px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
         <div className="max-w-7xl mx-auto">
           
           <motion.div 
@@ -262,30 +262,30 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+            className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4"
           >
             <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#926C3A] shadow-xs">
               <span>Menu & Daftar Harga</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
               Pilihan Perawatan Berkelas
             </h2>
             <div className="w-16 h-1 bg-[#926C3A] rounded-full mx-auto" />
-            <p className="text-zinc-500 text-base sm:text-lg font-normal leading-relaxed">
+            <p className="text-zinc-500 text-sm sm:text-lg font-normal leading-relaxed">
               Seluruh harga transparan dengan pengerjaan oleh stylist berpengalaman menggunakan produk internasional.
             </p>
           </motion.div>
 
-          {/* DESKTOP TABS (PURE CLEAN TEXT ONLY - NO ICONS) */}
-          <div className="hidden md:block space-y-8">
-            <div className="flex justify-center gap-2 bg-white p-2 rounded-full border border-zinc-200 shadow-xs max-w-4xl mx-auto">
+          {/* DESKTOP & MOBILE TABS (HORIZONTAL SCROLLABLE ON MOBILE WITH MIN-TOUCH TARGET) */}
+          <div className="space-y-6 sm:space-y-8">
+            <div className="flex overflow-x-auto justify-start sm:justify-center gap-2 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-zinc-200 shadow-xs max-w-4xl mx-auto scrollbar-none">
               {priceListCategories.map((category) => {
                 const isActive = activeTab === category.id;
                 return (
                   <button
                     key={category.id}
                     onClick={() => setActiveTab(category.id)}
-                    className={`flex-1 text-center py-3.5 px-5 rounded-full text-xs font-bold transition-all ${
+                    className={`flex-shrink-0 text-center py-3 px-4 sm:px-5 min-h-[44px] rounded-xl sm:rounded-full text-xs font-bold transition-all ${
                       isActive 
                         ? 'bg-[#926C3A] text-white shadow-xs' 
                         : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
@@ -297,6 +297,7 @@ export default function LandingPage() {
               })}
             </div>
 
+            {/* TAB CARD CONTENT WITH PRECISE MOBILE ALIGNMENT */}
             <div className="max-w-4xl mx-auto">
               {priceListCategories.map((category) => {
                 if (category.id !== activeTab) return null;
@@ -306,13 +307,13 @@ export default function LandingPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-white rounded-2xl p-8 border border-zinc-200 shadow-sm"
+                    className="bg-white rounded-2xl p-5 sm:p-8 border border-zinc-200 shadow-sm"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 divide-y md:divide-y-0 divide-zinc-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 sm:gap-y-4 divide-y md:divide-y-0 divide-zinc-100">
                       {category.services.map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-center py-3 border-b border-zinc-100 last:border-0">
-                          <span className="font-semibold text-zinc-800 text-sm">{item.name}</span>
-                          <span className="font-bold text-[#926C3A] text-sm font-mono">{item.price}</span>
+                        <div key={idx} className="flex justify-between items-center py-3 border-b border-zinc-100 last:border-0 min-h-[44px] gap-3">
+                          <span className="font-semibold text-zinc-800 text-xs sm:text-sm text-left leading-snug">{item.name}</span>
+                          <span className="font-bold text-[#926C3A] text-xs sm:text-sm font-mono flex-shrink-0 text-right">{item.price}</span>
                         </div>
                       ))}
                     </div>
@@ -322,48 +323,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* MOBILE ACCORDION (PURE CLEAN TEXT ONLY) */}
-          <div className="md:hidden space-y-4">
-            {priceListCategories.map((category) => {
-              const isOpen = activeAccordion === category.id;
-              return (
-                <div key={category.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-xs">
-                  <button
-                    onClick={() => setActiveAccordion(isOpen ? null : category.id)}
-                    className="w-full flex items-center justify-between p-5 text-left font-bold text-zinc-900 text-sm"
-                  >
-                    <span>{category.title}</span>
-                    {isOpen ? <ChevronUp className="h-5 w-5 text-[#926C3A]" /> : <ChevronDown className="h-5 w-5 text-zinc-400" />}
-                  </button>
-
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="px-5 pb-5 pt-1 border-t border-zinc-100 space-y-3"
-                      >
-                        {category.services.map((item, idx) => (
-                          <div key={idx} className="flex justify-between items-center text-xs py-2 border-b border-zinc-50 last:border-0">
-                            <span className="font-medium text-zinc-700">{item.name}</span>
-                            <span className="font-bold text-[#926C3A] font-mono">{item.price}</span>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-12 text-center">
+          <div className="mt-8 sm:mt-12 text-center">
             <motion.a
               href="/booking"
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-sm px-8 py-4 rounded-xl shadow-xs transition-all"
+              className="inline-flex items-center justify-center gap-2 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-xs sm:text-sm px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-xs transition-all w-full sm:w-auto"
             >
               <Calendar className="h-4 w-4" />
               <span>Reservasi Jadwal Sekarang</span>
@@ -374,9 +338,9 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. GALLERY SECTION WITH REAL SALON IMAGES (STATIC IMPORTS & BLUR PLACEHOLDER) */}
+      {/* 4. GALLERY SECTION WITH RESPONSIVE 1-COL MOBILE / 2-COL TABLET / 4-COL DESKTOP */}
       {/* ========================================================================= */}
-      <section id="galeri" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+      <section id="galeri" className="py-16 sm:py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
         <div className="max-w-7xl mx-auto">
           
           <motion.div 
@@ -384,22 +348,23 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+            className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4"
           >
             <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#926C3A] border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
               <Camera className="h-3.5 w-3.5" />
               <span>Galeri Portofolio Treatment</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
               Hasil Karya Hair Stylist Kami
             </h2>
             <div className="w-16 h-1 bg-[#926C3A] rounded-full mx-auto" />
-            <p className="text-zinc-500 text-base sm:text-lg font-normal leading-relaxed">
+            <p className="text-zinc-500 text-sm sm:text-lg font-normal leading-relaxed">
               Koleksi dokumentasi nyata penataan dan perawatan rambut pelanggan setia Milla Hair Studio.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* RESPONSIVE GRID: 1-COL (MOBILE) / 2-COL (TABLET) / 4-COL (DESKTOP) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {galleryItems.map((item) => (
               <motion.div
                 key={item.id}
@@ -408,9 +373,9 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.4 }}
-                className="bg-zinc-50 rounded-2xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
+                className="bg-zinc-50 rounded-2xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col"
               >
-                <div className="h-72 w-full overflow-hidden bg-zinc-200 relative">
+                <div className="h-64 sm:h-72 w-full overflow-hidden bg-zinc-200 relative">
                   <Image 
                     src={item.image} 
                     alt={item.title}
@@ -421,8 +386,8 @@ export default function LandingPage() {
                     {item.category}
                   </span>
                 </div>
-                <div className="p-5 text-left">
-                  <h3 className="font-bold text-sm text-zinc-900">{item.title}</h3>
+                <div className="p-4 sm:p-5 text-left flex-1 flex items-center">
+                  <h3 className="font-bold text-xs sm:text-sm text-zinc-900">{item.title}</h3>
                 </div>
               </motion.div>
             ))}
