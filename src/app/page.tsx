@@ -1,11 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import LocationSection from '../components/location-section';
 import { 
   Sparkles, Scissors, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, Calendar, Users, Camera, Star
 } from 'lucide-react';
+
+// Static Imports of Real Treatment Images
+import imgHaircut from '@/haircut layer.png';
+import imgHairdo from '@/hairdo.png';
+import imgKeratin from '@/keratin.png';
+import imgSmoothing from '@/smooting.png';
 
 export default function LandingPage() {
   
@@ -61,31 +68,31 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = useState(priceListCategories[0].id);
   const [activeAccordion, setActiveAccordion] = useState<string | null>(priceListCategories[0].id);
 
-  // Gallery Showcase Data
+  // Real Salon Portfolio Gallery Showcase Data
   const galleryItems = [
     {
       id: 1,
-      title: 'Korean Balayage & Silk Gloss',
-      category: 'Coloring',
-      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=600'
+      title: 'Premium Hairdo & Styling',
+      category: 'STYLING',
+      image: imgHairdo
     },
     {
       id: 2,
-      title: 'Keratin Filler Smoothing',
-      category: 'Smoothing',
-      image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600'
+      title: 'Signature Smoothing',
+      category: 'SMOOTHING',
+      image: imgSmoothing
     },
     {
       id: 3,
-      title: 'Signature Ladies Layer Cut',
-      category: 'Haircut',
-      image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=80&w=600'
+      title: 'Ladies Layer Haircut',
+      category: 'HAIRCUT',
+      image: imgHaircut
     },
     {
       id: 4,
-      title: 'Organic Scalp Detox Ritual',
-      category: 'Scalp Care',
-      image: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=600'
+      title: 'Keratin Filler Treatment',
+      category: 'TREATMENT',
+      image: imgKeratin
     }
   ];
 
@@ -367,7 +374,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. GALLERY SECTION */}
+      {/* 4. GALLERY SECTION WITH REAL SALON IMAGES (STATIC IMPORTS & BLUR PLACEHOLDER) */}
       {/* ========================================================================= */}
       <section id="galeri" className="py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
         <div className="max-w-7xl mx-auto">
@@ -403,17 +410,18 @@ export default function LandingPage() {
                 transition={{ duration: 0.4 }}
                 className="bg-zinc-50 rounded-2xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
               >
-                <div className="h-64 w-full overflow-hidden bg-zinc-200 relative">
-                  <img 
+                <div className="h-72 w-full overflow-hidden bg-zinc-200 relative">
+                  <Image 
                     src={item.image} 
                     alt={item.title}
+                    placeholder="blur"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-3 left-3 bg-zinc-900/80 backdrop-blur-md text-white font-bold text-[10px] uppercase px-3 py-1 rounded-full">
+                  <span className="absolute top-3 left-3 bg-zinc-900/80 backdrop-blur-md text-white font-bold text-[10px] uppercase px-3.5 py-1 rounded-full border border-white/10 shadow-xs">
                     {item.category}
                   </span>
                 </div>
-                <div className="p-5">
+                <div className="p-5 text-left">
                   <h3 className="font-bold text-sm text-zinc-900">{item.title}</h3>
                 </div>
               </motion.div>
