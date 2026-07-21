@@ -242,7 +242,7 @@ export default function PublicBookingPage() {
             <div className="p-3.5 bg-zinc-100/80 border border-zinc-200 rounded-xl flex items-center gap-3 text-xs text-zinc-600">
               <ShieldCheck className="h-5 w-5 text-[#926C3A] flex-shrink-0" />
               <span>
-                Pembayaran dilakukan secara langsung di <strong className="text-zinc-900">Kasir Salon (Fisik)</strong> saat treatment selesai.
+                Pembayaran dilakukan di tempat setelah perawatan selesai.
               </span>
             </div>
 
