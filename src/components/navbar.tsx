@@ -57,21 +57,21 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled 
-        ? 'bg-white/90 backdrop-blur-md shadow-xs border-b border-zinc-200 py-1' 
-        : 'bg-white/80 backdrop-blur-md border-b border-zinc-200/60 py-2'
+        ? 'bg-white/90 backdrop-blur-md shadow-xs border-b border-zinc-200 py-1.5' 
+        : 'bg-white/80 backdrop-blur-md border-b border-zinc-200/60 py-3'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 sm:h-24 items-center justify-between">
           
-          {/* Brand Logo with Real Image src/logosalon.png */}
-          <div className="flex-shrink-0 flex items-center">
+          {/* Brand Logo with Max Size Image src/logosalon.png */}
+          <div className="flex-shrink-0 flex items-center py-1">
             <Link href="/" className="flex items-center group">
               <Image 
                 src={LogoImage} 
                 alt="Milla Hair Studio" 
-                width={160} 
-                height={45} 
-                className="h-11 w-auto object-contain transition-transform group-hover:scale-105"
+                width={240} 
+                height={80} 
+                className="h-16 sm:h-20 w-auto object-contain transition-transform group-hover:scale-105"
                 priority
               />
             </Link>

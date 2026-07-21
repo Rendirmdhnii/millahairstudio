@@ -13,15 +13,16 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           
-          {/* Brand Info & Real Logo Image */}
+          {/* Brand Info & Extra Large Logo Image */}
           <div className="space-y-4">
             <Link href="/" className="inline-block">
               <Image 
                 src={LogoImage} 
                 alt="Milla Hair Studio Logo" 
-                width={170} 
-                height={48} 
-                className="h-11 w-auto object-contain brightness-110"
+                width={260} 
+                height={85} 
+                className="h-20 sm:h-24 w-auto object-contain brightness-110"
+                priority
               />
             </Link>
             <p className="text-xs text-zinc-400 leading-relaxed font-normal">
@@ -85,18 +86,18 @@ export default function Footer() {
 
         </div>
 
-        {/* Footer Bottom with Discreet Admin Portal Link */}
+        {/* Footer Bottom with Discreet Workspace Link */}
         <div className="border-t border-zinc-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-zinc-500 gap-4">
           <p>© {new Date().getFullYear()} Milla Hair Studio Sidoarjo. Hak Cipta Dilindungi.</p>
           <div className="flex items-center gap-4">
             <span className="text-zinc-500">Didedikasikan untuk keindahan mahkota wanita modern.</span>
-            {/* Discreet Admin Login Link */}
+            {/* Discreet Workspace Link */}
             <Link 
-              href="/admin" 
+              href="/workspace" 
               className="text-[11px] text-zinc-500 hover:text-[#926C3A] transition-colors"
-              title="Akses Konsol Admin"
+              title="Internal Console"
             >
-              Admin Portal
+              Workspace
             </Link>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import AdminDashboardPage from '../../admin/dashboard/page';
+import WorkspaceDashboardPage from '../../workspace/dashboard/page';
 
 export default function LegacyAdminDashboard() {
-  return <AdminDashboardPage />;
+  return <WorkspaceDashboardPage />;
 }
