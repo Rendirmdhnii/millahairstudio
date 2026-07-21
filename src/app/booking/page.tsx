@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Scissors, Calendar, Clock, User, Phone, Sparkles, 
-  CheckCircle2, ArrowRight, Loader2, MessageSquare, ShieldCheck
+  CheckCircle2, ArrowRight, Loader2, MessageSquare, ShieldCheck, ChevronDown
 } from 'lucide-react';
 import { useMillaStore } from '@/store/useMillaStore';
 import { supabase } from '@/lib/supabase';
@@ -30,8 +30,24 @@ export default function PublicBookingPage() {
   // Official Admin WhatsApp Phone Number
   const ADMIN_WA_NUMBER = '6285645121008';
 
-  // Time Slots
-  const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+  // Time Slots (Cut-off Last Order max 18:00 WIB agar tidak mepet jam tutup 19:00)
+  const timeSlots = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+
+  // Helper Format Tanggal Indonesia dengan Nama Hari
+  const getFormattedIndonesianDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const dateObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return new Intl.DateTimeFormat('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(dateObj);
+  };
+
+  const formattedDateText = getFormattedIndonesianDate(bookingDate);
 
   const handleSubmitBooking = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,8 +91,8 @@ export default function PublicBookingPage() {
       setIsSubmitting(false);
       setIsSuccess(true);
 
-      // 3. Construct WhatsApp Message URL
-      const waText = `Halo Admin Milla Hair Studio, saya baru saja melakukan reservasi melalui website. Berikut detailnya:\n\nNama: ${fullName}\nLayanan: ${selectedService}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\n\nMohon konfirmasinya.`;
+      // 3. Construct WhatsApp Message URL dengan Nama Hari
+      const waText = `Halo Admin Milla Hair Studio,\n\nSaya ingin melakukan reservasi perawatan rambut dengan rincian berikut:\n\n Nama: ${fullName}\n Layanan: ${selectedService}\n Tanggal: ${formattedDateText}\n Jam: ${bookingTime} WIB\n\nApakah slot tersebut masih tersedia? Mohon konfirmasinya ya. Terima kasih.`;
       const waUrl = `https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(waText)}`;
 
       // 4. Redirect User to WhatsApp API in new tab
@@ -129,7 +145,7 @@ export default function PublicBookingPage() {
             </p>
             <div className="pt-2">
               <a
-                href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(`Halo Admin Milla Hair Studio, saya baru saja melakukan reservasi melalui website. Berikut detailnya:\n\nNama: ${fullName}\nLayanan: ${selectedService}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\n\nMohon konfirmasinya.`)}`}
+                href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(`Halo Admin Milla Hair Studio,\n\nSaya ingin melakukan reservasi perawatan rambut dengan rincian berikut:\n\n Nama: ${fullName}\n Layanan: ${selectedService}\n Tanggal: ${formattedDateText}\n Jam: ${bookingTime} WIB\n\nApakah slot tersebut masih tersedia? Mohon konfirmasinya ya. Terima kasih.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3.5 min-h-[48px] rounded-xl text-xs transition-all shadow-xs"
@@ -185,24 +201,27 @@ export default function PublicBookingPage() {
                 <Scissors className="h-3.5 w-3.5 text-[#926C3A]" />
                 Pilihan Layanan Treatment
               </label>
-              <select
-                value={selectedService}
-                onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full text-base sm:text-sm p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
-                required
-              >
-                {services.map(s => (
-                  <option key={s.id} value={s.name}>
-                    {s.name}
-                  </option>
-                ))}
-                <option value="Balayage Korean Color & Gloss">Balayage Korean Color & Gloss</option>
-                <option value="Detoxifying Clay Scalp Ritual">Detoxifying Clay Scalp Ritual</option>
-                <option value="Premium Keratin Blowout Smooth">Premium Keratin Blowout Smooth</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={selectedService}
+                  onChange={(e) => setSelectedService(e.target.value)}
+                  className="w-full text-base sm:text-sm p-3.5 pr-9 appearance-none truncate bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                  required
+                >
+                  {services.map(s => (
+                    <option key={s.id} value={s.name}>
+                      {s.name}
+                    </option>
+                  ))}
+                  <option value="Balayage Korean Color & Gloss">Balayage Korean Color & Gloss</option>
+                  <option value="Detoxifying Clay Scalp Ritual">Detoxifying Clay Scalp Ritual</option>
+                  <option value="Premium Keratin Blowout Smooth">Premium Keratin Blowout Smooth</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+              </div>
             </div>
 
-            {/* 4. TANGGAL & JAM (GRID 2 KOLOM DENGAN GAP-4 & TINGGI SAMAA) */}
+            {/* 4. TANGGAL & JAM (GRID 2 KOLOM DENGAN CHEVRON KUSTOM & INDONESIAN DATE PREVIEW) */}
             <div className="grid grid-cols-2 gap-4">
               
               {/* Tanggal */}
@@ -219,24 +238,32 @@ export default function PublicBookingPage() {
                   className="w-full h-12 min-h-[48px] text-base sm:text-sm px-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium box-border"
                   required
                 />
+                {bookingDate && (
+                  <div className="text-[10px] text-[#926C3A] font-bold mt-1 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md inline-block">
+                    {formattedDateText}
+                  </div>
+                )}
               </div>
 
-              {/* Jam */}
+              {/* Jam (Custom Chevron & Anti-Truncated) */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
                   <Clock className="h-3.5 w-3.5 text-[#926C3A]" />
-                  Jam
+                  Jam Kedatangan
                 </label>
-                <select
-                  value={bookingTime}
-                  onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full h-12 min-h-[48px] text-base sm:text-sm px-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium box-border"
-                  required
-                >
-                  {timeSlots.map(t => (
-                    <option key={t} value={t}>{t} WIB</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={bookingTime}
+                    onChange={(e) => setBookingTime(e.target.value)}
+                    className="w-full h-12 min-h-[48px] text-base sm:text-sm px-3.5 pr-9 appearance-none truncate bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium box-border"
+                    required
+                  >
+                    {timeSlots.map(t => (
+                      <option key={t} value={t}>{t} WIB</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                </div>
               </div>
 
             </div>
