@@ -64,7 +64,7 @@ export default function Footer() {
                 <MapPin className="h-4 w-4 text-[#926C3A] flex-shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-zinc-200">Alamat Salon:</strong><br />
-                  Timur Jank Jank, Jl. Kav. DPR I No.26, Pagerwojo, Buduran, Kabupaten Sidoarjo, Jawa Timur 61219
+                  Timur Jank Jank, Jl. Kav. DPR I No.26, Nggrekmas, Pagerwojo, Kec. Buduran, Kabupaten Sidoarjo, Jawa Timur 61219, Indonesia
                 </span>
               </li>
               <li className="flex gap-2.5 items-center">

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { MapPin, Clock, Navigation, ExternalLink } from 'lucide-react';
 
 export default function LocationSection() {
-  const googleMapsDirectionsUrl = "https://maps.google.com/?q=Milla+Hair+Studio+Sidoarjo+Jl.+Kav.+DPR+I+No.26+Pagerwojo+Buduran+Sidoarjo";
+  const googleMapsDirectionsUrl = "https://www.google.com/maps/search/?api=1&query=Milla+Hairstudio+Sidoarjo";
 
   return (
     <section id="lokasi" className="py-24 bg-zinc-50 px-4 sm:px-6 lg:px-8 border-b border-zinc-200 overflow-hidden">
@@ -47,7 +47,7 @@ export default function LocationSection() {
                 <div>
                   <h4 className="text-xs font-bold uppercase text-zinc-400 tracking-wider">Alamat Lengkap</h4>
                   <p className="text-sm font-semibold text-zinc-800 leading-relaxed mt-1">
-                    Timur Jank Jank, Jl. Kav. DPR I No.26, Pagerwojo, Kecamatan Buduran, Kabupaten Sidoarjo, Jawa Timur 61219
+                    Timur Jank Jank, Jl. Kav. DPR I No.26, Nggrekmas, Pagerwojo, Kec. Buduran, Kabupaten Sidoarjo, Jawa Timur 61219, Indonesia
                   </p>
                 </div>
               </motion.div>
@@ -87,7 +87,7 @@ export default function LocationSection() {
           {/* Right Column: Google Maps Iframe Card */}
           <div className="lg:col-span-6 w-full h-[420px] sm:h-[480px] rounded-2xl overflow-hidden border border-zinc-200 bg-white shadow-sm relative">
             <iframe 
-              src="https://maps.google.com/maps?q=Jl.%20Kav.%20DPR%20I%20No.26,%20Pagerwojo,%20Sidoarjo&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+              src="https://maps.google.com/maps?q=Milla%20Hairstudio,%20Jl.%20Kav.%20DPR%20I%20No.26,%20Sidoarjo&t=&z=16&ie=UTF8&iwloc=&output=embed" 
               className="w-full h-full min-h-[400px] border-0"
               allowFullScreen={false} 
               loading="lazy" 
