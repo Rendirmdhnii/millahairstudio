@@ -4,10 +4,12 @@ import Footer from '../components/footer';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Milla Hair Studio - Luxury Salon & Spa Sidoarjo',
-  description: 'Mewujudkan kecantikan mahkota wanita modern melalui keahlian seni tata rambut berkelas dunia dan pelayanan penuh kehangatan.',
-  keywords: 'salon sidoarjo, hair studio, potong rambut, balayage, keratin treatment, korea wave perm, milla hair studio',
-  robots: 'index, follow',
+  title: "Milla Hair Studio | Luxury Salon & Spa",
+  description: "Salon wanita modern di Sidoarjo yang menghadirkan perawatan rambut profesional.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
