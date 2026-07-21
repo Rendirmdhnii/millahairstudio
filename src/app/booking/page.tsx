@@ -202,8 +202,8 @@ export default function PublicBookingPage() {
               </select>
             </div>
 
-            {/* 4. TANGGAL & JAM (GRID 2 KOLOM DI HP LAPTOP SIDE-BY-SIDE) */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {/* 4. TANGGAL & JAM (GRID 2 KOLOM DENGAN GAP-4 & TINGGI SAMAA) */}
+            <div className="grid grid-cols-2 gap-4">
               
               {/* Tanggal */}
               <div className="space-y-1.5">
@@ -216,7 +216,7 @@ export default function PublicBookingPage() {
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full text-base sm:text-sm p-3 sm:p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                  className="w-full h-12 min-h-[48px] text-base sm:text-sm px-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium box-border"
                   required
                 />
               </div>
@@ -230,7 +230,7 @@ export default function PublicBookingPage() {
                 <select
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full text-base sm:text-sm p-3 sm:p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                  className="w-full h-12 min-h-[48px] text-base sm:text-sm px-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium box-border"
                   required
                 >
                   {timeSlots.map(t => (
