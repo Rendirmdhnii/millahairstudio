@@ -310,15 +310,15 @@ export default function WorkspaceDashboardPage() {
       {/* 1. SIDEBAR LAYOUT (CLEAN LIGHT MODE PANEL - DESKTOP ONLY) */}
       <aside className="w-64 h-full bg-white text-gray-700 flex flex-col justify-between hidden md:flex border-r border-gray-200 shadow-xs flex-shrink-0">
         <div>
-          {/* Studio Brand Header */}
+          {/* Studio Brand Header (Large Logo) */}
           <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center gap-3">
+            <div className="w-36 md:w-44 mb-1">
               <Image 
                 src={LogoImage} 
                 alt="Milla Hair Studio" 
-                width={120} 
-                height={120} 
-                className="h-10 w-auto object-contain filter drop-shadow-xs"
+                width={180} 
+                height={180} 
+                className="w-full h-auto object-contain filter drop-shadow-xs"
                 priority
               />
             </div>
@@ -377,8 +377,24 @@ export default function WorkspaceDashboardPage() {
           </nav>
         </div>
 
-        {/* Bottom User Actions */}
-        <div className="p-6 border-t border-gray-200">
+        {/* Bottom Sidebar User Actions & Status Widget */}
+        <div className="p-4 border-t border-gray-200 mt-auto flex flex-col justify-end space-y-3">
+          {/* Widget Profil & Status System (Pure Typography, Light Mode) */}
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1">
+            <span className="text-xs text-gray-500 block font-medium">Admin Terautentikasi</span>
+            <span className="font-bold text-gray-900 text-sm block">Super Admin / Owner</span>
+            <span className="text-xs text-gray-500 truncate block font-mono">
+              {currentUser?.email || 'admin01@millahairstudio.com'}
+            </span>
+            
+            <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between text-xs">
+              <span className="text-gray-500 font-medium">Status Sistem:</span>
+              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 uppercase tracking-wider">
+                Online
+              </span>
+            </div>
+          </div>
+
           <button
             onClick={handleLogoutClick}
             className="w-full text-center p-3 text-rose-600 hover:bg-rose-50 border border-gray-200 rounded-xl transition-all text-xs font-bold"
