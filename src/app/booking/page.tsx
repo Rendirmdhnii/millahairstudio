@@ -58,7 +58,8 @@ export default function PublicBookingPage() {
       ]);
 
       if (error) {
-        console.warn('Supabase Insert Notice:', error.message);
+        console.error('Supabase Insert Error:', error.message);
+        throw new Error(error.message);
       }
 
       // 2. Sync with Zustand store
