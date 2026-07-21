@@ -190,12 +190,12 @@ export default function PublicBookingPage() {
               >
                 {services.map(s => (
                   <option key={s.id} value={s.name}>
-                    {s.name} - ({formatPrice(s.price)})
+                    {s.name}
                   </option>
                 ))}
-                <option value="Balayage Korean Color & Gloss">Balayage Korean Color & Gloss (Rp 1.100.000)</option>
-                <option value="Detoxifying Clay Scalp Ritual">Detoxifying Clay Scalp Ritual (Rp 450.000)</option>
-                <option value="Premium Keratin Blowout Smooth">Premium Keratin Blowout Smooth (Rp 1.200.000)</option>
+                <option value="Balayage Korean Color & Gloss">Balayage Korean Color & Gloss</option>
+                <option value="Detoxifying Clay Scalp Ritual">Detoxifying Clay Scalp Ritual</option>
+                <option value="Premium Keratin Blowout Smooth">Premium Keratin Blowout Smooth</option>
               </select>
             </div>
 
