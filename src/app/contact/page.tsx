@@ -87,7 +87,7 @@ export default function ContactPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Contoh: Aurelia"
-                  className="w-full text-xs mt-1 p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all"
+                  className="w-full text-base sm:text-xs mt-1 p-3.5 min-h-[44px] bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium"
                   required
                 />
               </div>
@@ -99,7 +99,7 @@ export default function ContactPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Contoh: aurelia@gmail.com"
-                  className="w-full text-xs mt-1 p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all"
+                  className="w-full text-base sm:text-xs mt-1 p-3.5 min-h-[44px] bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all font-medium"
                   required
                 />
               </div>
@@ -111,7 +111,7 @@ export default function ContactPage() {
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
                   placeholder="Tulis tanggapan atau masukan Anda di sini..."
-                  className="w-full text-xs mt-1 p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"
+                  className="w-full text-base sm:text-xs mt-1 p-3.5 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-primary focus:bg-white transition-all resize-none font-medium"
                   required
                 />
               </div>

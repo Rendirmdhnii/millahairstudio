@@ -88,7 +88,7 @@ export default function StealthLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Masukkan email..."
-                className="w-full text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[44px]"
+                className="w-full text-base sm:text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[48px]"
                 required
                 disabled={loading}
               />
@@ -100,13 +100,13 @@ export default function StealthLoginPage() {
               Kata Sandi
             </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-zinc-400" />
+              <Lock className="absolute left-3.5 top-4 h-4 w-4 text-zinc-400" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan kata sandi..."
-                className="w-full text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[44px]"
+                className="w-full text-base sm:text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[48px]"
                 required
                 disabled={loading}
               />

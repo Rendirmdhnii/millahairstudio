@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { useMillaStore } from '@/store/useMillaStore';
 import { supabase } from '@/lib/supabase';
-import { formatPrice } from '@/lib/utils';
 
 export default function PublicBookingPage() {
   const { services, addSupabaseBooking } = useMillaStore();
@@ -93,17 +92,17 @@ export default function PublicBookingPage() {
   };
 
   return (
-    <div className="min-h-[85vh] bg-zinc-50 text-zinc-900 font-sans flex items-center justify-center p-4 sm:p-8 py-16 sm:py-24 relative">
+    <div className="min-h-[85vh] bg-zinc-50 text-zinc-900 font-sans flex items-center justify-center p-4 sm:p-8 py-16 sm:py-24 pb-24 md:pb-8 relative">
       
       {/* Single-Column Centered Card Container */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-xl bg-white border border-zinc-200 shadow-sm rounded-2xl p-6 sm:p-10 relative z-10"
+        className="w-full max-w-xl bg-white border border-zinc-200 shadow-sm rounded-2xl p-5 sm:p-10 relative z-10"
       >
         {/* Header Branding */}
-        <div className="text-center space-y-2 mb-8">
+        <div className="text-center space-y-2 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 bg-zinc-100 border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-[#926C3A]">
             <Sparkles className="h-3.5 w-3.5 text-[#926C3A]" />
             <span>Milla Hair Studio - Online Booking</span>
@@ -121,7 +120,7 @@ export default function PublicBookingPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center space-y-4"
+            className="bg-emerald-50 border border-emerald-200 p-6 sm:p-8 rounded-2xl text-center space-y-4"
           >
             <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
             <h3 className="text-xl font-serif font-bold text-zinc-900">Reservasi Berhasil Dicatat</h3>
@@ -133,7 +132,7 @@ export default function PublicBookingPage() {
                 href={`https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(`Halo Admin Milla Hair Studio, saya baru saja melakukan reservasi melalui website. Berikut detailnya:\n\nNama: ${fullName}\nLayanan: ${selectedService}\nTanggal: ${bookingDate}\nJam: ${bookingTime}\n\nMohon konfirmasinya.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all shadow-xs"
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3.5 min-h-[48px] rounded-xl text-xs transition-all shadow-xs"
               >
                 <MessageSquare className="h-4 w-4" />
                 Buka WhatsApp Admin Sekarang
@@ -142,7 +141,7 @@ export default function PublicBookingPage() {
           </motion.div>
         ) : (
           /* SINGLE COLUMN CLEAN BOOKING FORM */
-          <form onSubmit={handleSubmitBooking} className="space-y-5 text-left">
+          <form onSubmit={handleSubmitBooking} className="space-y-4 sm:space-y-5 text-left">
             
             {/* 1. NAMA LENGKAP */}
             <div className="space-y-1.5">
@@ -155,7 +154,7 @@ export default function PublicBookingPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Masukkan nama lengkap Anda..."
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                className="w-full text-base sm:text-sm p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                 required
               />
             </div>
@@ -172,7 +171,7 @@ export default function PublicBookingPage() {
                 onChange={(e) => setWhatsappPhone(e.target.value.replace(/\D/g, ''))}
                 placeholder="Contoh: 08123456789..."
                 maxLength={13}
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-mono"
+                className="w-full text-base sm:text-sm p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-mono"
                 required
               />
               <p className="text-[10px] text-zinc-400 font-normal leading-none mt-1 pl-1">
@@ -189,7 +188,7 @@ export default function PublicBookingPage() {
               <select
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
-                className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                className="w-full text-base sm:text-sm p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                 required
               >
                 {services.map(s => (
@@ -203,21 +202,21 @@ export default function PublicBookingPage() {
               </select>
             </div>
 
-            {/* 4. TANGGAL & JAM */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* 4. TANGGAL & JAM (GRID 2 KOLOM DI HP LAPTOP SIDE-BY-SIDE) */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               
               {/* Tanggal */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
                   <Calendar className="h-3.5 w-3.5 text-[#926C3A]" />
-                  Tanggal Kunjungan
+                  Tanggal
                 </label>
                 <input
                   type="date"
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                  className="w-full text-base sm:text-sm p-3 sm:p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                   required
                 />
               </div>
@@ -226,12 +225,12 @@ export default function PublicBookingPage() {
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-zinc-700 flex items-center gap-1.5 uppercase tracking-wider">
                   <Clock className="h-3.5 w-3.5 text-[#926C3A]" />
-                  Jam Kedatangan
+                  Jam
                 </label>
                 <select
                   value={bookingTime}
                   onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
+                  className="w-full text-base sm:text-sm p-3 sm:p-3.5 min-h-[48px] bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium"
                   required
                 >
                   {timeSlots.map(t => (
@@ -255,7 +254,7 @@ export default function PublicBookingPage() {
               type="submit"
               disabled={isSubmitting}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
+              className="w-full bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3.5 min-h-[48px] rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

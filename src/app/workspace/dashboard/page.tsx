@@ -478,7 +478,7 @@ export default function WorkspaceDashboardPage() {
                   setFilterDate(e.target.value);
                   if (e.target.value) setFilterMonth('');
                 }}
-                className="w-full text-xs p-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
+                className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
               />
             </div>
 
@@ -493,7 +493,7 @@ export default function WorkspaceDashboardPage() {
                   setFilterMonth(e.target.value);
                   if (e.target.value) setFilterDate('');
                 }}
-                className="w-full text-xs p-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
+                className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
               />
             </div>
 
@@ -504,7 +504,7 @@ export default function WorkspaceDashboardPage() {
               <select
                 value={statusFilter}
                 onChange={(e: any) => setStatusFilter(e.target.value)}
-                className="w-full text-xs p-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A] capitalize"
+                className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A] capitalize"
               >
                 <option value="all">Semua Status</option>
                 <option value="pending">Pending (Menunggu)</option>
@@ -520,13 +520,13 @@ export default function WorkspaceDashboardPage() {
               </label>
               <div className="flex gap-1.5">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-500" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 sm:h-3.5 sm:w-3.5 text-zinc-500" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Nama / HP / Layanan..."
-                    className="w-full text-xs p-2.5 pl-8 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
+                    className="w-full text-base sm:text-xs p-2.5 pl-9 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
                   />
                 </div>
                 {(filterDate || filterMonth || statusFilter !== 'all' || searchQuery) && (
@@ -537,7 +537,7 @@ export default function WorkspaceDashboardPage() {
                       setStatusFilter('all');
                       setSearchQuery('');
                     }}
-                    className="px-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 font-bold rounded-lg text-[10px] transition-colors"
+                    className="px-3 min-h-[44px] sm:min-h-[36px] bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 font-bold rounded-lg text-[10px] transition-colors"
                   >
                     Reset
                   </button>
@@ -548,7 +548,7 @@ export default function WorkspaceDashboardPage() {
           </div>
 
           {/* Table Element with responsive wrapper */}
-          <div className="w-full overflow-x-auto rounded-xl border border-zinc-800/80 bg-zinc-950/60">
+          <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-zinc-800/80 bg-zinc-950/60">
             <table className="w-full min-w-[850px] text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-zinc-800 text-zinc-400 font-bold uppercase text-[9px] tracking-wider bg-zinc-900/80">
@@ -808,7 +808,7 @@ export default function WorkspaceDashboardPage() {
                   value={custName}
                   onChange={(e) => setCustName(e.target.value)}
                   placeholder="Contoh: Dian Sastrowardoyo"
-                  className="w-full mt-1 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
                   required
                 />
               </div>
@@ -820,7 +820,7 @@ export default function WorkspaceDashboardPage() {
                   value={custPhone}
                   onChange={(e) => setCustPhone(e.target.value)}
                   placeholder="Contoh: 081122334455"
-                  className="w-full mt-1 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
                   required
                 />
               </div>
@@ -830,7 +830,7 @@ export default function WorkspaceDashboardPage() {
                 <select
                   value={serviceName}
                   onChange={(e) => setServiceName(e.target.value)}
-                  className="w-full mt-1 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
                 >
                   {services.map(s => (
                     <option key={s.id} value={s.name}>{s.name} - ({formatPrice(s.price)})</option>
@@ -845,7 +845,7 @@ export default function WorkspaceDashboardPage() {
                     type="date"
                     value={bDate}
                     onChange={(e) => setBDate(e.target.value)}
-                    className="w-full mt-1 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
                     required
                   />
                 </div>
@@ -854,7 +854,7 @@ export default function WorkspaceDashboardPage() {
                   <select
                     value={bTime}
                     onChange={(e) => setBTime(e.target.value)}
-                    className="w-full mt-1 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
                   >
                     {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'].map(t => (
                       <option key={t} value={t}>{t}</option>
