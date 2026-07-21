@@ -10,6 +10,7 @@ import LogoImage from '@/logosalon.png';
 
 export default function Navbar() {
   const pathname = usePathname();
+  if (pathname && pathname.startsWith('/workspace')) return null;
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

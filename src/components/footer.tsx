@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, MapPin, Clock } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import LogoImage from '@/logosalon.png';
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname && pathname.startsWith('/workspace')) return null;
   const waLink = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20ingin%20berkonsultasi.";
 
   return (
