@@ -169,11 +169,15 @@ export default function PublicBookingPage() {
               <input
                 type="tel"
                 value={whatsappPhone}
-                onChange={(e) => setWhatsappPhone(e.target.value)}
+                onChange={(e) => setWhatsappPhone(e.target.value.replace(/\D/g, ''))}
                 placeholder="Contoh: 08123456789..."
+                maxLength={13}
                 className="w-full text-xs p-3.5 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-mono"
                 required
               />
+              <p className="text-[10px] text-zinc-400 font-normal leading-none mt-1 pl-1">
+                Masukkan hanya angka saja, maksimal 13 digit.
+              </p>
             </div>
 
             {/* 3. PILIHAN LAYANAN (DROPDOWN) */}
