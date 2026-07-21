@@ -3,11 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { 
-  Calendar, DollarSign, Clock, CheckCircle2, XCircle, 
-  Search, Plus, Check, X, Phone, Scissors, LogOut, LayoutDashboard, 
-  FileSpreadsheet, AlertCircle, TrendingUp, Trash2, Users, Settings
-} from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useMillaStore } from '@/store/useMillaStore';
 import { formatPrice } from '@/lib/utils';
@@ -85,6 +80,7 @@ export default function WorkspaceDashboardPage() {
   const [activeTab, setActiveTab] = useState<'reservations' | 'customers' | 'services' | 'settings'>('reservations');
 
   // Booking table filter & search states
+  const [showFilters, setShowFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | BookingStatus>('all');
   const [filterDate, setFilterDate] = useState<string>('');
   const [filterMonth, setFilterMonth] = useState<string>('');
@@ -154,126 +150,130 @@ export default function WorkspaceDashboardPage() {
     return matchesStatus && matchesDate && matchesMonth && matchesSearch;
   });
 
-  // FITUR EXPORT EXCEL (.XLSX)
-  const handleExportExcel = () => {
-    if (filteredBookings.length === 0) {
-      alert('Tidak ada data booking untuk diekspor.');
-      return;
-    }
-
-    const excelData = filteredBookings.map((b, index) => ({
-      'No': index + 1,
-      'ID Booking': b.id,
-      'Nama Pelanggan': b.customer_name,
-      'No. Handphone': b.customer_phone,
-      'Layanan Treatment': b.service_name,
-      'Tanggal Kunjungan': b.booking_date,
-      'Jam Kedatangan': b.booking_time,
-      'Status Booking': b.status.toUpperCase(),
-      'Total Pembayaran Kasir (Rp)': b.total_payment || 0,
-      'Waktu Dibuat': new Date(b.created_at).toLocaleString('id-ID')
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    worksheet['!cols'] = [
-      { wch: 5 }, { wch: 15 }, { wch: 22 }, { wch: 16 }, { wch: 30 },
-      { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 25 }, { wch: 22 },
-    ];
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Laporan Booking');
-
-    const fileName = `Milla_Hair_Studio_Bookings.xlsx`;
-    XLSX.writeFile(workbook, fileName);
-
-    addAuditLog(currentUser.id, 'Export Excel XLSX', `Mengunduh file Excel ${fileName} (${filteredBookings.length} baris data)`);
-  };
-
-  // Action: Accept Booking
-  const handleAcceptBooking = async (bookingId: string) => {
-    updateSupabaseBookingStatus(bookingId, 'accepted');
+  // HANDLERS FOR STATUS UPDATES WITH SUPABASE
+  const handleAcceptBooking = async (id: string) => {
     try {
-      await supabase.from('bookings').update({ status: 'accepted' }).eq('id', bookingId);
+      updateSupabaseBookingStatus(id, 'accepted');
+      addAuditLog(currentUser?.id || 'system', 'Terima Booking', `Menerima booking ID: ${id}`);
+      await supabase.from('bookings').update({ status: 'accepted' }).eq('id', id);
       await reFetchBookings();
     } catch (err) {
-      console.warn('Supabase Update Notice:', err);
+      console.warn('Supabase Accept Notice:', err);
     }
   };
 
-  // Action: Open Complete Modal
   const handleOpenCompleteModal = (booking: Booking) => {
     setSelectedBookingForComplete(booking);
-    const matched = services.find(s => s.name.toLowerCase() === booking.service_name.toLowerCase());
-    setNominalPayment(matched ? matched.price : 350000);
+    const matchedService = services.find(s => s.name === booking.service_name);
+    setNominalPayment(matchedService ? matchedService.price : 350000);
   };
 
-  // Action: Confirm Complete Booking & Save total_payment
   const handleConfirmComplete = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBookingForComplete) return;
 
-    const bId = selectedBookingForComplete.id;
-    const payment = Number(nominalPayment);
-
-    updateSupabaseBookingStatus(bId, 'completed', payment);
+    const id = selectedBookingForComplete.id;
+    const payment = Number(nominalPayment) || 0;
 
     try {
-      await supabase.from('bookings').update({ status: 'completed', total_payment: payment }).eq('id', bId);
+      updateSupabaseBookingStatus(id, 'completed', payment);
+      addAuditLog(currentUser?.id || 'system', 'Selesaikan Booking', `Menyelesaikan booking ID: ${id} dengan total bayar Rp ${payment.toLocaleString()}`);
+
+      await supabase.from('bookings').update({ 
+        status: 'completed',
+        total_payment: payment 
+      }).eq('id', id);
+
+      setSelectedBookingForComplete(null);
       await reFetchBookings();
     } catch (err) {
-      console.warn('Supabase Update Notice:', err);
+      console.warn('Supabase Complete Notice:', err);
     }
-
-    setSelectedBookingForComplete(null);
   };
 
-  // Action: Submit Manual Booking Form
   const handleCreateBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!custName || !custPhone || !serviceName || !bDate || !bTime) {
-      alert('Mohon lengkapi formulir booking.');
+      alert('Mohon isi semua data reservasi.');
       return;
     }
 
-    const newBooking = {
-      customer_name: custName,
-      customer_phone: custPhone,
-      service_name: serviceName,
-      booking_date: bDate,
-      booking_time: bTime,
-      status: 'pending' as BookingStatus,
-      total_payment: 0
-    };
-
-    addSupabaseBooking(newBooking);
-
     try {
-      await supabase.from('bookings').insert([newBooking]);
+      const { data, error } = await supabase.from('bookings').insert([
+        {
+          customer_name: custName,
+          customer_phone: custPhone,
+          service_name: serviceName,
+          booking_date: bDate,
+          booking_time: bTime,
+          status: 'pending',
+          total_payment: 0
+        }
+      ]).select();
+
+      if (error) {
+        console.error('Manual Booking Insert Error:', error.message);
+      }
+
+      addSupabaseBooking({
+        customer_name: custName,
+        customer_phone: custPhone,
+        service_name: serviceName,
+        booking_date: bDate,
+        booking_time: bTime,
+        status: 'pending',
+        total_payment: 0
+      });
+
+      setShowAddBookingModal(false);
+      setCustName('');
+      setCustPhone('');
       await reFetchBookings();
     } catch (err) {
-      console.warn('Supabase Insert Notice:', err);
+      console.error('Manual booking creation failed:', err);
     }
-
-    setShowAddBookingModal(false);
-    setCustName('');
-    setCustPhone('');
   };
 
-  // Action: Delete Booking
-  const handleDeleteBooking = async (bookingId: string) => {
-    const isConfirmed = window.confirm('Apakah Anda yakin ingin menghapus data pelanggan ini? Data pendapatan akan otomatis menyesuaikan.');
+  const handleExportExcel = () => {
+    if (filteredBookings.length === 0) {
+      alert('Tidak ada data reservasi untuk diunduh.');
+      return;
+    }
+
+    const exportData = filteredBookings.map((b, index) => ({
+      No: index + 1,
+      Nama_Pelanggan: b.customer_name,
+      No_Handphone: b.customer_phone,
+      Layanan: b.service_name,
+      Tanggal: b.booking_date,
+      Jam: b.booking_time,
+      Status: b.status,
+      Pembayaran_Kasir: b.total_payment || 0
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reservasi');
+    XLSX.writeFile(workbook, `Laporan_Reservasi_Milla_Hair_Studio_${todayStr}.xlsx`);
+  };
+
+  const handleDeleteBooking = async (id: string) => {
+    const isConfirmed = window.confirm(
+      'Apakah Anda yakin ingin menghapus data pelanggan ini? Data pendapatan akan otomatis menyesuaikan.'
+    );
+
     if (!isConfirmed) return;
 
-    deleteSupabaseBooking(bookingId);
     try {
-      await supabase.from('bookings').delete().eq('id', bookingId);
+      deleteSupabaseBooking(id);
+      addAuditLog(currentUser?.id || 'system', 'Hapus Booking', `Menghapus data booking ID: ${id}`);
+      await supabase.from('bookings').delete().eq('id', id);
       await reFetchBookings();
     } catch (err) {
       console.warn('Supabase Delete Notice:', err);
     }
   };
 
-  // Logout Handler (Clears local session)
   const handleLogoutClick = () => {
     localStorage.removeItem('isLoggedIn');
     logout();
@@ -281,40 +281,37 @@ export default function WorkspaceDashboardPage() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-zinc-950 font-sans text-zinc-300">
+    <div className="flex h-screen w-full overflow-hidden bg-slate-50 font-sans text-gray-800">
       
-      {/* 1. SIDEBAR LAYOUT (CLEAN ZINC 950 PANEL - HIDDEN ON MOBILE SCREEN) */}
-      <aside className="w-64 h-full bg-zinc-950 text-zinc-300 flex flex-col justify-between hidden md:flex border-r border-zinc-900 shadow-xl flex-shrink-0">
+      {/* 1. SIDEBAR LAYOUT (CLEAN LIGHT MODE PANEL - DESKTOP ONLY) */}
+      <aside className="w-64 h-full bg-white text-gray-700 flex flex-col justify-between hidden md:flex border-r border-gray-200 shadow-xs flex-shrink-0">
         <div>
           {/* Studio Brand Header */}
-          <div className="p-6 border-b border-zinc-900">
+          <div className="p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <Image 
                 src={LogoImage} 
                 alt="Milla Hair Studio" 
                 width={120} 
                 height={120} 
-                className="h-10 w-auto object-contain filter drop-shadow-md brightness-110"
+                className="h-10 w-auto object-contain filter drop-shadow-xs"
                 priority
               />
             </div>
           </div>
 
-          {/* Navigation Menu Links (4 Essential Menus) */}
-          <nav className="p-4 space-y-1.5 text-xs font-semibold">
+          {/* Navigation Menu Links (4 Pure Text Menus) */}
+          <nav className="p-4 space-y-1 text-xs font-semibold">
             {/* 1. Daftar Reservasi */}
             <button
               onClick={() => setActiveTab('reservations')}
-              className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+              className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
                 activeTab === 'reservations'
-                  ? 'bg-[#926C3A]/10 text-white border border-[#926C3A]/30 shadow-xs'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 border border-transparent'
+                  ? 'bg-amber-50 text-[#926C3A] border border-amber-200/80 font-bold shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <LayoutDashboard className={`h-4 w-4 ${activeTab === 'reservations' ? 'text-[#926C3A]' : 'text-zinc-500'}`} />
-                <span>Daftar Reservasi</span>
-              </div>
+              <span>Daftar Reservasi</span>
               {activeBookingsCount > 0 && (
                 <span className="bg-[#926C3A] text-white font-extrabold text-[9px] px-2 py-0.5 rounded-full">
                   {activeBookingsCount}
@@ -325,286 +322,345 @@ export default function WorkspaceDashboardPage() {
             {/* 2. Data Pelanggan */}
             <button
               onClick={() => setActiveTab('customers')}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
+              className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
                 activeTab === 'customers'
-                  ? 'bg-[#926C3A]/10 text-white border border-[#926C3A]/30 shadow-xs'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 border border-transparent'
+                  ? 'bg-amber-50 text-[#926C3A] border border-amber-200/80 font-bold shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent'
               }`}
             >
-              <Users className={`h-4 w-4 ${activeTab === 'customers' ? 'text-[#926C3A]' : 'text-zinc-500'}`} />
               <span>Data Pelanggan</span>
             </button>
 
             {/* 3. Kelola Layanan */}
             <button
               onClick={() => setActiveTab('services')}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
+              className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
                 activeTab === 'services'
-                  ? 'bg-[#926C3A]/10 text-white border border-[#926C3A]/30 shadow-xs'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 border border-transparent'
+                  ? 'bg-amber-50 text-[#926C3A] border border-amber-200/80 font-bold shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent'
               }`}
             >
-              <Scissors className={`h-4 w-4 ${activeTab === 'services' ? 'text-[#926C3A]' : 'text-zinc-500'}`} />
               <span>Kelola Layanan</span>
             </button>
 
             {/* 4. Pengaturan */}
             <button
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${
+              className={`w-full flex items-center justify-between p-3.5 rounded-xl transition-all ${
                 activeTab === 'settings'
-                  ? 'bg-[#926C3A]/10 text-white border border-[#926C3A]/30 shadow-xs'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900 border border-transparent'
+                  ? 'bg-amber-50 text-[#926C3A] border border-amber-200/80 font-bold shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent'
               }`}
             >
-              <Settings className={`h-4 w-4 ${activeTab === 'settings' ? 'text-[#926C3A]' : 'text-zinc-500'}`} />
-              <span>Pengaturan</span>
+              <span>Pengaturan System</span>
             </button>
           </nav>
         </div>
 
         {/* Bottom User Actions */}
-        <div className="p-6 border-t border-zinc-900">
+        <div className="p-6 border-t border-gray-200">
           <button
             onClick={handleLogoutClick}
-            className="w-full flex items-center justify-center gap-2.5 p-3 text-zinc-400 hover:text-rose-400 hover:bg-zinc-900 border border-zinc-900 hover:border-zinc-800 rounded-xl transition-all text-xs font-bold"
+            className="w-full text-center p-3 text-rose-600 hover:bg-rose-50 border border-gray-200 rounded-xl transition-all text-xs font-bold"
           >
-            <LogOut className="h-4 w-4" />
-            <span>Keluar Panel Kontrol</span>
+            Keluar Panel Kontrol
           </button>
         </div>
       </aside>
 
-      {/* 2. MAIN CONTENT AREA (FIXED SHELL WITH INTERNAL OVERFLOW SCROLL) */}
-      <main className="flex-1 h-full overflow-y-auto p-4 sm:p-8 pb-24 md:pb-8 space-y-6">
+      {/* 2. MAIN CONTENT AREA (LIGHT MODE BG-SLATE-50 WITH INTERNAL OVERFLOW SCROLL) */}
+      <main className="flex-1 h-full overflow-y-auto p-4 sm:p-8 pb-24 md:pb-8 space-y-5 bg-slate-50 text-gray-800">
         
         {/* TAB 1: DAFTAR RESERVASI */}
         {activeTab === 'reservations' && (
           <>
             {/* Top Header Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-950 p-6 rounded-2xl border border-zinc-900 shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
               <div>
-                <h1 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
                   Reservasi Masuk
                 </h1>
-                <p className="text-xs text-zinc-500 mt-0.5">
-                  Panel pencatatan transaksi dan penjadwalan salon.
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Panel pencatatan transaksi dan penjadwalan salon Milla Hair Studio Sidoarjo.
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-wrap gap-2.5 w-full sm:w-auto">
                 <button
                   onClick={handleExportExcel}
-                  className="bg-[#926C3A]/10 hover:bg-[#926C3A]/20 text-[#926C3A] border border-[#926C3A]/30 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-xs transition-all"
+                  className="flex-1 sm:flex-none bg-amber-50 hover:bg-amber-100 text-[#926C3A] border border-amber-200/80 font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-xs"
                 >
-                  <FileSpreadsheet className="h-4 w-4" />
-                  <span>Unduh Spreadsheet</span>
+                  Unduh Spreadsheet
                 </button>
                 <button
                   onClick={() => setShowAddBookingModal(true)}
-                  className="bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-semibold text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-xs transition-all"
+                  className="flex-1 sm:flex-none bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-xs"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span>Pencatatan Baru</span>
+                  Pencatatan Baru
                 </button>
               </div>
             </div>
 
-            {/* WIDGET RINCIAN PENDAPATAN & METRIK (REVENUE CARDS GRID) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* WIDGET RINCIAN PENDAPATAN & METRIK (KOMPAK 2X2 GRID HP, LIGHT MODE, ZERO ICONS) */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
               
               {/* Card 1: Pendapatan Hari Ini */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                    Pendapatan Hari Ini
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                    <DollarSign className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">
-                    {formatPrice(todayRevenue)}
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 mt-1 flex items-center gap-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
-                    <span>Reservasi selesai hari ini ({todayStr})</span>
-                  </p>
-                </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                  Pendapatan Hari Ini
+                </span>
+                <h3 className="text-lg sm:text-2xl font-bold font-mono text-[#926C3A] tracking-tight">
+                  {formatPrice(todayRevenue)}
+                </h3>
+                <span className="text-[10px] text-gray-400 block">
+                  Reservasi selesai hari ini
+                </span>
               </div>
 
               {/* Card 2: Pendapatan Bulan Ini */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-[#926C3A]/50 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                    Pendapatan Bulan Ini
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-[#926C3A]/15 border border-[#926C3A]/30 text-[#926C3A] flex items-center justify-center">
-                    <TrendingUp className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-3">
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-amber-400 font-mono tracking-tight">
-                    {formatPrice(monthRevenue)}
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 mt-1 flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5 text-amber-500" />
-                    <span>Total omzet bulan berjalan</span>
-                  </p>
-                </div>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                  Pendapatan Bulan Ini
+                </span>
+                <h3 className="text-lg sm:text-2xl font-bold font-mono text-[#926C3A] tracking-tight">
+                  {formatPrice(monthRevenue)}
+                </h3>
+                <span className="text-[10px] text-gray-400 block">
+                  Omzet bulan berjalan
+                </span>
               </div>
 
               {/* Card 3: Total Antrean Aktif */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-blue-500/40 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                    Total Antrean Aktif
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
-                    <Clock className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
-                    {activeBookingsCount}
-                  </h3>
-                  <span className="text-xs text-blue-400 font-semibold">Reservasi</span>
-                </div>
-                <p className="text-[11px] text-zinc-500 mt-1">
-                  Status Pending & Accepted
-                </p>
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                  Total Antrean Aktif
+                </span>
+                <h3 className="text-lg sm:text-2xl font-bold font-mono text-gray-900 tracking-tight">
+                  {activeBookingsCount} <span className="text-xs text-blue-600 font-medium">Reservasi</span>
+                </h3>
+                <span className="text-[10px] text-gray-400 block">
+                  Status Pending & Diterima
+                </span>
               </div>
 
               {/* Card 4: Reservasi Selesai */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-purple-500/40 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                    Total Reservasi Selesai
-                  </span>
-                  <div className="h-9 w-9 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center">
-                    <CheckCircle2 className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
-                    {completedBookingsCount}
-                  </h3>
-                  <span className="text-xs text-purple-400 font-semibold">Selesai</span>
-                </div>
-                <p className="text-[11px] text-zinc-500 mt-1">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                  Reservasi Selesai
+                </span>
+                <h3 className="text-lg sm:text-2xl font-bold font-mono text-gray-900 tracking-tight">
+                  {completedBookingsCount} <span className="text-xs text-emerald-600 font-medium">Selesai</span>
+                </h3>
+                <span className="text-[10px] text-gray-400 block">
                   Transaksi kasir berhasil
-                </p>
+                </span>
               </div>
 
             </div>
 
             {/* TABEL BOOKING MANAGEMENT CARD CONTAINER */}
-            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 shadow-xl p-5 sm:p-6 space-y-5">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6 space-y-4">
               
               {/* Table Container Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800/80">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-gray-100">
                 <div>
-                  <h2 className="text-base sm:text-lg font-serif font-bold text-white flex items-center gap-2">
-                    <span>Daftar Reservasi Terbaru</span>
-                    <span className="text-[10px] bg-[#926C3A]/20 text-amber-400 border border-[#926C3A]/40 font-mono px-2 py-0.5 rounded-full font-sans font-semibold">
-                      20 List Data Terbaru
-                    </span>
+                  <h2 className="text-base sm:text-lg font-serif font-bold text-gray-900">
+                    Daftar Reservasi Terbaru (20 Data Terakhir)
                   </h2>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-gray-500">
                     Kelola status kedatangan dan pembayaran pelanggan salon secara real-time.
                   </p>
                 </div>
               </div>
 
-              {/* FILTER CONTROLS BAR */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-zinc-950 p-4 rounded-xl border border-zinc-800/80 text-xs">
-                
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider block mb-1">
-                    Filter Tanggal (Hari)
-                  </label>
-                  <input
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => {
-                      setFilterDate(e.target.value);
-                      if (e.target.value) setFilterMonth('');
-                    }}
-                    className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
-                  />
-                </div>
+              {/* COLLAPSIBLE FILTER BUTTON & ACCORDION (NO ICONS) */}
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="w-full bg-white border border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl shadow-xs hover:bg-gray-50 transition-all text-xs text-center flex items-center justify-between"
+                >
+                  <span>Filter & Cari Data</span>
+                  <span className="text-[10px] text-gray-400 font-semibold uppercase">
+                    {showFilters ? 'Sembunyikan' : 'Buka Filter'}
+                  </span>
+                </button>
 
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider block mb-1">
-                    Filter Bulan & Tahun
-                  </label>
-                  <input
-                    type="month"
-                    value={filterMonth}
-                    onChange={(e) => {
-                      setFilterMonth(e.target.value);
-                      if (e.target.value) setFilterDate('');
-                    }}
-                    className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider block mb-1">
-                    Status Booking
-                  </label>
-                  <select
-                    value={statusFilter}
-                    onChange={(e: any) => setStatusFilter(e.target.value)}
-                    className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A] capitalize"
-                  >
-                    <option value="all">Semua Status</option>
-                    <option value="pending">Pending (Menunggu)</option>
-                    <option value="accepted">Accepted (Diterima)</option>
-                    <option value="completed">Completed (Selesai)</option>
-                    <option value="cancelled">Cancelled (Dibatalkan)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider block mb-1">
-                    Pencarian
-                  </label>
-                  <div className="flex gap-1.5">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-3 h-4 w-4 sm:h-3.5 sm:w-3.5 text-zinc-500" />
+                {showFilters && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs shadow-xs">
+                    <div>
+                      <label className="text-[10px] text-gray-500 uppercase font-bold tracking-wider block mb-1">
+                        Filter Tanggal (Hari)
+                      </label>
                       <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Nama / HP / Layanan..."
-                        className="w-full text-base sm:text-xs p-2.5 pl-9 min-h-[44px] sm:min-h-[36px] bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:outline-none focus:border-[#926C3A]"
+                        type="date"
+                        value={filterDate}
+                        onChange={(e) => {
+                          setFilterDate(e.target.value);
+                          if (e.target.value) setFilterMonth('');
+                        }}
+                        className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-[#926C3A]"
                       />
                     </div>
-                    {(filterDate || filterMonth || statusFilter !== 'all' || searchQuery) && (
-                      <button
-                        onClick={() => {
-                          setFilterDate('');
-                          setFilterMonth('');
-                          setStatusFilter('all');
-                          setSearchQuery('');
-                        }}
-                        className="px-3 min-h-[44px] sm:min-h-[36px] bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 font-bold rounded-lg text-[10px] transition-colors"
-                      >
-                        Reset
-                      </button>
-                    )}
-                  </div>
-                </div>
 
+                    <div>
+                      <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">
+                        Filter Bulan & Tahun
+                      </label>
+                      <input
+                        type="month"
+                        value={filterMonth}
+                        onChange={(e) => {
+                          setFilterMonth(e.target.value);
+                          if (e.target.value) setFilterDate('');
+                        }}
+                        className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-[#926C3A]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">
+                        Status Booking
+                      </label>
+                      <select
+                        value={statusFilter}
+                        onChange={(e: any) => setStatusFilter(e.target.value)}
+                        className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-[#926C3A] capitalize"
+                      >
+                        <option value="all">Semua Status</option>
+                        <option value="pending">Pending (Menunggu)</option>
+                        <option value="accepted">Accepted (Diterima)</option>
+                        <option value="completed">Completed (Selesai)</option>
+                        <option value="cancelled">Cancelled (Dibatalkan)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">
+                        Pencarian Nama / HP / Layanan
+                      </label>
+                      <div className="flex gap-1.5">
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Nama / HP / Layanan..."
+                          className="w-full text-base sm:text-xs p-2.5 min-h-[44px] sm:min-h-[36px] bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-[#926C3A]"
+                        />
+                        {(filterDate || filterMonth || statusFilter !== 'all' || searchQuery) && (
+                          <button
+                            onClick={() => {
+                              setFilterDate('');
+                              setFilterMonth('');
+                              setStatusFilter('all');
+                              setSearchQuery('');
+                            }}
+                            className="px-3 min-h-[44px] sm:min-h-[36px] bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg text-[10px] transition-colors"
+                          >
+                            Reset
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Table Element with responsive wrapper */}
-              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-zinc-800/80 bg-zinc-950/60">
+              {/* 3. MOBILE CARD LIST VIEW (SANGAT PENTING - LIGHT MODE, PURE TEXT BUTTONS, ZERO ICONS) */}
+              <div className="flex md:hidden flex-col gap-3.5">
+                {filteredBookings.length === 0 ? (
+                  <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-500 text-xs font-medium shadow-xs">
+                    Belum ada data reservasi saat ini.
+                  </div>
+                ) : (
+                  filteredBookings.map((b) => (
+                    <div key={b.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-3">
+                      
+                      {/* Card Header: Customer Name & Pure Text Badge */}
+                      <div className="flex justify-between items-start gap-2 border-b border-gray-100 pb-2.5">
+                        <div>
+                          <h3 className="font-bold text-gray-900 text-sm">{b.customer_name}</h3>
+                          <p className="text-[11px] text-gray-500 font-mono mt-0.5">{b.customer_phone}</p>
+                        </div>
+                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border ${
+                          b.status === 'pending'
+                            ? 'bg-amber-50 text-amber-700 border-amber-200'
+                            : b.status === 'accepted'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : b.status === 'completed'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}>
+                          {b.status === 'pending' ? 'Pending' : b.status === 'accepted' ? 'Diterima' : b.status === 'completed' ? 'Selesai' : 'Batal'}
+                        </span>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="space-y-1 text-xs text-gray-600">
+                        <p><span className="font-medium text-gray-500">Layanan:</span> <span className="font-bold text-gray-900">{b.service_name}</span></p>
+                        <p><span className="font-medium text-gray-500">Jadwal:</span> <span className="font-semibold text-gray-800">{b.booking_date} Pukul {b.booking_time} WIB</span></p>
+                        {b.status === 'completed' && (
+                          <p><span className="font-medium text-gray-500">Total Pembayaran:</span> <span className="font-bold text-emerald-700 font-mono">{formatPrice(b.total_payment || 0)}</span></p>
+                        )}
+                      </div>
+
+                      {/* Card Footer: Action Buttons (Full Width Pure Text, NO ICONS) */}
+                      <div className="pt-2 space-y-2">
+                        <a
+                          href={`https://wa.me/${formatWhatsAppNumber(b.customer_phone)}?text=${encodeURIComponent(
+                            `Halo Kak ${b.customer_name}, kami dari Milla Hair Studio ingin mengingatkan jadwal perawatan ${b.service_name} Anda hari ini pada pukul ${b.booking_time}. Apakah Anda masih bisa hadir sesuai jadwal? Mohon konfirmasinya ya Kak. Terima kasih.`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full block border border-[#926C3A] text-[#926C3A] hover:bg-amber-50 font-bold py-2.5 rounded-xl text-xs text-center transition-all"
+                        >
+                          Hubungi WhatsApp
+                        </a>
+
+                        {b.status === 'pending' && (
+                          <button
+                            onClick={() => handleAcceptBooking(b.id)}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs text-center transition-all"
+                          >
+                            Terima Reservasi
+                          </button>
+                        )}
+
+                        {b.status === 'accepted' && (
+                          <button
+                            onClick={() => handleOpenCompleteModal(b)}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs text-center transition-all"
+                          >
+                            Selesaikan & Catat Pembayaran
+                          </button>
+                        )}
+
+                        {b.status !== 'cancelled' && b.status !== 'completed' && (
+                          <button
+                            onClick={() => updateSupabaseBookingStatus(b.id, 'cancelled')}
+                            className="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5 rounded-xl text-xs text-center transition-all"
+                          >
+                            Batalkan Booking
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => handleDeleteBooking(b.id)}
+                          className="w-full bg-gray-50 hover:bg-red-50 text-red-600 font-bold py-2.5 rounded-xl text-xs text-center border border-gray-200 transition-all"
+                        >
+                          Hapus Data Pelanggan
+                        </button>
+                      </div>
+
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* DESKTOP TABLE VIEW (HIDDEN ON MOBILE SCREEN) */}
+              <div className="hidden md:block w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
                 <table className="w-full min-w-[850px] text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-zinc-800 text-zinc-400 font-bold uppercase text-[9px] tracking-wider bg-zinc-900/80">
+                    <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
                       <th className="p-3.5">Pelanggan</th>
                       <th className="p-3.5">No. Handphone</th>
                       <th className="p-3.5">Layanan Treatment</th>
@@ -614,128 +670,108 @@ export default function WorkspaceDashboardPage() {
                       <th className="p-3.5 text-center">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                  <tbody className="divide-y divide-gray-200 text-gray-700">
                     {filteredBookings.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="p-12 text-center text-zinc-500 font-medium">
+                        <td colSpan={7} className="p-12 text-center text-gray-400 font-medium">
                           Belum ada data reservasi saat ini.
                         </td>
                       </tr>
                     ) : (
                       filteredBookings.map((b) => (
-                        <tr key={b.id} className="hover:bg-zinc-900/50 transition-colors">
-                          <td className="p-3.5 font-bold text-zinc-100 flex items-center gap-2.5">
-                            <div className="h-8 w-8 rounded-xl bg-zinc-800 text-amber-400 font-bold flex items-center justify-center text-xs border border-zinc-700">
-                              {b.customer_name ? b.customer_name.charAt(0).toUpperCase() : 'C'}
-                            </div>
-                            <span>{b.customer_name}</span>
+                        <tr key={b.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="p-3.5 font-bold text-gray-900">
+                            {b.customer_name}
                           </td>
 
-                          <td className="p-3.5 font-mono text-zinc-300">
-                            <div className="flex items-center gap-2">
-                              <Phone className="h-3.5 w-3.5 text-zinc-500" />
-                              <span>{b.customer_phone}</span>
-                            </div>
+                          <td className="p-3.5 font-mono text-gray-700">
+                            {b.customer_phone}
                           </td>
 
                           <td className="p-3.5 font-medium">
-                            <span className="bg-zinc-800/90 text-zinc-200 px-2.5 py-1 rounded-lg border border-zinc-700/60">
+                            <span className="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-lg border border-gray-200">
                               {b.service_name}
                             </span>
                           </td>
 
-                          <td className="p-3.5 text-zinc-300">
-                            <div className="font-semibold text-white">{b.booking_date}</div>
-                            <div className="text-[10px] text-zinc-400 font-mono">Pukul {b.booking_time}</div>
+                          <td className="p-3.5 text-gray-700">
+                            <div className="font-semibold text-gray-900">{b.booking_date}</div>
+                            <div className="text-[10px] text-gray-500 font-mono">Pukul {b.booking_time}</div>
                           </td>
 
-                          {/* BADGE STATUS ENHANCEMENT */}
                           <td className="p-3.5 text-center">
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${
+                            <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                               b.status === 'pending'
-                                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
                                 : b.status === 'accepted'
-                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
                                 : b.status === 'completed'
-                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                                : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-rose-50 text-rose-700 border-rose-200'
                             }`}>
-                              <span className={`h-1.5 w-1.5 rounded-full ${
-                                b.status === 'pending' ? 'bg-amber-400 animate-pulse' :
-                                b.status === 'accepted' ? 'bg-blue-400' :
-                                b.status === 'completed' ? 'bg-emerald-400' : 'bg-rose-400'
-                              }`} />
                               {b.status === 'pending' ? 'Pending' : b.status === 'accepted' ? 'Diterima' : b.status === 'completed' ? 'Selesai' : 'Batal'}
                             </span>
                           </td>
 
-                          <td className="p-3.5 text-right font-bold font-mono text-white">
+                          <td className="p-3.5 text-right font-bold font-mono text-gray-900">
                             {b.status === 'completed' ? (
-                              <span className="text-emerald-400">{formatPrice(b.total_payment || 0)}</span>
+                              <span className="text-emerald-700">{formatPrice(b.total_payment || 0)}</span>
                             ) : (
-                              <span className="text-zinc-600 font-normal italic text-[11px]">-</span>
+                              <span className="text-gray-400 font-normal italic text-[11px]">-</span>
                             )}
                           </td>
 
-                          {/* ACTION BUTTONS COLUMN */}
                           <td className="p-3.5 text-center">
                             <div className="flex items-center justify-center gap-2">
-                              {/* WhatsApp Reminder Icon Button */}
                               <a
                                 href={`https://wa.me/${formatWhatsAppNumber(b.customer_phone)}?text=${encodeURIComponent(
                                   `Halo Kak ${b.customer_name}, kami dari Milla Hair Studio ingin mengingatkan jadwal perawatan ${b.service_name} Anda hari ini pada pukul ${b.booking_time}. Apakah Anda masih bisa hadir sesuai jadwal? Mohon konfirmasinya ya Kak. Terima kasih.`
                                 )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all flex items-center justify-center"
-                                title="Kirim Pengingat WhatsApp"
+                                className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-[#926C3A] border border-amber-200 text-xs font-bold transition-all"
                               >
-                                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
-                                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.731-1.456L0 24zm6.59-4.846c1.6.95 2.568 1.489 4.53 1.49 5.309 0 9.626-4.244 9.629-9.46.002-2.527-.979-4.904-2.761-6.69C16.262 2.709 13.897 1.72 11.4 1.72c-5.312 0-9.63 4.246-9.632 9.462-.001 1.942.502 3.102 1.408 4.675l-1.03 3.766 3.86-1.014z" />
-                                </svg>
+                                WA
                               </a>
 
                               {b.status === 'pending' && (
                                 <button
                                   onClick={() => handleAcceptBooking(b.id)}
-                                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1 transition-all"
+                                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1 rounded-lg shadow-xs transition-all"
                                 >
-                                  <Check className="h-3.5 w-3.5" /> Terima
+                                  Terima
                                 </button>
                               )}
 
                               {b.status === 'accepted' && (
                                 <button
                                   onClick={() => handleOpenCompleteModal(b)}
-                                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-md flex items-center gap-1 transition-all"
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1 rounded-lg shadow-xs transition-all"
                                 >
-                                  <DollarSign className="h-3.5 w-3.5" /> Selesaikan
+                                  Selesaikan
                                 </button>
                               )}
 
                               {b.status === 'completed' && (
-                                <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Terbayar
+                                <span className="text-emerald-700 font-bold text-[11px] bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                                  Terbayar
                                 </span>
                               )}
 
                               {b.status !== 'cancelled' && b.status !== 'completed' && (
                                 <button
                                   onClick={() => updateSupabaseBookingStatus(b.id, 'cancelled')}
-                                  className="p-1.5 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors border border-transparent hover:border-rose-500/20"
-                                  title="Batalkan Booking"
+                                  className="px-2 py-1 text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors"
                                 >
-                                  <X className="h-4 w-4" />
+                                  Batal
                                 </button>
                               )}
 
                               <button
                                 onClick={() => handleDeleteBooking(b.id)}
-                                className="px-2.5 py-1 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-red-500/20 flex items-center gap-1 font-semibold text-xs"
-                                title="Hapus Booking"
+                                className="px-2.5 py-1 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 font-semibold text-xs transition-colors"
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                <span>Hapus</span>
+                                Hapus
                               </button>
                             </div>
                           </td>
@@ -752,32 +788,31 @@ export default function WorkspaceDashboardPage() {
 
         {/* TAB 2: DATA PELANGGAN */}
         {activeTab === 'customers' && (
-          <div className="space-y-6">
-            <div className="bg-zinc-950 p-6 rounded-2xl border border-zinc-900 shadow-sm">
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight flex items-center gap-2.5">
-                <Users className="h-6 w-6 text-[#926C3A]" />
-                <span>Data Pelanggan Salon (CRM)</span>
+          <div className="space-y-5">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
+                Data Pelanggan Salon (CRM)
               </h1>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Daftar pelanggan terdaftar dan histori akumulasi reservasi Milla Hair Studio Sidoarjo.
               </p>
             </div>
 
-            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 shadow-xl p-5 sm:p-6">
-              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-zinc-800/80 bg-zinc-950/60">
-                <table className="w-full min-w-[700px] text-left border-collapse text-xs">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
+                <table className="w-full min-w-[650px] text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-zinc-800 text-zinc-400 font-bold uppercase text-[9px] tracking-wider bg-zinc-900/80">
+                    <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
                       <th className="p-3.5">Nama Pelanggan</th>
                       <th className="p-3.5">No. Handphone WA</th>
                       <th className="p-3.5">Status Keanggotaan</th>
                       <th className="p-3.5 text-center">Total Reservasi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                  <tbody className="divide-y divide-gray-200 text-gray-700">
                     {supabaseBookings.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-zinc-500">
+                        <td colSpan={4} className="p-8 text-center text-gray-400">
                           Belum ada data pelanggan tercatat.
                         </td>
                       </tr>
@@ -786,20 +821,17 @@ export default function WorkspaceDashboardPage() {
                         const customerBookings = supabaseBookings.filter(b => b.customer_phone === phone);
                         const lastBooking = customerBookings[0];
                         return (
-                          <tr key={phone} className="hover:bg-zinc-900/50 transition-colors">
-                            <td className="p-3.5 font-bold text-zinc-100 flex items-center gap-2.5">
-                              <div className="h-8 w-8 rounded-xl bg-[#926C3A]/20 text-[#926C3A] font-bold flex items-center justify-center text-xs border border-[#926C3A]/30">
-                                {lastBooking.customer_name ? lastBooking.customer_name.charAt(0).toUpperCase() : 'P'}
-                              </div>
-                              <span>{lastBooking.customer_name}</span>
+                          <tr key={phone} className="hover:bg-gray-50 transition-colors">
+                            <td className="p-3.5 font-bold text-gray-900">
+                              {lastBooking.customer_name}
                             </td>
-                            <td className="p-3.5 font-mono text-zinc-300">{phone}</td>
+                            <td className="p-3.5 font-mono text-gray-700">{phone}</td>
                             <td className="p-3.5">
-                              <span className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                              <span className="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
                                 VIP Member
                               </span>
                             </td>
-                            <td className="p-3.5 text-center font-bold text-white font-mono">
+                            <td className="p-3.5 text-center font-bold text-gray-900 font-mono">
                               {customerBookings.length} Kali
                             </td>
                           </tr>
@@ -815,38 +847,36 @@ export default function WorkspaceDashboardPage() {
 
         {/* TAB 3: KELOLA LAYANAN */}
         {activeTab === 'services' && (
-          <div className="space-y-6">
-            <div className="bg-zinc-950 p-6 rounded-2xl border border-zinc-900 shadow-sm">
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight flex items-center gap-2.5">
-                <Scissors className="h-6 w-6 text-[#926C3A]" />
-                <span>Katalog Menu Layanan & Tarif</span>
+          <div className="space-y-5">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
+                Katalog Menu Layanan & Tarif
               </h1>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Daftar menu treatment dan estimasi durasi pelayanan salon.
               </p>
             </div>
 
-            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 shadow-xl p-5 sm:p-6">
-              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-zinc-800/80 bg-zinc-950/60">
-                <table className="w-full min-w-[700px] text-left border-collapse text-xs">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
+              <div className="w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
+                <table className="w-full min-w-[650px] text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-zinc-800 text-zinc-400 font-bold uppercase text-[9px] tracking-wider bg-zinc-900/80">
+                    <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
                       <th className="p-3.5">Nama Treatment</th>
                       <th className="p-3.5">Kategori</th>
                       <th className="p-3.5">Estimasi Durasi</th>
                       <th className="p-3.5 text-right">Tarif Harga</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                  <tbody className="divide-y divide-gray-200 text-gray-700">
                     {services.map((s) => (
-                      <tr key={s.id} className="hover:bg-zinc-900/50 transition-colors">
-                        <td className="p-3.5 font-bold text-white flex items-center gap-2">
-                          <Scissors className="h-4 w-4 text-[#926C3A]" />
-                          <span>{s.name}</span>
+                      <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-3.5 font-bold text-gray-900">
+                          {s.name}
                         </td>
-                        <td className="p-3.5 text-zinc-400 capitalize">{s.category || 'Hair Treatment'}</td>
-                        <td className="p-3.5 font-mono text-zinc-400">{s.durationMins || 60} Menit</td>
-                        <td className="p-3.5 text-right font-bold text-emerald-400 font-mono">
+                        <td className="p-3.5 text-gray-600 capitalize">{s.category || 'Hair Treatment'}</td>
+                        <td className="p-3.5 font-mono text-gray-600">{s.durationMins || 60} Menit</td>
+                        <td className="p-3.5 text-right font-bold text-emerald-700 font-mono">
                           {formatPrice(s.price)}
                         </td>
                       </tr>
@@ -860,75 +890,70 @@ export default function WorkspaceDashboardPage() {
 
         {/* TAB 4: PENGATURAN */}
         {activeTab === 'settings' && (
-          <div className="space-y-6">
-            <div className="bg-zinc-950 p-6 rounded-2xl border border-zinc-900 shadow-sm">
-              <h1 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight flex items-center gap-2.5">
-                <Settings className="h-6 w-6 text-[#926C3A]" />
-                <span>Pengaturan Studio & Sesi Admin</span>
+          <div className="space-y-5">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-gray-900 tracking-tight">
+                Pengaturan Studio & Sesi Admin
               </h1>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 Informasi profil salon dan status kredensial login aktif.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Profil Studio Card */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 shadow-xl">
-                <h3 className="text-base font-bold text-white border-b border-zinc-800 pb-3 flex items-center gap-2">
-                  <Scissors className="h-4 w-4 text-[#926C3A]" />
-                  <span>Profil Milla Hair Studio</span>
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-sm">
+                <h3 className="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">
+                  Profil Milla Hair Studio
                 </h3>
-                <div className="space-y-3 text-xs text-zinc-400">
+                <div className="space-y-3 text-xs text-gray-600">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Nama Salon</span>
-                    <span className="font-bold text-zinc-200 text-sm">Milla Hair Studio Sidoarjo</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Nama Salon</span>
+                    <span className="font-bold text-gray-900 text-sm">Milla Hair Studio Sidoarjo</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Alamat Salon</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Alamat Salon</span>
                     <span>Timur Jank Jank, Jl. Kav. DPR I No.26, Nggrekmas, Buduran, Sidoarjo</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Hotline WhatsApp</span>
-                    <span className="font-mono text-emerald-400 font-bold">+6285645121008</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Hotline WhatsApp</span>
+                    <span className="font-mono text-emerald-700 font-bold">+6285645121008</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Jam Operasional</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Jam Operasional</span>
                     <span>Setiap Hari (09:30 - 20:00 WIB)</span>
                   </div>
                 </div>
               </div>
 
               {/* Sesi Kredensial Admin Card */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4 shadow-xl">
-                <h3 className="text-base font-bold text-white border-b border-zinc-800 pb-3 flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span>Status Kredensial Admin</span>
+              <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-4 shadow-sm">
+                <h3 className="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">
+                  Status Kredensial Admin
                 </h3>
-                <div className="space-y-3 text-xs text-zinc-400">
+                <div className="space-y-3 text-xs text-gray-600">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Email Terautentikasi</span>
-                    <span className="font-mono font-bold text-white text-sm">{currentUser?.email || 'admin01@millahairstudio.com'}</span>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Email Terautentikasi</span>
+                    <span className="font-mono font-bold text-gray-900 text-sm">{currentUser?.email || 'admin01@millahairstudio.com'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Peran Akses</span>
-                    <span className="bg-[#926C3A]/20 text-[#926C3A] border border-[#926C3A]/40 font-bold px-2.5 py-0.5 rounded-full text-[10px]">
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Peran Akses</span>
+                    <span className="bg-amber-50 text-[#926C3A] border border-amber-200 font-bold px-2.5 py-0.5 rounded-full text-[10px]">
                       Owner / Super Admin
                     </span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-zinc-500 block">Sesi Login</span>
-                    <span className="text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">Sesi Login</span>
+                    <span className="text-emerald-700 font-bold block mt-0.5">
                       Aktif (Persisted Session)
                     </span>
                   </div>
                   <div className="pt-2">
                     <button
                       onClick={handleLogoutClick}
-                      className="w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 transition-all"
+                      className="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold py-2.5 rounded-xl text-xs text-center transition-all"
                     >
-                      <LogOut className="h-4 w-4" />
-                      <span>Keluar dari Panel Kontrol</span>
+                      Keluar dari Panel Kontrol
                     </button>
                   </div>
                 </div>
@@ -939,121 +964,109 @@ export default function WorkspaceDashboardPage() {
 
       </main>
 
-      {/* 3. MOBILE UX: BOTTOM NAVIGATION BAR (FIXED APP-LIKE FEEL) */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-900 px-2 py-2 flex justify-around items-center text-[10px] font-bold text-zinc-400 shadow-2xl">
+      {/* 3. MOBILE UX: APP-LIKE BOTTOM NAVIGATION BAR (LIGHT MODE, PURE TYPOGRAPHY, ZERO ICONS) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 px-2 py-2 flex justify-around items-center text-xs font-bold text-gray-600 shadow-lg">
         <button
           onClick={() => setActiveTab('reservations')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 min-h-[44px] justify-center transition-all ${
-            activeTab === 'reservations' ? 'text-[#926C3A]' : 'text-zinc-500 hover:text-zinc-300'
+          className={`py-2 px-3 rounded-lg transition-all ${
+            activeTab === 'reservations' ? 'bg-amber-50 text-[#926C3A] font-extrabold' : 'text-gray-600'
           }`}
         >
-          <LayoutDashboard className="h-5 w-5" />
-          <span>Reservasi</span>
+          Reservasi
         </button>
 
         <button
           onClick={() => setActiveTab('customers')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 min-h-[44px] justify-center transition-all ${
-            activeTab === 'customers' ? 'text-[#926C3A]' : 'text-zinc-500 hover:text-zinc-300'
+          className={`py-2 px-3 rounded-lg transition-all ${
+            activeTab === 'customers' ? 'bg-amber-50 text-[#926C3A] font-extrabold' : 'text-gray-600'
           }`}
         >
-          <Users className="h-5 w-5" />
-          <span>Pelanggan</span>
+          Pelanggan
         </button>
 
         <button
           onClick={() => setActiveTab('services')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 min-h-[44px] justify-center transition-all ${
-            activeTab === 'services' ? 'text-[#926C3A]' : 'text-zinc-500 hover:text-zinc-300'
+          className={`py-2 px-3 rounded-lg transition-all ${
+            activeTab === 'services' ? 'bg-amber-50 text-[#926C3A] font-extrabold' : 'text-gray-600'
           }`}
         >
-          <Scissors className="h-5 w-5" />
-          <span>Layanan</span>
+          Layanan
         </button>
 
         <button
           onClick={() => setActiveTab('settings')}
-          className={`flex flex-col items-center gap-1 py-1 px-2.5 min-h-[44px] justify-center transition-all ${
-            activeTab === 'settings' ? 'text-[#926C3A]' : 'text-zinc-500 hover:text-zinc-300'
+          className={`py-2 px-3 rounded-lg transition-all ${
+            activeTab === 'settings' ? 'bg-amber-50 text-[#926C3A] font-extrabold' : 'text-gray-600'
           }`}
         >
-          <Settings className="h-5 w-5" />
-          <span>Pengaturan</span>
+          Pengaturan
         </button>
 
         <button
           onClick={handleLogoutClick}
-          className="flex flex-col items-center gap-1 py-1 px-2.5 text-zinc-500 hover:text-rose-400 min-h-[44px] justify-center transition-all"
+          className="py-2 px-3 rounded-lg text-rose-600 font-bold transition-all"
         >
-          <LogOut className="h-5 w-5" />
-          <span>Keluar</span>
+          Keluar
         </button>
       </div>
 
       {/* MODAL POPUP: SELESAIKAN BOOKING */}
       {selectedBookingForComplete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4 font-sans text-zinc-300">
-          <div className="w-full max-w-md bg-zinc-900 rounded-2xl p-6 border border-zinc-800 shadow-xl space-y-5">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
-              <h3 className="text-lg font-serif font-bold text-white flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-emerald-500" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-4 font-sans text-gray-800">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 border border-gray-200 shadow-xl space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h3 className="text-lg font-serif font-bold text-gray-900">
                 Selesaikan Booking & Pembayaran
               </h3>
               <button 
                 onClick={() => setSelectedBookingForComplete(null)} 
-                className="text-zinc-500 hover:text-zinc-300 p-1"
+                className="text-gray-400 hover:text-gray-600 p-1 font-bold"
               >
-                <X className="h-5 w-5" />
+                Tutup
               </button>
             </div>
 
-            <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1.5 text-xs">
-              <p className="font-bold text-white flex justify-between">
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-1 text-xs">
+              <p className="font-bold text-gray-900 flex justify-between">
                 <span>Pelanggan: {selectedBookingForComplete.customer_name}</span>
-                <span className="text-zinc-500 font-mono">{selectedBookingForComplete.customer_phone}</span>
+                <span className="text-gray-500 font-mono">{selectedBookingForComplete.customer_phone}</span>
               </p>
-              <p className="text-zinc-300">Layanan: <span className="font-semibold text-[#926C3A]">{selectedBookingForComplete.service_name}</span></p>
-              <p className="text-[10px] text-zinc-500">Jadwal: {selectedBookingForComplete.booking_date} Pukul {selectedBookingForComplete.booking_time}</p>
+              <p className="text-gray-700">Layanan: <span className="font-bold text-[#926C3A]">{selectedBookingForComplete.service_name}</span></p>
+              <p className="text-[10px] text-gray-500">Jadwal: {selectedBookingForComplete.booking_date} Pukul {selectedBookingForComplete.booking_time} WIB</p>
             </div>
 
             <form onSubmit={handleConfirmComplete} className="space-y-4 text-left text-xs">
               <div>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1">
                   Nominal Pembayaran Kasir (Rp)
                 </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-3.5 font-bold text-zinc-500 text-sm">Rp</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="5000"
-                    value={nominalPayment}
-                    onChange={(e) => setNominalPayment(Number(e.target.value))}
-                    placeholder="Contoh: 350000"
-                    className="w-full text-base font-bold pl-12 pr-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none focus:border-emerald-600 text-white font-mono transition-all"
-                    required
-                  />
-                </div>
+                <input
+                  type="number"
+                  min="0"
+                  step="5000"
+                  value={nominalPayment}
+                  onChange={(e) => setNominalPayment(Number(e.target.value))}
+                  placeholder="Contoh: 350000"
+                  className="w-full text-base font-bold px-4 py-3 min-h-[48px] bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:border-emerald-600 text-gray-900 font-mono transition-all"
+                  required
+                />
               </div>
 
-              <div className="p-3 bg-emerald-950/20 border border-emerald-900/30 rounded-xl flex gap-2 text-[10px] text-emerald-400">
-                <AlertCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>
-                  Status akan diubah menjadi Completed dan nominal dimasukkan ke dalam laporan transaksi kasir.
-                </span>
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-800 font-medium">
+                Status akan diubah menjadi Completed dan nominal dimasukkan ke dalam laporan transaksi kasir.
               </div>
 
               <div className="flex gap-2.5 pt-2">
                 <button
                   type="button"
                   onClick={() => setSelectedBookingForComplete(null)}
-                  className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-3 rounded-xl text-xs"
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl text-xs"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all"
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow-xs transition-all"
                 >
                   Simpan Pembayaran
                 </button>
@@ -1066,49 +1079,48 @@ export default function WorkspaceDashboardPage() {
 
       {/* MODAL POPUP: CATAT BOOKING BARU */}
       {showAddBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm p-4 font-sans text-zinc-300">
-          <div className="w-full max-w-md bg-zinc-900 rounded-2xl p-6 border border-zinc-800 shadow-xl space-y-4">
-            <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
-              <h3 className="text-lg font-serif font-bold text-white flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-[#926C3A]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-4 font-sans text-gray-800">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 border border-gray-200 shadow-xl space-y-4">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <h3 className="text-lg font-serif font-bold text-gray-900">
                 Catat Booking Manual Baru
               </h3>
-              <button onClick={() => setShowAddBookingModal(false)} className="text-zinc-500 hover:text-zinc-300">
-                <X className="h-5 w-5" />
+              <button onClick={() => setShowAddBookingModal(false)} className="text-gray-400 hover:text-gray-600 font-bold">
+                Tutup
               </button>
             </div>
 
             <form onSubmit={handleCreateBookingSubmit} className="space-y-3.5 text-left text-xs">
               <div>
-                <label className="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">Nama Pelanggan</label>
+                <label className="text-[10px] text-gray-500 uppercase tracking-wider block font-bold">Nama Pelanggan</label>
                 <input
                   type="text"
                   value={custName}
                   onChange={(e) => setCustName(e.target.value)}
                   placeholder="Contoh: Dian Sastrowardoyo"
-                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:border-[#926C3A]"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">No. Handphone Pelanggan</label>
+                <label className="text-[10px] text-gray-500 uppercase tracking-wider block font-bold">No. Handphone Pelanggan</label>
                 <input
                   type="tel"
                   value={custPhone}
                   onChange={(e) => setCustPhone(e.target.value)}
                   placeholder="Contoh: 081122334455"
-                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:border-[#926C3A]"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">Menu Layanan Treatment</label>
+                <label className="text-[10px] text-gray-500 uppercase tracking-wider block font-bold">Menu Layanan Treatment</label>
                 <select
                   value={serviceName}
                   onChange={(e) => setServiceName(e.target.value)}
-                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                  className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:border-[#926C3A]"
                 >
                   {services.map(s => (
                     <option key={s.id} value={s.name}>{s.name} - ({formatPrice(s.price)})</option>
@@ -1118,24 +1130,24 @@ export default function WorkspaceDashboardPage() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">Tanggal Kunjungan</label>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-wider block font-bold">Tanggal Kunjungan</label>
                   <input
                     type="date"
                     value={bDate}
                     onChange={(e) => setBDate(e.target.value)}
-                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:border-[#926C3A]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-wider block font-bold">Jam Kedatangan</label>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-wider block font-bold">Jam Kedatangan</label>
                   <select
                     value={bTime}
                     onChange={(e) => setBTime(e.target.value)}
-                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-zinc-950 border border-zinc-800 rounded-xl text-white focus:outline-none focus:border-[#926C3A]"
+                    className="w-full mt-1 p-3 text-base sm:text-xs min-h-[44px] bg-gray-50 border border-gray-300 rounded-xl text-gray-900 focus:outline-none focus:border-[#926C3A]"
                   >
                     {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'].map(t => (
-                      <option key={t} value={t}>{t}</option>
+                      <option key={t} value={t}>{t} WIB</option>
                     ))}
                   </select>
                 </div>
@@ -1145,13 +1157,13 @@ export default function WorkspaceDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddBookingModal(false)}
-                  className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold py-3 rounded-xl text-xs"
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl text-xs"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all"
+                  className="flex-1 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3 rounded-xl text-xs shadow-xs transition-all"
                 >
                   Simpan Reservasi
                 </button>
