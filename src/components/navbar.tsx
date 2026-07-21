@@ -11,15 +11,14 @@ import LogoImage from '@/logosalon.png';
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('beranda');
   const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
-    { name: 'Beranda', href: '/', id: 'beranda' },
-    { name: 'Tentang Kami', href: '/#tentang', id: 'tentang' },
-    { name: 'Layanan & Harga', href: '/#layanan', id: 'layanan' },
-    { name: 'Galeri Treatment', href: '/#galeri', id: 'galeri' },
-    { name: 'Lokasi Studio', href: '/#lokasi', id: 'lokasi' },
+    { name: 'Beranda', href: '/' },
+    { name: 'Tentang Kami', href: '/tentang' },
+    { name: 'Layanan & Harga', href: '/layanan' },
+    { name: 'Galeri Treatment', href: '/galeri' },
+    { name: 'Lokasi Studio', href: '/lokasi' },
   ];
 
   const waUrl = "https://wa.me/6285645121008?text=Halo%20Milla%20Hair%20Studio,%20saya%20ingin%20bertanya%20seputar%20treatment";
@@ -27,30 +26,11 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-
-      if (pathname === '/') {
-        const sections = navLinks.map(link => link.id).filter(id => id !== 'beranda');
-        const scrollPosition = window.scrollY + 120;
-
-        let current = 'beranda';
-        for (const sectionId of sections) {
-          const element = document.getElementById(sectionId);
-          if (element) {
-            const top = element.offsetTop;
-            const height = element.offsetHeight;
-            if (scrollPosition >= top && scrollPosition < top + height) {
-              current = sectionId;
-              break;
-            }
-          }
-        }
-        setActiveSection(current);
-      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
+  }, []);
 
   const isBookingActive = pathname === '/booking';
 
@@ -77,17 +57,14 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation Links (Dark Mode Styling) */}
+          {/* Desktop Navigation Links (Dark Mode Styling with Pathname matching) */}
           <nav className="hidden md:flex items-center gap-x-1 bg-zinc-900/90 p-1.5 rounded-full border border-zinc-800/80 shadow-inner">
             {navLinks.map((link) => {
-              const isActive = pathname === '/' && activeSection === link.id;
+              const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  onClick={() => {
-                    if (pathname === '/') setActiveSection(link.id);
-                  }}
                   className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-colors duration-200 ${
                     isActive ? 'text-white font-bold' : 'text-zinc-300 hover:text-white'
                   }`}
@@ -159,15 +136,12 @@ export default function Navbar() {
             <div className="px-5 pt-3 pb-8 space-y-3 max-w-md mx-auto">
               <div className="space-y-1">
                 {navLinks.map((link) => {
-                  const isActive = pathname === '/' && activeSection === link.id;
+                  const isActive = pathname === link.href;
                   return (
                     <Link
                       key={link.name}
                       href={link.href}
-                      onClick={() => {
-                        if (pathname === '/') setActiveSection(link.id);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => setIsOpen(false)}
                       className={`flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
                         isActive
                           ? 'bg-[#926C3A] text-white shadow-xs'

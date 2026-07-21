@@ -1,101 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import LocationSection from '../components/location-section';
-import { 
-  Sparkles, Scissors, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, Calendar, Users, Camera, Star
-} from 'lucide-react';
-
-// Static Imports of Real Treatment Images
-import imgHaircut from '@/haircut layer.png';
-import imgHairdo from '@/hairdo.png';
-import imgKeratin from '@/keratin.png';
-import imgSmoothing from '@/smooting.png';
+import { motion } from 'framer-motion';
+import { Sparkles, Calendar, ArrowRight, Star } from 'lucide-react';
 
 export default function LandingPage() {
-  
-  // Price List Categories (No icons inside buttons - Clean Pure Text UI)
-  const priceListCategories = [
-    {
-      id: 'hair-treatment-styling',
-      title: 'Hair Treatment & Styling',
-      services: [
-        { name: 'Ladies Haircut (Owner)', price: '125k' },
-        { name: 'Ladies Haircut By Hairdresser', price: '100k' },
-        { name: 'Gent Haircut', price: '50k' },
-        { name: 'Hairspa / Hairmask (Keratin/Matrix/MK Texture)', price: '150k - 200k' },
-        { name: 'Scalp / Hairfall Treatment', price: '200k' },
-        { name: 'Wash & Dry / Flat Iron / Curly', price: '45k - 110k' },
-        { name: 'Hairdo / Halfdo', price: '130k - 150k' }
-      ]
-    },
-    {
-      id: 'hair-color-smoothing-perm',
-      title: 'Hair Color, Smoothing & Perm',
-      services: [
-        { name: 'Basic Color Vegan (No Bleach)', price: '300k - 900k + UP' },
-        { name: 'Balyage / Highlight', price: '480k - 900k + UP' },
-        { name: 'Bleach + Fashion Color', price: '500k - 950k + UP' },
-        { name: 'Smoothing Collagen / Japan Nano Keratin', price: '400k - 980k + UP' },
-        { name: 'Keratin Filler', price: 'Start From 470k - 1000k + UP' },
-        { name: 'Down Perm Poni / Cold Perm', price: '250k - 600k + UP' }
-      ]
-    },
-    {
-      id: 'hair-extension-eyelash',
-      title: 'Hair Extension & Eyelash',
-      services: [
-        { name: 'Apply Extension Keratin/Ring/Braid', price: '5k - 8k / Helai' },
-        { name: 'Natural / Dramatic / Volume Eyelash', price: '180k - 250k' }
-      ]
-    },
-    {
-      id: 'body-treatment-nails',
-      title: 'Body Treatment & Nails',
-      services: [
-        { name: 'Manicure / Pedicure / Reflexi', price: '75k - 150k' },
-        { name: 'Bodyspa Scrub / V Ratus', price: '75k - 300k' },
-        { name: 'Facial (Basic/Detox)', price: '85k - 250k' },
-        { name: 'Nail Gel (Polos/Simple/Hard Design)', price: '180k - 230k' },
-        { name: 'Nail Gel Halal + Mani/Pedi', price: '165k - 175k' }
-      ]
-    }
-  ];
-
-  // Active Tab & Accordion
-  const [activeTab, setActiveTab] = useState(priceListCategories[0].id);
-  const [activeAccordion, setActiveAccordion] = useState<string | null>(priceListCategories[0].id);
-
-  // Real Salon Portfolio Gallery Showcase Data
-  const galleryItems = [
-    {
-      id: 1,
-      title: 'Premium Hairdo & Styling',
-      category: 'STYLING',
-      image: imgHairdo
-    },
-    {
-      id: 2,
-      title: 'Signature Smoothing',
-      category: 'SMOOTHING',
-      image: imgSmoothing
-    },
-    {
-      id: 3,
-      title: 'Ladies Layer Haircut',
-      category: 'HAIRCUT',
-      image: imgHaircut
-    },
-    {
-      id: 4,
-      title: 'Keratin Filler Treatment',
-      category: 'TREATMENT',
-      image: imgKeratin
-    }
-  ];
-
   return (
     <div className="w-full flex flex-col font-sans text-zinc-900 bg-zinc-50 overflow-x-hidden">
       
@@ -151,7 +59,7 @@ export default function LandingPage() {
               Milla Hair Studio menghadirkan perawatan dan penataan rambut kelas dunia yang profesional, steril, dan penuh estetika modern di Sidoarjo. Pancarkan rasa percaya diri mahkota indah Anda bersama kami.
             </p>
             
-            {/* Action Buttons with min-h-[44px] touch targets */}
+            {/* Action Buttons with min-h-[48px] touch targets */}
             <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 pt-2 sm:pt-4">
               <motion.a 
                 href="/booking"
@@ -163,7 +71,7 @@ export default function LandingPage() {
               </motion.a>
               
               <motion.a 
-                href="#layanan"
+                href="/layanan"
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl border border-white/20 backdrop-blur-md transition-all"
               >
@@ -182,11 +90,11 @@ export default function LandingPage() {
                 <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Rating Pelanggan</p>
               </div>
               <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-lg sm:text-2xl font-bold text-[#926C3A]">100%</p>
+                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">100%</p>
                 <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Steril & Higienis</p>
               </div>
               <div className="bg-white/5 backdrop-blur-md p-3 sm:p-4 rounded-xl border border-white/10 text-center">
-                <p className="text-lg sm:text-2xl font-bold text-[#926C3A]">Sidoarjo</p>
+                <p className="text-xl sm:text-2xl font-bold text-[#926C3A]">Sidoarjo</p>
                 <p className="text-[9px] sm:text-[10px] text-zinc-400 font-bold mt-1 tracking-wider uppercase">Pusat Kota</p>
               </div>
             </div>
@@ -195,212 +103,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 2. ABOUT SECTION */}
-      {/* ========================================================================= */}
-      <section id="tentang" className="py-16 sm:py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center"
-          >
-            <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#926C3A] border border-zinc-200 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
-                <Scissors className="h-3.5 w-3.5" />
-                <span>Tentang Milla Hair Studio</span>
-              </div>
-              
-              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight leading-tight">
-                Pengalaman Perawatan Rambut Berkelas Dunia
-              </h2>
-
-              <p className="text-zinc-500 text-sm sm:text-lg leading-relaxed font-normal">
-                Milla Hair Studio didirikan untuk menghadirkan tempat relaksasi dan perawatan rambut berstandar internasional bagi wanita modern Sidoarjo. Kami menggabungkan teknik penataan terkini dengan produk perawatan rambut alami pilihan.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 sm:p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
-                  <ShieldCheck className="h-6 w-6 text-[#926C3A] mb-2" />
-                  <h4 className="font-bold text-sm text-zinc-900">Produk Bersertifikat</h4>
-                  <p className="text-xs text-zinc-500 mt-1">Menggunakan formula ramah kulit kepala tanpa zat kimia berbahaya.</p>
-                </div>
-                <div className="p-4 sm:p-5 bg-zinc-50 rounded-2xl border border-zinc-200">
-                  <Users className="h-6 w-6 text-[#926C3A] mb-2" />
-                  <h4 className="font-bold text-sm text-zinc-900">Stylist Berpengalaman</h4>
-                  <p className="text-xs text-zinc-500 mt-1">Tim profesional yang tersertifikasi dalam teknik tren internasional.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
-              <img 
-                src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600" 
-                alt="Hair Treatment Studio"
-                className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200"
-              />
-              <img 
-                src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600" 
-                alt="Styling Hair Studio"
-                className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200 mt-4 sm:mt-8"
-              />
-            </div>
-          </motion.div>
+      {/* BRIEF EXQUISITE BRAND STATEMENT SECTION */}
+      <section className="py-20 bg-white text-center px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <h2 className="text-2xl sm:text-4xl font-serif font-bold text-zinc-900 tracking-tight leading-tight">
+            Elevate Your Hair Aesthetics
+          </h2>
+          <p className="text-zinc-500 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            Setiap kunjungan ke Milla Hair Studio dirancang khusus untuk merevitalisasi dan memperindah mahkota rambut Anda secara mendalam menggunakan pelayanan berkualitas tinggi.
+          </p>
+          <div className="flex justify-center gap-4 pt-2">
+            <Link href="/tentang" className="text-xs font-bold uppercase tracking-wider text-[#926C3A] hover:underline">
+              Selengkapnya tentang kami &rarr;
+            </Link>
+          </div>
         </div>
       </section>
-
-      {/* ========================================================================= */}
-      {/* 3. SERVICES & PRICELIST SECTION (MOBILE HORIZONTAL SCROLLABLE TABS) */}
-      {/* ========================================================================= */}
-      <section id="layanan" className="py-16 sm:py-24 bg-zinc-50 px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto">
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4"
-          >
-            <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#926C3A] shadow-xs">
-              <span>Menu & Daftar Harga</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
-              Pilihan Perawatan Berkelas
-            </h2>
-            <div className="w-16 h-1 bg-[#926C3A] rounded-full mx-auto" />
-            <p className="text-zinc-500 text-sm sm:text-lg font-normal leading-relaxed">
-              Seluruh harga transparan dengan pengerjaan oleh stylist berpengalaman menggunakan produk internasional.
-            </p>
-          </motion.div>
-
-          {/* DESKTOP & MOBILE TABS (HORIZONTAL SCROLLABLE ON MOBILE WITH MIN-TOUCH TARGET) */}
-          <div className="space-y-6 sm:space-y-8">
-            <div className="flex overflow-x-auto justify-start sm:justify-center gap-2 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-zinc-200 shadow-xs max-w-4xl mx-auto scrollbar-none">
-              {priceListCategories.map((category) => {
-                const isActive = activeTab === category.id;
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveTab(category.id)}
-                    className={`flex-shrink-0 text-center py-3 px-4 sm:px-5 min-h-[44px] rounded-xl sm:rounded-full text-xs font-bold transition-all ${
-                      isActive 
-                        ? 'bg-[#926C3A] text-white shadow-xs' 
-                        : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
-                    }`}
-                  >
-                    <span>{category.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* TAB CARD CONTENT WITH PRECISE MOBILE ALIGNMENT */}
-            <div className="max-w-4xl mx-auto">
-              {priceListCategories.map((category) => {
-                if (category.id !== activeTab) return null;
-                return (
-                  <motion.div
-                    key={category.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="bg-white rounded-2xl p-5 sm:p-8 border border-zinc-200 shadow-sm"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 sm:gap-y-4 divide-y md:divide-y-0 divide-zinc-100">
-                      {category.services.map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-center py-3 border-b border-zinc-100 last:border-0 min-h-[44px] gap-3">
-                          <span className="font-semibold text-zinc-800 text-xs sm:text-sm text-left leading-snug">{item.name}</span>
-                          <span className="font-bold text-[#926C3A] text-xs sm:text-sm font-mono flex-shrink-0 text-right">{item.price}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-8 sm:mt-12 text-center">
-            <motion.a
-              href="/booking"
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center justify-center gap-2 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-xs sm:text-sm px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-xs transition-all w-full sm:w-auto"
-            >
-              <Calendar className="h-4 w-4" />
-              <span>Reservasi Jadwal Sekarang</span>
-            </motion.a>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 4. GALLERY SECTION WITH RESPONSIVE 1-COL MOBILE / 2-COL TABLET / 4-COL DESKTOP */}
-      {/* ========================================================================= */}
-      <section id="galeri" className="py-16 sm:py-24 bg-white px-4 sm:px-6 lg:px-8 border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto">
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4"
-          >
-            <div className="inline-flex items-center gap-2 bg-zinc-100 text-[#926C3A] border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase">
-              <Camera className="h-3.5 w-3.5" />
-              <span>Galeri Portofolio Treatment</span>
-            </div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif font-bold text-zinc-900 tracking-tight">
-              Hasil Karya Hair Stylist Kami
-            </h2>
-            <div className="w-16 h-1 bg-[#926C3A] rounded-full mx-auto" />
-            <p className="text-zinc-500 text-sm sm:text-lg font-normal leading-relaxed">
-              Koleksi dokumentasi nyata penataan dan perawatan rambut pelanggan setia Milla Hair Studio.
-            </p>
-          </motion.div>
-
-          {/* RESPONSIVE GRID: 1-COL (MOBILE) / 2-COL (TABLET) / 4-COL (DESKTOP) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {galleryItems.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.4 }}
-                className="bg-zinc-50 rounded-2xl border border-zinc-200 overflow-hidden shadow-xs hover:shadow-md transition-shadow flex flex-col"
-              >
-                <div className="h-64 sm:h-72 w-full overflow-hidden bg-zinc-200 relative">
-                  <Image 
-                    src={item.image} 
-                    alt={item.title}
-                    placeholder="blur"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-zinc-900/80 backdrop-blur-md text-white font-bold text-[10px] uppercase px-3.5 py-1 rounded-full border border-white/10 shadow-xs">
-                    {item.category}
-                  </span>
-                </div>
-                <div className="p-4 sm:p-5 text-left flex-1 flex items-center">
-                  <h3 className="font-bold text-xs sm:text-sm text-zinc-900">{item.title}</h3>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 5. LOCATION INTEGRATION SECTION */}
-      {/* ========================================================================= */}
-      <LocationSection />
 
     </div>
   );
 }
+
+// Helper Link wrapper for clean next/link compatibility
+import Link from 'next/link';

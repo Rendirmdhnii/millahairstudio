@@ -40,16 +40,16 @@ export default function Footer() {
                 <Link href="/" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Beranda</Link>
               </li>
               <li>
-                <Link href="/#tentang" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Tentang Kami</Link>
+                <Link href="/tentang" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Tentang Kami</Link>
               </li>
               <li>
-                <Link href="/#layanan" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Layanan Spesialis</Link>
+                <Link href="/layanan" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Layanan Spesialis</Link>
               </li>
               <li>
                 <Link href="/booking" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Form Booking Online</Link>
               </li>
               <li>
-                <Link href="/#lokasi" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Lokasi Studio</Link>
+                <Link href="/lokasi" className="hover:text-[#926C3A] text-zinc-400 transition-colors">Lokasi Studio</Link>
               </li>
             </ul>
           </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ShieldAlert, Loader2 } from 'lucide-react';
 import { useMillaStore } from '@/store/useMillaStore';
 import LogoImage from '@/logosalon.png';
 
@@ -12,20 +12,31 @@ export default function StealthLoginPage() {
   const router = useRouter();
   const { login } = useMillaStore();
 
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
+    setLoading(true);
 
-    const success = login(username, password);
-    if (success) {
-      router.push('/workspace/dashboard');
-    } else {
-      setErrorMsg('Identifikasi gagal. Silakan periksa kembali data Anda.');
-    }
+    // Simulate 1 second processing delay for clean professional flow
+    setTimeout(() => {
+      if (email.toLowerCase() === 'admin@millahairstudio.com' && password === 'milla123') {
+        const res = login('owner@milla.com'); // Authenticate as Owner/Admin in store
+        if (res.success) {
+          router.push('/workspace/dashboard');
+        } else {
+          setErrorMsg('Kredensial tidak valid. Silakan coba lagi.');
+          setLoading(false);
+        }
+      } else {
+        setErrorMsg('Kredensial tidak valid. Silakan coba lagi.');
+        setLoading(false);
+      }
+    }, 1000);
   };
 
   return (
@@ -59,8 +70,8 @@ export default function StealthLoginPage() {
 
         {errorMsg && (
           <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2 font-medium">
-            <ShieldCheck className="h-4 w-4 flex-shrink-0 text-rose-600" />
-            <span>{errorMsg}</span>
+            <ShieldAlert className="h-4 w-4 flex-shrink-0 text-rose-600" />
+            <span className="text-red-500 text-sm">{errorMsg}</span>
           </div>
         )}
 
@@ -71,14 +82,15 @@ export default function StealthLoginPage() {
               ID Pengguna
             </label>
             <div className="relative">
-              <User className="absolute left-3.5 top-3.5 h-4 w-4 text-zinc-400" />
+              <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-zinc-400" />
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan ID pengguna..."
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@millahairstudio.com"
                 className="w-full text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[44px]"
                 required
+                disabled={loading}
               />
             </div>
           </div>
@@ -96,17 +108,28 @@ export default function StealthLoginPage() {
                 placeholder="Masukkan kata sandi..."
                 className="w-full text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[44px]"
                 required
+                disabled={loading}
               />
             </div>
           </div>
 
           <motion.button
             type="submit"
+            disabled={loading}
             whileTap={{ scale: 0.98 }}
-            className="w-full bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider min-h-[44px] mt-2"
+            className="w-full bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold py-3.5 rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider min-h-[44px] mt-2 disabled:opacity-50"
           >
-            <span>Masuk</span>
-            <ArrowRight className="h-4 w-4" />
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin text-white" />
+                <span>Memproses...</span>
+              </>
+            ) : (
+              <>
+                <span>Masuk</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </motion.button>
         </form>
       </motion.div>
