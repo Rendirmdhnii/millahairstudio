@@ -26,6 +26,7 @@ export default function StealthLoginPage() {
       if (email.toLowerCase() === 'admin01@millahairstudio.com' && password === 'Millahairstd@01') {
         const res = login('owner@milla.com'); // Authenticate as Owner/Admin in store
         if (res.success) {
+          localStorage.setItem('isLoggedIn', 'true');
           router.push('/workspace/dashboard');
         } else {
           setErrorMsg('Kredensial tidak valid. Silakan coba lagi.');

@@ -19,6 +19,7 @@ export default function WorkspaceDashboardPage() {
 
   const { 
     currentUser, 
+    login,
     logout,
     services, 
     supabaseBookings,
@@ -28,14 +29,20 @@ export default function WorkspaceDashboardPage() {
     addAuditLog
   } = useMillaStore();
 
-  // Redirect if not authenticated/authorized
+  // 1. CEGAH LOGOUT OTOMATIS SAAT REFRESH (PERSISTENT SESSION)
   useEffect(() => {
-    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'owner')) {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn !== 'true') {
       router.push('/workspace');
+    } else {
+      // Re-authenticate in store if store's currentUser is empty (e.g. on page refresh)
+      if (!useMillaStore.getState().currentUser) {
+        login('owner@milla.com');
+      }
     }
-  }, [currentUser, router]);
+  }, [router, login]);
 
-  // LIVE SUPABASE QUERY: SELECT * FROM bookings ON MOUNT
+  // 2. LIVE SYNC SUPABASE DATA (4-SECOND POLLING INTERVAL)
   useEffect(() => {
     async function fetchLiveBookingsFromSupabase() {
       try {
@@ -45,14 +52,10 @@ export default function WorkspaceDashboardPage() {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.warn('Supabase Live Fetch Notice:', error.message);
-        } else if (data && data.length > 0) {
-          data.forEach((b: Booking) => {
-            const exists = useMillaStore.getState().supabaseBookings.some(sb => sb.id === b.id);
-            if (!exists) {
-              addSupabaseBooking(b);
-            }
-          });
+          console.warn('Supabase Live Fetch Error:', error.message);
+        } else if (data) {
+          // Direct sync Zustand store with Supabase database (reflects new items, status updates, and deletions)
+          useMillaStore.setState({ supabaseBookings: data });
         }
       } catch (err) {
         console.error('Supabase Connection Error:', err);
@@ -60,6 +63,10 @@ export default function WorkspaceDashboardPage() {
     }
 
     fetchLiveBookingsFromSupabase();
+
+    // Set a lightweight 4-second interval poll for live updates
+    const interval = setInterval(fetchLiveBookingsFromSupabase, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   // Booking table filter & search states
@@ -139,6 +146,9 @@ export default function WorkspaceDashboardPage() {
     updateSupabaseBookingStatus(bookingId, 'accepted');
     try {
       await supabase.from('bookings').update({ status: 'accepted' }).eq('id', bookingId);
+      // Re-fetch immediately for instant response
+      const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+      if (data) useMillaStore.setState({ supabaseBookings: data });
     } catch (err) {
       console.warn('Supabase Update Notice:', err);
     }
@@ -163,6 +173,9 @@ export default function WorkspaceDashboardPage() {
 
     try {
       await supabase.from('bookings').update({ status: 'completed', total_payment: payment }).eq('id', bId);
+      // Re-fetch immediately for instant response
+      const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+      if (data) useMillaStore.setState({ supabaseBookings: data });
     } catch (err) {
       console.warn('Supabase Update Notice:', err);
     }
@@ -192,6 +205,9 @@ export default function WorkspaceDashboardPage() {
 
     try {
       await supabase.from('bookings').insert([newBooking]);
+      // Re-fetch immediately for instant response
+      const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+      if (data) useMillaStore.setState({ supabaseBookings: data });
     } catch (err) {
       console.warn('Supabase Insert Notice:', err);
     }
@@ -199,6 +215,26 @@ export default function WorkspaceDashboardPage() {
     setShowAddBookingModal(false);
     setCustName('');
     setCustPhone('');
+  };
+
+  // Action: Delete Booking
+  const handleDeleteBooking = async (bookingId: string) => {
+    deleteSupabaseBooking(bookingId);
+    try {
+      await supabase.from('bookings').delete().eq('id', bookingId);
+      // Re-fetch immediately for instant response
+      const { data } = await supabase.from('bookings').select('*').order('created_at', { ascending: false });
+      if (data) useMillaStore.setState({ supabaseBookings: data });
+    } catch (err) {
+      console.warn('Supabase Delete Notice:', err);
+    }
+  };
+
+  // Logout Handler (Clears local session)
+  const handleLogoutClick = () => {
+    localStorage.removeItem('isLoggedIn');
+    logout();
+    router.push('/workspace');
   };
 
   return (
@@ -237,13 +273,10 @@ export default function WorkspaceDashboardPage() {
           </nav>
         </div>
 
-        {/* Bottom User Actions (Clean Logout Button only, profiles removed for clean state) */}
+        {/* Bottom User Actions */}
         <div className="p-6 border-t border-zinc-900">
           <button
-            onClick={() => {
-              logout();
-              router.push('/workspace');
-            }}
+            onClick={handleLogoutClick}
             className="w-full flex items-center justify-center gap-2.5 p-3 text-zinc-400 hover:text-rose-400 hover:bg-zinc-900 border border-zinc-900 hover:border-zinc-800 rounded-xl transition-all text-xs font-bold"
           >
             <LogOut className="h-4 w-4" />
@@ -489,7 +522,7 @@ export default function WorkspaceDashboardPage() {
                           )}
 
                           <button
-                            onClick={() => deleteSupabaseBooking(b.id)}
+                            onClick={() => handleDeleteBooking(b.id)}
                             className="p-1.5 text-zinc-600 hover:text-rose-500 transition-colors"
                           >
                             <XCircle className="h-4 w-4" />
@@ -514,10 +547,7 @@ export default function WorkspaceDashboardPage() {
           <span>Bookings</span>
         </div>
         <button
-          onClick={() => {
-            logout();
-            router.push('/workspace');
-          }}
+          onClick={handleLogoutClick}
           className="flex flex-col items-center gap-1 py-1 px-3 text-zinc-500 hover:text-rose-400 min-h-[44px] justify-center"
         >
           <LogOut className="h-5 w-5" />
