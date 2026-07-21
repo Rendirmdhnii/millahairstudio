@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Scissors, ShieldCheck, Users } from 'lucide-react';
 
@@ -41,17 +42,27 @@ export default function TentangPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
-            <img 
-              src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=600" 
-              alt="Hair Treatment Studio"
-              className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200"
-            />
-            <img 
-              src="https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=600" 
-              alt="Styling Hair Studio"
-              className="w-full h-56 sm:h-72 object-cover rounded-2xl shadow-sm border border-zinc-200 mt-4 sm:mt-8"
-            />
+          <div className="lg:col-span-6 grid grid-cols-2 gap-4 sm:gap-6">
+            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border border-zinc-200 transition-all duration-300 group">
+              <Image 
+                src="/about-hair.jpg" 
+                alt="Detail hasil perawatan rambut sehat berkilau di Milla Hair Studio Sidoarjo"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl border border-zinc-200 mt-6 sm:mt-10 transition-all duration-300 group">
+              <Image 
+                src="/about-tools.jpg" 
+                alt="Peralatan profesional salon Milla Hair Studio Sidoarjo"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
         </motion.div>
       </div>

@@ -4,11 +4,40 @@ import Footer from '../components/footer';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: "Milla Hair Studio | Luxury Salon & Spa",
-  description: "Salon wanita modern di Sidoarjo yang menghadirkan perawatan rambut profesional.",
+  metadataBase: new URL('https://www.millahairstudio.com'),
+  title: {
+    default: "Milla Hair Studio | Premium Salon Sidoarjo",
+    template: "%s | Milla Hair Studio"
+  },
+  description: "Salon wanita kelas dunia di Sidoarjo. Spesialis balayage, smoothing, keratin, dan hair spa dengan produk bersertifikat.",
+  applicationName: 'Milla Hair Studio',
+  authors: [{ name: 'Milla Hair Studio' }],
+  generator: 'Next.js',
+  keywords: ["salon premium Sidoarjo", "balayage Sidoarjo", "keratin treatment terbaik", "salon wanita terdekat", "Milla Hair Studio"],
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
+  },
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: "Milla Hair Studio Sidoarjo",
+    description: "Pancarkan kecantikan rambut Anda bersama stylist profesional kami.",
+    url: "https://www.millahairstudio.com",
+    siteName: "Milla Hair Studio",
+    images: [{ url: "/icon.png", width: 1200, height: 630, alt: "Milla Hair Studio Premium Salon" }],
+    locale: "id_ID",
+    type: "website",
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Milla Hair Studio | Premium Salon Sidoarjo',
+    description: 'Salon wanita kelas dunia di Sidoarjo. Spesialis balayage dan smoothing.',
+    images: ['/icon.png'],
+  },
+  verification: {
+    google: 'isi_dengan_google_site_verification_code',
   },
 };
 

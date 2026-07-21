@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sparkles, Calendar, ArrowRight, Star } from 'lucide-react';
 
@@ -7,15 +9,64 @@ export default function LandingPage() {
   return (
     <div className="w-full flex flex-col font-sans text-zinc-900 bg-zinc-50 overflow-x-hidden">
       
+      {/* Enterprise LocalBusiness & Service Schema Markup (JSON-LD) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "HairSalon",
+              "name": "Milla Hair Studio",
+              "image": "https://www.millahairstudio.com/icon.png",
+              "@id": "https://www.millahairstudio.com",
+              "url": "https://www.millahairstudio.com",
+              "telephone": "+6285645121008",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Timur Jank Jank, Jl. Kav. DPR I No.26, Nggrekmas, Pagerwojo",
+                "addressLocality": "Sidoarjo",
+                "addressRegion": "Jawa Timur",
+                "postalCode": "61219",
+                "addressCountry": "ID"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": -7.4478,
+                "longitude": 112.7183
+              },
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "reviewCount": "150"
+              },
+              "priceRange": "$$"
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "Service",
+              "serviceType": "Premium Hair Treatment",
+              "provider": {
+                "@type": "HairSalon",
+                "name": "Milla Hair Studio"
+              }
+            }
+          ])
+        }}
+      />
+      
       {/* ========================================================================= */}
       {/* 1. HERO SECTION WITH MOBILE-OPTIMIZED SPACING & 4.9 RATING BADGE */}
       {/* ========================================================================= */}
       <section className="relative w-full min-h-[85vh] flex items-center bg-zinc-900 text-white overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 z-0">
-          <img 
+          <Image 
             src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1600" 
-            alt="Milla Hair Studio Salon Interior" 
-            className="w-full h-full object-cover opacity-20 scale-105"
+            alt="Perawatan rambut profesional dan smoothing di Milla Hair Studio Sidoarjo" 
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover opacity-20 scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900/95 to-zinc-900/80" />
         </div>
@@ -61,23 +112,23 @@ export default function LandingPage() {
             
             {/* Action Buttons with min-h-[48px] touch targets */}
             <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 pt-2 sm:pt-4">
-              <motion.a 
+              <Link 
                 href="/booking"
-                whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-3 bg-[#926C3A] hover:bg-[#7D5B2E] text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl shadow-xs transition-all"
+                aria-label="Form Booking Online Milla Hair Studio"
               >
                 <Calendar className="h-5 w-5" />
                 <span>Form Booking Online</span>
-              </motion.a>
+              </Link>
               
-              <motion.a 
+              <Link 
                 href="/layanan"
-                whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[48px] rounded-xl border border-white/20 backdrop-blur-md transition-all"
+                aria-label="Lihat Layanan & Harga Treatment Salon"
               >
                 <span>Lihat Layanan & Harga</span>
                 <ArrowRight className="h-4 w-4 text-[#926C3A]" />
-              </motion.a>
+              </Link>
             </div>
 
             {/* Quick Stats Grid */}
@@ -115,7 +166,7 @@ export default function LandingPage() {
             Setiap kunjungan ke Milla Hair Studio dirancang khusus untuk merevitalisasi dan memperindah mahkota rambut Anda secara mendalam menggunakan pelayanan berkualitas tinggi.
           </p>
           <div className="flex justify-center gap-4 pt-2">
-            <Link href="/tentang" className="text-xs font-bold uppercase tracking-wider text-[#926C3A] hover:underline">
+            <Link href="/tentang" className="text-xs font-bold uppercase tracking-wider text-[#926C3A] hover:underline" aria-label="Selengkapnya tentang Milla Hair Studio Sidoarjo">
               Selengkapnya tentang kami &rarr;
             </Link>
           </div>
@@ -125,6 +176,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-// Helper Link wrapper for clean next/link compatibility
-import Link from 'next/link';

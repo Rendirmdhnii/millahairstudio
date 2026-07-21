@@ -128,7 +128,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2.5 rounded-xl bg-zinc-900 text-zinc-200 hover:bg-zinc-800 focus:outline-none transition-colors border border-zinc-800 min-h-[40px] min-w-[40px] flex items-center justify-center"
-              aria-label="Toggle menu"
+              aria-label="Buka Menu Navigasi Milla Hair Studio"
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
