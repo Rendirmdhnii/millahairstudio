@@ -22,9 +22,8 @@ export default function StealthLoginPage() {
     setErrorMsg('');
     setLoading(true);
 
-    // Simulate 1 second processing delay for clean professional flow
     setTimeout(() => {
-      if (email.toLowerCase() === 'admin@millahairstudio.com' && password === 'milla123') {
+      if (email.toLowerCase() === 'admin01@millahairstudio.com' && password === 'Millahairstd@01') {
         const res = login('owner@milla.com'); // Authenticate as Owner/Admin in store
         if (res.success) {
           router.push('/workspace/dashboard');
@@ -71,7 +70,7 @@ export default function StealthLoginPage() {
         {errorMsg && (
           <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2 font-medium">
             <ShieldAlert className="h-4 w-4 flex-shrink-0 text-rose-600" />
-            <span className="text-red-500 text-sm">{errorMsg}</span>
+            <span className="text-red-500 text-sm font-semibold">{errorMsg}</span>
           </div>
         )}
 
@@ -87,7 +86,7 @@ export default function StealthLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@millahairstudio.com"
+                placeholder="admin01@millahairstudio.com"
                 className="w-full text-xs p-3.5 pl-10 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 focus:outline-none focus:border-[#926C3A] focus:ring-2 focus:ring-[#926C3A]/30 transition-all font-medium min-h-[44px]"
                 required
                 disabled={loading}

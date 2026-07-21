@@ -216,9 +216,9 @@ export default function WorkspaceDashboardPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-zinc-50 font-sans text-zinc-900">
+    <div className="flex min-h-screen bg-zinc-50 font-sans text-zinc-900 pb-20 md:pb-0">
       
-      {/* 1. SIDEBAR LAYOUT (CLEAN ZINC 900 PANEL) */}
+      {/* 1. SIDEBAR LAYOUT (CLEAN ZINC 900 PANEL - HIDDEN ON MOBILE SCREEN) */}
       <aside className="w-64 bg-zinc-900 text-white flex flex-col justify-between hidden md:flex border-r border-zinc-800 shadow-xl flex-shrink-0">
         <div>
           {/* Studio Brand Header */}
@@ -356,7 +356,7 @@ export default function WorkspaceDashboardPage() {
           </div>
         </div>
 
-        {/* 3 SUMMARY WIDGET CARDS */}
+        {/* 3 SUMMARY WIDGET CARDS (1 column on HP, 3 columns on Laptop) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* CARD 1: PENDAPATAN HARI INI */}
@@ -543,9 +543,9 @@ export default function WorkspaceDashboardPage() {
 
           </div>
 
-          {/* Table Element */}
-          <div className="overflow-x-auto text-xs">
-            <table className="w-full text-left border-collapse">
+          {/* Table Element with responsive wrapper */}
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[800px] text-left border-collapse text-xs">
               <thead>
                 <tr className="border-b border-zinc-200 text-zinc-500 font-bold uppercase text-[9px] tracking-wider bg-zinc-100/80">
                   <th className="p-3.5">Pelanggan</th>
@@ -560,8 +560,8 @@ export default function WorkspaceDashboardPage() {
               <tbody className="divide-y divide-zinc-100">
                 {filteredBookings.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-zinc-400 italic">
-                      Tidak ada data booking yang cocok dengan filter.
+                    <td colSpan={7} className="p-12 text-center text-zinc-500 font-medium">
+                      Belum ada data reservasi saat ini.
                     </td>
                   </tr>
                 ) : (
@@ -671,6 +671,47 @@ export default function WorkspaceDashboardPage() {
         </div>
 
       </main>
+
+      {/* Bottom Navigation Bar for Mobile Screen (HP) with Collapse option */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-45 bg-zinc-900 border-t border-zinc-800 px-4 py-2.5 flex justify-around items-center text-[10px] font-bold text-zinc-400 shadow-2xl">
+        <button
+          onClick={() => setActiveNav('dashboard')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-all min-h-[44px] justify-center ${
+            activeNav === 'dashboard' ? 'text-white' : 'text-zinc-500'
+          }`}
+        >
+          <LayoutDashboard className="h-5 w-5" />
+          <span>Bookings</span>
+        </button>
+        <button
+          onClick={() => setActiveNav('revenue')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-all min-h-[44px] justify-center ${
+            activeNav === 'revenue' ? 'text-white' : 'text-zinc-500'
+          }`}
+        >
+          <TrendingUp className="h-5 w-5" />
+          <span>Laporan</span>
+        </button>
+        <button
+          onClick={() => setActiveNav('services')}
+          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-all min-h-[44px] justify-center ${
+            activeNav === 'services' ? 'text-white' : 'text-zinc-500'
+          }`}
+        >
+          <Scissors className="h-5 w-5" />
+          <span>Layanan</span>
+        </button>
+        <button
+          onClick={() => {
+            logout();
+            router.push('/workspace');
+          }}
+          className="flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-zinc-500 hover:text-rose-400 min-h-[44px] justify-center"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Keluar</span>
+        </button>
+      </div>
 
       {/* MODAL POPUP: SELESAIKAN BOOKING */}
       {selectedBookingForComplete && (

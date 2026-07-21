@@ -403,63 +403,7 @@ export const useMillaStore = create<MillaState>()(
       auditLogs: [
         { id: 'al-1', userId: 'usr-2', userName: 'Admin Rina', action: 'Update Stock', details: 'Menyesuaikan manual stok Milla Signature Caviar Elixir Shampoo di Cabang Senopati (+5 botol)', createdAt: new Date(Date.now() - 3600000).toISOString() }
       ],
-      supabaseBookings: [
-        {
-          id: 'bk-101',
-          customer_name: 'Aurelia Cantika',
-          customer_phone: '08123456789',
-          service_name: 'Signature Milla Haircut & Blow',
-          booking_date: new Date().toISOString().split('T')[0],
-          booking_time: '14:00',
-          status: 'completed',
-          total_payment: 350000,
-          created_at: new Date(Date.now() - 86400000).toISOString()
-        },
-        {
-          id: 'bk-102',
-          customer_name: 'Dian Sastrowardoyo',
-          customer_phone: '081122334455',
-          service_name: 'Premium Keratin Blowout Smooth',
-          booking_date: new Date().toISOString().split('T')[0],
-          booking_time: '10:00',
-          status: 'completed',
-          total_payment: 1200000,
-          created_at: new Date(Date.now() - 172800000).toISOString()
-        },
-        {
-          id: 'bk-103',
-          customer_name: 'Budi Santoso',
-          customer_phone: '081987654321',
-          service_name: 'Detoxifying Clay Scalp Ritual',
-          booking_date: new Date().toISOString().split('T')[0],
-          booking_time: '11:00',
-          status: 'accepted',
-          total_payment: 0,
-          created_at: new Date(Date.now() - 43200000).toISOString()
-        },
-        {
-          id: 'bk-104',
-          customer_name: 'Siti Nurhaliza',
-          customer_phone: '081345678901',
-          service_name: 'Balayage Korean Color & Gloss',
-          booking_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-          booking_time: '13:00',
-          status: 'pending',
-          total_payment: 0,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: 'bk-105',
-          customer_name: 'Raisa Andriana',
-          customer_phone: '081299887766',
-          service_name: 'Luxe Restructuring Hair Spa',
-          booking_date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
-          booking_time: '15:00',
-          status: 'completed',
-          total_payment: 450000,
-          created_at: new Date(Date.now() - 259200000).toISOString()
-        }
-      ],
+      supabaseBookings: [],
       cart: [],
 
       // Supabase Bookings Actions
