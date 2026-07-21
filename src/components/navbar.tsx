@@ -57,13 +57,13 @@ export default function Navbar() {
   return (
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
       scrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-xs border-b border-zinc-200 py-3' 
-        : 'bg-white/90 backdrop-blur-md border-b border-zinc-200/60 py-4'
+        ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg border-b border-zinc-800/80 py-2.5' 
+        : 'bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/60 py-3.5'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 sm:h-24 items-center justify-between gap-4">
           
-          {/* Brand Logo with Drastically Enlarged Container & Drop Shadow */}
+          {/* Brand Logo with Flexible Container & Drop Shadow over Dark Background */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="relative flex items-center h-16 sm:h-20 group">
               <Image 
@@ -71,14 +71,14 @@ export default function Navbar() {
                 alt="Milla Hair Studio" 
                 width={280} 
                 height={280} 
-                className="w-auto h-full object-contain filter drop-shadow-md transition-transform group-hover:scale-105"
+                className="w-auto h-full object-contain filter drop-shadow-lg transition-transform group-hover:scale-105"
                 priority={true}
               />
             </Link>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-x-1 bg-zinc-100/80 p-1.5 rounded-full border border-zinc-200">
+          {/* Desktop Navigation Links (Dark Mode Styling) */}
+          <nav className="hidden md:flex items-center gap-x-1 bg-zinc-900/90 p-1.5 rounded-full border border-zinc-800/80 shadow-inner">
             {navLinks.map((link) => {
               const isActive = pathname === '/' && activeSection === link.id;
               return (
@@ -89,7 +89,7 @@ export default function Navbar() {
                     if (pathname === '/') setActiveSection(link.id);
                   }}
                   className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-wide transition-colors duration-200 ${
-                    isActive ? 'text-white' : 'text-zinc-600 hover:text-zinc-900'
+                    isActive ? 'text-white font-bold' : 'text-zinc-300 hover:text-white'
                   }`}
                 >
                   {isActive && (
@@ -107,18 +107,20 @@ export default function Navbar() {
 
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center gap-2.5">
+            {/* Form Booking Button */}
             <Link
               href="/booking"
-              className={`inline-flex items-center gap-2 font-bold text-xs px-4.5 py-2.5 rounded-xl transition-all shadow-xs ${
+              className={`inline-flex items-center gap-2 font-bold text-xs px-4.5 py-2.5 rounded-xl transition-all shadow-xs border ${
                 isBookingActive
-                  ? 'bg-[#926C3A] text-white shadow-xs'
-                  : 'bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-200'
+                  ? 'bg-[#926C3A] text-white border-[#926C3A]'
+                  : 'border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white'
               }`}
             >
               <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#926C3A]'}`} />
               <span>Form Booking</span>
             </Link>
 
+            {/* Konsultasi WA Button */}
             <motion.a
               href={waUrl}
               target="_blank"
@@ -135,7 +137,7 @@ export default function Navbar() {
           <div className="flex md:hidden items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 rounded-xl bg-zinc-100 text-zinc-800 hover:bg-zinc-200 focus:outline-none transition-colors border border-zinc-200"
+              className="p-2.5 rounded-xl bg-zinc-900 text-zinc-200 hover:bg-zinc-800 focus:outline-none transition-colors border border-zinc-800"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -144,7 +146,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile Menu Drawer (Dark Mode) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -152,7 +154,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-b border-zinc-200 shadow-lg"
+            className="md:hidden overflow-hidden bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800 shadow-2xl"
           >
             <div className="px-5 pt-3 pb-8 space-y-3 max-w-md mx-auto">
               <div className="space-y-1">
@@ -169,24 +171,24 @@ export default function Navbar() {
                       className={`flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-bold transition-all duration-200 ${
                         isActive
                           ? 'bg-[#926C3A] text-white shadow-xs'
-                          : 'text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900'
+                          : 'text-zinc-300 hover:bg-zinc-900 hover:text-white'
                       }`}
                     >
                       <span>{link.name}</span>
-                      <ArrowUpRight className={`h-4 w-4 ${isActive ? 'text-white' : 'text-zinc-400'}`} />
+                      <ArrowUpRight className={`h-4 w-4 ${isActive ? 'text-white' : 'text-zinc-500'}`} />
                     </Link>
                   );
                 })}
               </div>
 
-              <div className="pt-3 border-t border-zinc-200 space-y-2">
+              <div className="pt-3 border-t border-zinc-800 space-y-2">
                 <Link
                   href="/booking"
                   onClick={() => setIsOpen(false)}
                   className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm border ${
                     isBookingActive
                       ? 'bg-[#926C3A] text-white border-[#926C3A]'
-                      : 'bg-zinc-100 text-zinc-800 border-zinc-200'
+                      : 'bg-zinc-900 text-zinc-200 border-zinc-700 hover:bg-zinc-800'
                   }`}
                 >
                   <Calendar className={`h-4 w-4 ${isBookingActive ? 'text-white' : 'text-[#926C3A]'}`} />
