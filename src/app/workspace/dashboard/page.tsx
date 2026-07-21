@@ -87,6 +87,14 @@ export default function WorkspaceDashboardPage() {
   const [bDate, setBDate] = useState(new Date().toISOString().split('T')[0]);
   const [bTime, setBTime] = useState('14:00');
 
+  const formatWhatsAppNumber = (phone: string) => {
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.startsWith('0')) {
+      return '62' + cleaned.substring(1);
+    }
+    return cleaned;
+  };
+
   if (!currentUser) return null;
 
   // STATISTICAL CALCULATIONS
@@ -447,10 +455,27 @@ export default function WorkspaceDashboardPage() {
                       </td>
 
                       <td className="p-3.5 font-mono text-zinc-400">
-                        <span className="flex items-center gap-1.5">
-                          <Phone className="h-3.5 w-3.5 text-zinc-600" />
-                          {b.customer_phone}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="flex items-center gap-1.5">
+                            <Phone className="h-3.5 w-3.5 text-zinc-600" />
+                            {b.customer_phone}
+                          </span>
+                          
+                          {/* WhatsApp Reminder Icon Button */}
+                          <a
+                            href={`https://wa.me/${formatWhatsAppNumber(b.customer_phone)}?text=${encodeURIComponent(
+                              `Halo Kak ${b.customer_name}, kami dari Milla Hair Studio ingin mengingatkan jadwal perawatan ${b.service_name} Anda hari ini pada pukul ${b.booking_time}. Apakah Anda masih bisa hadir sesuai jadwal? Mohon konfirmasinya ya Kak. Terima kasih.`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded-lg bg-zinc-900 hover:bg-emerald-950/40 text-zinc-500 hover:text-emerald-450 border border-zinc-800 hover:border-emerald-800/40 transition-all flex items-center justify-center min-h-[28px] min-w-[28px]"
+                            title="Kirim Pengingat WhatsApp"
+                          >
+                            <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+                              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.731-1.456L0 24zm6.59-4.846c1.6.95 2.568 1.489 4.53 1.49 5.309 0 9.626-4.244 9.629-9.46.002-2.527-.979-4.904-2.761-6.69C16.262 2.709 13.897 1.72 11.4 1.72c-5.312 0-9.63 4.246-9.632 9.462-.001 1.942.502 3.102 1.408 4.675l-1.03 3.766 3.86-1.014z" />
+                            </svg>
+                          </a>
+                        </div>
                       </td>
 
                       <td className="p-3.5 font-medium">
