@@ -7,7 +7,7 @@ import {
   CheckCircle2, ArrowRight, Loader2, MessageSquare, ShieldCheck, ChevronDown
 } from 'lucide-react';
 import { useMillaStore } from '@/store/useMillaStore';
-import { supabase } from '@/lib/supabase';
+import { supabase, BookingStatus } from '@/lib/supabase';
 
 export default function PublicBookingPage() {
   const { services, addSupabaseBooking } = useMillaStore();
@@ -59,51 +59,53 @@ export default function PublicBookingPage() {
     setIsSubmitting(true);
 
     try {
-      // 1. Insert into Supabase table `bookings` with status 'pending'
-      const { error } = await supabase.from('bookings').insert([
-        {
-          customer_name: fullName,
-          customer_phone: whatsappPhone,
-          service_name: selectedService,
-          booking_date: bookingDate,
-          booking_time: bookingTime,
-          status: 'pending',
-          total_payment: 0
-        }
-      ]);
-
-      if (error) {
-        console.error('Supabase Insert Error:', error.message);
-        throw new Error(error.message);
-      }
-
-      // 2. Sync with Zustand store
-      addSupabaseBooking({
+      // 1. Insert into Supabase table `reservations` with status 'pending' (fallback to `bookings`)
+      const payload = {
         customer_name: fullName,
         customer_phone: whatsappPhone,
         service_name: selectedService,
         booking_date: bookingDate,
         booking_time: bookingTime,
-        status: 'pending',
+        status: 'pending' as BookingStatus,
         total_payment: 0
-      });
+      };
+
+      let insertError = null;
+      let res = await supabase.from('reservations').insert([payload]);
+      
+      if (res.error) {
+        // Fallback to `bookings` table if `reservations` table fails
+        const fallbackRes = await supabase.from('bookings').insert([payload]);
+        if (fallbackRes.error) {
+          insertError = fallbackRes.error;
+        }
+      }
+
+      if (insertError) {
+        console.error('Supabase Insert Error:', insertError.message);
+        throw new Error(insertError.message);
+      }
+
+      // 2. Sync with Zustand store
+      addSupabaseBooking(payload);
 
       setIsSubmitting(false);
       setIsSuccess(true);
+      alert('Reservasi Berhasil! Data Anda telah tersimpan. Anda akan dihubungkan ke WhatsApp Admin.');
 
       // 3. Construct WhatsApp Message URL dengan Nama Hari
       const waText = `Halo Admin Milla Hair Studio,\n\nSaya ingin melakukan reservasi perawatan rambut dengan rincian berikut:\n\n Nama: ${fullName}\n Layanan: ${selectedService}\n Tanggal: ${formattedDateText}\n Jam: ${bookingTime} WIB\n\nApakah slot tersebut masih tersedia? Mohon konfirmasinya ya. Terima kasih.`;
       const waUrl = `https://wa.me/${ADMIN_WA_NUMBER}?text=${encodeURIComponent(waText)}`;
 
-      // 4. Redirect User to WhatsApp API in new tab
+      // 4. Redirect User to WhatsApp Gateway in new tab
       setTimeout(() => {
         window.open(waUrl, '_blank');
-      }, 800);
+      }, 500);
 
-    } catch (err) {
+    } catch (err: any) {
       console.error('Booking submission error:', err);
       setIsSubmitting(false);
-      alert('Terjadi kesalahan saat memproses booking. Silakan coba lagi.');
+      alert(`Terjadi kesalahan saat memproses booking: ${err.message || 'Silakan coba lagi.'}`);
     }
   };
 

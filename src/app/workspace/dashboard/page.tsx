@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { useMillaStore } from '@/store/useMillaStore';
 import { formatPrice } from '@/lib/utils';
 import { supabase, Booking, BookingStatus } from '@/lib/supabase';
+import { Eye, Trash2, X, Calendar, Clock, User, Phone, Scissors, AlertTriangle } from 'lucide-react';
 import LogoImage from '@/logosalon.png';
 
 export default function WorkspaceDashboardPage() {
@@ -66,11 +67,18 @@ export default function WorkspaceDashboardPage() {
   // Helper re-fetch Supabase query
   const reFetchBookings = async () => {
     try {
-      const { data } = await supabase
-        .from('bookings')
+      let { data, error } = await supabase
+        .from('reservations')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(30);
+        .order('created_at', { ascending: false });
+
+      if (error || !data || data.length === 0) {
+        const fallback = await supabase
+          .from('bookings')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (fallback.data && fallback.data.length > 0) data = fallback.data;
+      }
       if (data) useMillaStore.setState({ supabaseBookings: data });
       updateLiveTimestamp();
     } catch (err) {
@@ -82,15 +90,20 @@ export default function WorkspaceDashboardPage() {
   useEffect(() => {
     async function fetchLiveBookingsFromSupabase() {
       try {
-        const { data, error } = await supabase
-          .from('bookings')
+        let { data, error } = await supabase
+          .from('reservations')
           .select('*')
-          .order('created_at', { ascending: false })
-          .limit(30);
+          .order('created_at', { ascending: false });
 
-        if (error) {
-          console.warn('Supabase Live Fetch Error:', error.message);
-        } else if (data) {
+        if (error || !data || data.length === 0) {
+          const fallback = await supabase
+            .from('bookings')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (fallback.data && fallback.data.length > 0) data = fallback.data;
+        }
+
+        if (data) {
           useMillaStore.setState({ supabaseBookings: data });
         }
         updateLiveTimestamp();
@@ -108,10 +121,10 @@ export default function WorkspaceDashboardPage() {
   // Active Navigation Tab State
   const [activeTab, setActiveTab] = useState<'reservations' | 'customers' | 'services' | 'settings'>('reservations');
 
-  // Booking table filter & search states (Default Filter: Today's Date)
+  // Booking table filter & search states (Default Filter: All Dates)
   const [showFilters, setShowFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | BookingStatus>('all');
-  const [filterDate, setFilterDate] = useState<string>(todayStr);
+  const [filterDate, setFilterDate] = useState<string>('');
   const [filterMonth, setFilterMonth] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -129,6 +142,29 @@ export default function WorkspaceDashboardPage() {
   const [serviceName, setServiceName] = useState(services[0]?.name || 'Signature Milla Haircut & Blow');
   const [bDate, setBDate] = useState(todayStr);
   const [bTime, setBTime] = useState('14:00');
+
+  // Customer CRM Modal states
+  const [selectedCustomerPhone, setSelectedCustomerPhone] = useState<string | null>(null);
+  const [customerToDeletePhone, setCustomerToDeletePhone] = useState<string | null>(null);
+
+  const handleConfirmDeleteCustomer = async () => {
+    if (!customerToDeletePhone) return;
+    try {
+      const toDelete = supabaseBookings.filter(b => b.customer_phone === customerToDeletePhone);
+      for (const b of toDelete) {
+        await supabase.from('reservations').delete().eq('id', b.id);
+        await supabase.from('bookings').delete().eq('id', b.id);
+        deleteSupabaseBooking(b.id);
+      }
+      addAuditLog(currentUser?.id || 'system', 'Hapus Pelanggan CRM', `Menghapus data pelanggan nomor ${customerToDeletePhone}`);
+      setCustomerToDeletePhone(null);
+      alert('Data pelanggan berhasil dihapus dari database.');
+      await reFetchBookings();
+    } catch (err) {
+      console.error('Delete customer error:', err);
+      alert('Gagal menghapus data pelanggan dari database.');
+    }
+  };
 
   const formatWhatsAppNumber = (phone: string) => {
     const cleaned = phone.replace(/\D/g, '');
@@ -868,7 +904,7 @@ export default function WorkspaceDashboardPage() {
                     const customerBookings = supabaseBookings.filter(b => b.customer_phone === phone);
                     const lastBooking = customerBookings[0];
                     return (
-                      <div key={phone} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-2 w-full">
+                      <div key={phone} className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs space-y-3 w-full">
                         <div className="flex justify-between items-start">
                           <div>
                             <h3 className="font-bold text-gray-900 text-sm">{lastBooking.customer_name}</h3>
@@ -884,6 +920,22 @@ export default function WorkspaceDashboardPage() {
                             {customerBookings.length} Kali
                           </span>
                         </div>
+                        <div className="flex gap-2 pt-2 border-t border-gray-100">
+                          <button
+                            onClick={() => setSelectedCustomerPhone(phone)}
+                            className="flex-1 bg-amber-50 hover:bg-amber-100 text-[#926C3A] border border-amber-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            <span>Detail</span>
+                          </button>
+                          <button
+                            onClick={() => setCustomerToDeletePhone(phone)}
+                            className="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Hapus</span>
+                          </button>
+                        </div>
                       </div>
                     );
                   })
@@ -892,19 +944,20 @@ export default function WorkspaceDashboardPage() {
 
               {/* DESKTOP TABLE FOR CUSTOMERS (HIDDEN ON MOBILE SCREEN) */}
               <div className="hidden md:block w-full overflow-x-auto pb-4 scrollbar-hide rounded-xl border border-gray-200 bg-white">
-                <table className="w-full min-w-[650px] text-left border-collapse text-xs">
+                <table className="w-full min-w-[750px] text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-gray-200 text-gray-600 font-bold uppercase text-[9px] tracking-wider bg-gray-50">
                       <th className="p-3.5">Nama Pelanggan</th>
                       <th className="p-3.5">No. Handphone WA</th>
                       <th className="p-3.5">Status Keanggotaan</th>
                       <th className="p-3.5 text-center">Total Reservasi</th>
+                      <th className="p-3.5 text-center">AKSI</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 text-gray-700">
                     {supabaseBookings.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-gray-400">
+                        <td colSpan={5} className="p-8 text-center text-gray-400">
                           Belum ada data pelanggan tercatat.
                         </td>
                       </tr>
@@ -925,6 +978,26 @@ export default function WorkspaceDashboardPage() {
                             </td>
                             <td className="p-3.5 text-center font-bold text-gray-900 font-mono">
                               {customerBookings.length} Kali
+                            </td>
+                            <td className="p-3.5 text-center">
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  onClick={() => setSelectedCustomerPhone(phone)}
+                                  title="Lihat Detail Riwayat Booking"
+                                  className="p-2 bg-amber-50 hover:bg-amber-100 text-[#926C3A] border border-amber-200 rounded-lg font-bold text-xs flex items-center gap-1 transition-all"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  <span>Detail</span>
+                                </button>
+                                <button
+                                  onClick={() => setCustomerToDeletePhone(phone)}
+                                  title="Hapus Data Pelanggan"
+                                  className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg font-bold text-xs flex items-center gap-1 transition-all"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                  <span>Hapus</span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         );
@@ -1284,6 +1357,118 @@ export default function WorkspaceDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL POPUP: DETAIL RIWAYAT BOOKING PELANGGAN */}
+      {selectedCustomerPhone && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-4 font-sans text-gray-800">
+          <div className="w-full max-w-lg bg-white rounded-2xl p-6 border border-gray-200 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+              <div>
+                <h3 className="text-lg font-serif font-bold text-gray-900">
+                  Riwayat Booking Pelanggan
+                </h3>
+                <p className="text-xs text-gray-500 font-mono mt-0.5">
+                  No. WA: {selectedCustomerPhone}
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedCustomerPhone(null)} 
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg border border-gray-200 hover:bg-gray-50"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {supabaseBookings.filter(b => b.customer_phone === selectedCustomerPhone).length === 0 ? (
+                <div className="text-center py-6 text-gray-400 text-xs font-medium">
+                  Belum ada riwayat booking untuk pelanggan ini.
+                </div>
+              ) : (
+                supabaseBookings
+                  .filter(b => b.customer_phone === selectedCustomerPhone)
+                  .map((b) => (
+                    <div key={b.id} className="p-3.5 bg-gray-50 border border-gray-200 rounded-xl space-y-2 text-xs">
+                      <div className="flex justify-between items-start">
+                        <span className="font-bold text-gray-900 text-sm">{b.service_name}</span>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                          b.status === 'pending'
+                            ? 'bg-amber-50 text-amber-700 border-amber-200'
+                            : b.status === 'accepted'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : b.status === 'completed'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                        }`}>
+                          {b.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-gray-600 text-[11px]">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5 text-[#926C3A]" />
+                          <span>{b.booking_date}</span>
+                        </div>
+                        <div className="flex items-center gap-1 font-mono">
+                          <Clock className="h-3.5 w-3.5 text-[#926C3A]" />
+                          <span>{b.booking_time} WIB</span>
+                        </div>
+                      </div>
+                      {b.status === 'completed' && (
+                        <div className="text-right font-bold font-mono text-emerald-700 pt-1 border-t border-gray-200/60">
+                          Total: {formatPrice(b.total_payment || 0)}
+                        </div>
+                      )}
+                    </div>
+                  ))
+              )}
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setSelectedCustomerPhone(null)}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl text-xs"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL POPUP: KONFIRMASI HAPUS PELANGGAN */}
+      {customerToDeletePhone && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-4 font-sans text-gray-800">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 border border-gray-200 shadow-xl space-y-4 text-center">
+            <div className="w-12 h-12 bg-rose-50 border border-rose-200 rounded-full flex items-center justify-center mx-auto text-rose-600">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-serif font-bold text-gray-900">
+                Hapus Data Pelanggan?
+              </h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                Apakah Anda yakin ingin menghapus data pelanggan dengan nomor WA <span className="font-bold text-gray-800 font-mono">{customerToDeletePhone}</span> dari database? Tindakan ini tidak dapat dibatalkan.
+              </p>
+            </div>
+
+            <div className="flex gap-2.5 pt-2">
+              <button
+                onClick={() => setCustomerToDeletePhone(null)}
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 rounded-xl text-xs"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDeleteCustomer}
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl text-xs shadow-xs transition-all"
+              >
+                Ya, Hapus Data
+              </button>
+            </div>
           </div>
         </div>
       )}
