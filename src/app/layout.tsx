@@ -28,10 +28,10 @@ export const metadata: Metadata = {
     siteName: 'Milla Hair Studio & Salon',
     images: [
       { 
-        url: "/images/bg-salon-cerah.jpg", 
+        url: "/og-image.png", 
         width: 1200, 
         height: 630, 
-        alt: "Milla Hair Studio & Salon" 
+        alt: "Logo Milla Hair Studio & Salon" 
       }
     ],
     locale: 'id_ID',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Milla Hair Studio & Salon',
     description: 'Temukan Keahlian Artistik & Dedikasi Dalam Setiap Perawatan Rambut. Salon premium di Sidoarjo.',
-    images: ['/images/bg-salon-cerah.jpg'],
+    images: ['/og-image.png'],
   },
   verification: {
     google: 'isi_dengan_google_site_verification_code',
