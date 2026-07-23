@@ -6,14 +6,14 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.millahairstudio.com'),
   title: {
-    default: 'Milla Hair Studio | Enterprise Salon Management Platform',
-    template: '%s | Milla Hair Studio'
+    default: 'Milla Hair Studio & Salon',
+    template: '%s | Milla Hair Studio & Salon'
   },
-  description: 'Sistem operasional dan reservasi digital high-end berbasis arsitektur full-stack enterprise dengan enkripsi data real-time, integrasi Meta Graph API, dan optimasi konversi mobile.',
-  applicationName: 'Milla Hair Studio',
+  description: 'Temukan Keahlian Artistik & Dedikasi Dalam Setiap Perawatan Rambut. Salon premium di Sidoarjo.',
+  applicationName: 'Milla Hair Studio & Salon',
   authors: [{ name: 'Milla Hair Studio' }],
   generator: 'Next.js',
-  keywords: ["Milla Hair Studio", "enterprise salon SaaS", "salon premium Sidoarjo", "balayage Sidoarjo", "keratin treatment terbaik"],
+  keywords: ["Milla Hair Studio", "salon premium Sidoarjo", "balayage Sidoarjo", "keratin treatment Sidoarjo", "potong rambut Sidoarjo"],
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -22,19 +22,26 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'Milla Hair Studio Enterprise SaaS Engine',
-    description: 'Sistem kustom full-stack kelas atas dengan valuasi profesional industri perangkat lunak.',
-    url: 'https://millahairstudio.com',
-    siteName: 'Milla Hair Studio',
-    images: [{ url: "/icon.png", width: 1200, height: 630, alt: "Milla Hair Studio Enterprise SaaS Engine" }],
+    title: 'Milla Hair Studio & Salon',
+    description: 'Temukan Keahlian Artistik & Dedikasi Dalam Setiap Perawatan Rambut. Salon premium di Sidoarjo.',
+    url: 'https://www.millahairstudio.com',
+    siteName: 'Milla Hair Studio & Salon',
+    images: [
+      { 
+        url: "/images/bg-salon-cerah.jpg", 
+        width: 1200, 
+        height: 630, 
+        alt: "Milla Hair Studio & Salon" 
+      }
+    ],
     locale: 'id_ID',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Milla Hair Studio Enterprise SaaS Engine',
-    description: 'Sistem kustom full-stack kelas atas dengan valuasi profesional industri perangkat lunak.',
-    images: ['/icon.png'],
+    title: 'Milla Hair Studio & Salon',
+    description: 'Temukan Keahlian Artistik & Dedikasi Dalam Setiap Perawatan Rambut. Salon premium di Sidoarjo.',
+    images: ['/images/bg-salon-cerah.jpg'],
   },
   verification: {
     google: 'isi_dengan_google_site_verification_code',

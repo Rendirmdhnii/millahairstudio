@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Sparkles, Calendar, ArrowRight, Star } from 'lucide-react';
 
-export default function LandingPage() {
+export default function Home() {
   return (
     <div className="w-full flex flex-col font-sans text-zinc-900 bg-zinc-50 overflow-x-hidden">
       
@@ -58,17 +58,18 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* 1. HERO SECTION WITH MOBILE-OPTIMIZED SPACING & 4.9 RATING BADGE */}
       {/* ========================================================================= */}
-      <section className="relative w-full min-h-[85vh] flex items-center bg-zinc-900 text-white overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+      <section className="relative w-full min-h-[85vh] flex items-center bg-zinc-950 text-white overflow-hidden py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1600" 
-            alt="Perawatan rambut profesional dan smoothing di Milla Hair Studio Sidoarjo" 
+            src="/images/bg-salon-cerah.jpg" 
+            alt="Interior salon modern dan mewah Milla Hair Studio Sidoarjo" 
             fill
             priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover opacity-20 scale-105"
+            sizes="100vw"
+            className="object-cover object-center scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900/95 to-zinc-900/80" />
+          {/* Light Tinted Overlay (50% opacity / bg-black/50 gradient for bright & detailed salon interior with clear text legibility) */}
+          <div className="absolute inset-0 bg-black/50 bg-gradient-to-r from-black/75 via-black/50 to-black/35" />
         </div>
         
         <div className="relative max-w-7xl mx-auto w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
@@ -81,7 +82,7 @@ export default function LandingPage() {
           >
             {/* Header Badges Grid (Location & 4.9 Rating) */}
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-4 sm:px-5 py-1.5 sm:py-2">
+              <div className="inline-flex items-center gap-2 bg-black/40 border border-white/20 backdrop-blur-md rounded-full px-4 sm:px-5 py-1.5 sm:py-2 shadow-sm">
                 <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#926C3A]" />
                 <span className="text-[10px] sm:text-[11px] font-bold tracking-widest text-[#926C3A] uppercase">
                   Premium Salon • Sidoarjo
@@ -89,7 +90,7 @@ export default function LandingPage() {
               </div>
 
               {/* 4.9/5.0 Rating Element (Solid Star SVG + Text) */}
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2">
+              <div className="inline-flex items-center gap-2 bg-black/40 border border-white/20 backdrop-blur-md rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2 shadow-sm">
                 <Star className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#926C3A] fill-[#926C3A]" />
                 <span className="text-[10px] sm:text-[11px] font-bold text-zinc-200 tracking-wide">
                   4.9 / 5.0 Rating
@@ -98,7 +99,7 @@ export default function LandingPage() {
             </div>
             
             {/* Heading - Responsive Font Size */}
-            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-serif font-bold text-white leading-[1.18] sm:leading-[1.15] tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-serif font-bold text-white leading-[1.18] sm:leading-[1.15] tracking-tight drop-shadow-md">
               Kecantikan Rambut Anda<br />
               <span className="text-[#926C3A]">
                 Adalah Seni & Dedikasi.
