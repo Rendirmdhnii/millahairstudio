@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, ChevronDown, ChevronUp } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { Calendar } from 'lucide-react';
 
 export default function LayananPage() {
   const priceListCategories = [
@@ -54,7 +53,8 @@ export default function LayananPage() {
   ];
 
   const [activeTab, setActiveTab] = useState(priceListCategories[0].id);
-  const [activeAccordion, setActiveAccordion] = useState<string | null>(priceListCategories[0].id);
+
+  const activeCategory = priceListCategories.find((cat) => cat.id === activeTab) || priceListCategories[0];
 
   return (
     <div className="w-full min-h-[70vh] bg-zinc-50 font-sans text-zinc-900 py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
@@ -64,7 +64,7 @@ export default function LayananPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-3 sm:space-y-4"
+          className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 space-y-3 sm:space-y-4"
         >
           <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 px-5 py-1.5 rounded-full text-[11px] font-bold tracking-widest uppercase text-[#926C3A] shadow-xs">
             <span>Menu & Daftar Harga</span>
@@ -78,87 +78,75 @@ export default function LayananPage() {
           </p>
         </motion.div>
 
-        {/* DESKTOP & MOBILE TABS */}
+        {/* CATEGORY TABS (MOBILE & DESKTOP) */}
         <div className="space-y-6 sm:space-y-8">
-          <div className="flex overflow-x-auto justify-start sm:justify-center gap-2 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-zinc-200 shadow-xs max-w-4xl mx-auto scrollbar-none">
+          <div className="flex overflow-x-auto justify-start sm:justify-center gap-2 bg-white p-1.5 sm:p-2 rounded-2xl sm:rounded-full border border-zinc-200/90 shadow-xs max-w-4xl mx-auto scrollbar-none px-2">
             {priceListCategories.map((category) => {
               const isActive = activeTab === category.id;
               return (
                 <button
                   key={category.id}
                   onClick={() => setActiveTab(category.id)}
-                  className={`flex-shrink-0 text-center py-3 px-4 sm:px-5 min-h-[44px] rounded-xl sm:rounded-full text-xs font-bold transition-all ${
+                  className={`relative flex-shrink-0 text-center py-3 px-4 sm:px-5 min-h-[44px] rounded-xl sm:rounded-full text-xs font-bold transition-colors duration-200 ${
                     isActive 
-                      ? 'bg-[#926C3A] text-white shadow-xs' 
-                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                      ? 'text-white' 
+                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/80'
                   }`}
                 >
-                  <span>{category.title}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="max-w-4xl mx-auto hidden md:block">
-            {priceListCategories.map((category) => {
-              if (category.id !== activeTab) return null;
-              return (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl p-5 sm:p-8 border border-zinc-200 shadow-sm"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 sm:gap-y-4 divide-y md:divide-y-0 divide-zinc-100">
-                    {category.services.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center py-3 border-b border-zinc-100 last:border-0 min-h-[44px] gap-3">
-                        <span className="font-semibold text-zinc-800 text-xs sm:text-sm text-left leading-snug">{item.name}</span>
-                        <span className="font-bold text-[#926C3A] text-xs sm:text-sm font-mono flex-shrink-0 text-right">{item.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* MOBILE ACCORDION */}
-        <div className="md:hidden space-y-4 max-w-4xl mx-auto">
-          {priceListCategories.map((category) => {
-            const isOpen = activeAccordion === category.id;
-            return (
-              <div key={category.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-xs">
-                <button
-                  onClick={() => setActiveAccordion(isOpen ? null : category.id)}
-                  className="w-full flex items-center justify-between p-5 text-left font-bold text-zinc-900 text-sm"
-                >
-                  <span>{category.title}</span>
-                  {isOpen ? <ChevronUp className="h-5 w-5 text-[#926C3A]" /> : <ChevronDown className="h-5 w-5 text-zinc-400" />}
-                </button>
-
-                <AnimatePresence>
-                  {isOpen && (
+                  {isActive && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="px-5 pb-5 pt-1 border-t border-zinc-100 space-y-3"
-                    >
-                      {category.services.map((item, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-xs py-2 border-b border-zinc-50 last:border-0 min-h-[44px] gap-3">
-                          <span className="font-medium text-zinc-700 text-left">{item.name}</span>
-                          <span className="font-bold text-[#926C3A] font-mono flex-shrink-0">{item.price}</span>
-                        </div>
-                      ))}
-                    </motion.div>
+                      layoutId="activeCategoryPill"
+                      className="absolute inset-0 bg-[#926C3A] rounded-xl sm:rounded-full shadow-xs"
+                      transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+                    />
                   )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
+                  <span className="relative z-10">{category.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ACTIVE TAB CONTENT DISPLAY (MOBILE & DESKTOP) */}
+          <div className="max-w-4xl mx-auto">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeCategory.id}
+                initial={{ opacity: 0, y: 12, scale: 0.99 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.99 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="bg-white rounded-2xl p-5 sm:p-8 border border-zinc-200/80 shadow-xs"
+              >
+                {/* Category Header */}
+                <div className="flex items-center justify-between pb-4 mb-4 sm:mb-6 border-b border-zinc-100">
+                  <h2 className="text-base sm:text-xl font-serif font-bold text-zinc-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#926C3A]" />
+                    {activeCategory.title}
+                  </h2>
+                  <span className="text-[11px] sm:text-xs font-semibold text-zinc-400 bg-zinc-100 px-3 py-1 rounded-full">
+                    {activeCategory.services.length} Layanan
+                  </span>
+                </div>
+
+                {/* Services List Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 sm:gap-y-3 divide-y md:divide-y-0 divide-zinc-100">
+                  {activeCategory.services.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex justify-between items-center py-3.5 border-b border-zinc-100/80 last:border-0 min-h-[44px] gap-3 group hover:bg-zinc-50/60 px-2.5 rounded-xl transition-colors"
+                    >
+                      <span className="font-semibold text-zinc-800 text-xs sm:text-sm text-left leading-snug group-hover:text-[#926C3A] transition-colors">
+                        {item.name}
+                      </span>
+                      <span className="font-bold text-[#926C3A] text-xs sm:text-sm font-mono flex-shrink-0 text-right bg-amber-50/60 px-2.5 py-1 rounded-lg border border-[#926C3A]/20 shadow-2xs">
+                        {item.price}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="mt-8 sm:mt-12 text-center max-w-4xl mx-auto">
